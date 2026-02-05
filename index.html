@@ -2,28 +2,135 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Otuics Photography</title>
-    <style>
-        body { background: #050505; color: white; font-family: 'Inter', sans-serif; text-align: center; margin: 0; }
-        nav { padding: 20px; border-bottom: 1px solid #222; }
-        .hero { padding: 100px 20px; }
-        h1 { font-size: 3rem; letter-spacing: 10px; text-transform: uppercase; }
-        .gallery-preview { background: #111; padding: 50px; border-radius: 20px; max-width: 800px; margin: 0 auto; border: 1px dashed #444; }
-        .btn-telegram { display: inline-block; background: #0088cc; color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; margin-top: 40px; font-weight: bold; transition: 0.3s; }
-        .btn-telegram:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,136,204,0.3); }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALEX PHOTO | Portfolio & Client Area</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script> <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #e5e5e5; }
+        h1, h2, h3, .brand { font-family: 'Unbounded', sans-serif; }
+        
+        /* Effetto Glassmorphism per la UI */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Nascondi scrollbar ma permetti scroll */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animazione caricamento foto */
+        .photo-item {
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+        }
+        .photo-item:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+            z-index: 10;
+        }
     </style>
 </head>
-<body>
-    <nav>PORTFOLIO | CONTATTI | AREA CLIENTI</nav>
-    <div class="hero">
-        <h1>OTUICS</h1>
-        <p>Visual Storyteller</p>
-        
-        <div class="gallery-preview">
-            <p>Qui caricheremo il feed automatico di Telegram</p>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
+        <div class="brand text-xl font-bold tracking-tighter">ALEX.RAW</div>
+        <div class="hidden md:flex gap-8 text-sm font-light tracking-wide">
+            <a href="#" class="hover:text-gray-400 transition">WORK</a>
+            <a href="#" class="hover:text-gray-400 transition">GEAR</a>
+            <a href="#" class="hover:text-gray-400 transition">CONTACT</a>
+        </div>
+        <a href="#" class="border border-white/20 px-4 py-2 rounded-full text-xs hover:bg-white hover:text-black transition uppercase tracking-widest">
+            Area Clienti
+        </a>
+    </nav>
+
+    <section class="h-screen flex flex-col justify-center items-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+        <div class="absolute w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+
+        <h1 class="text-6xl md:text-9xl font-bold text-center leading-none z-10 mix-blend-overlay opacity-90">
+            CATTURARE<br>L'INVISIBILE
+        </h1>
+        <p class="mt-8 text-gray-400 max-w-md text-center text-sm uppercase tracking-widest z-10">
+            Visual Artist & Photographer<br>Based in Italy
+        </p>
+    </section>
+
+    <section class="min-h-screen px-4 md:px-12 py-20 bg-[#0a0a0a]">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <span class="text-purple-500 text-xs tracking-widest uppercase">Area Riservata</span>
+                <h2 class="text-3xl md:text-5xl mt-2">Shooting: Matrimonio Luca & Sara</h2>
+                <p class="text-gray-500 mt-2 text-sm">124 Foto • Sincronizzato da Cloud</p>
+            </div>
+            <button class="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg hover:bg-gray-200 transition font-medium text-sm">
+                <i data-lucide="download-cloud" class="w-4 h-4"></i> Scarica Tutto (.zip)
+            </button>
+        </div>
+
+        <div class="columns-1 md:columns-3 lg:columns-4 gap-4 space-y-4">
+            
+            <div class="photo-item relative group break-inside-avoid rounded-xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1511285560982-1351cdeb9821?q=80&w=800&auto=format&fit=crop" class="w-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-mono text-gray-300">IMG_2024_001.RAW</span>
+                        <div class="flex gap-2">
+                            <button class="p-2 bg-white/10 hover:bg-white text-white hover:text-black rounded-full backdrop-blur-md transition">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button class="p-2 bg-white/10 hover:bg-white text-white hover:text-black rounded-full backdrop-blur-md transition" title="Scarica Originale">
+                                <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-        <a href="#" class="btn-telegram">ENTRA NELL'AREA CLIENTI (7 GIORNI)</a>
-    </div>
+            <div class="photo-item relative group break-inside-avoid rounded-xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" class="w-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-4">
+                     <div class="flex justify-between items-center">
+                        <span class="text-xs font-mono text-gray-300">IMG_2024_002.RAW</span>
+                        <div class="flex gap-2">
+                            <button class="p-2 bg-white/10 hover:bg-white text-white hover:text-black rounded-full backdrop-blur-md transition">
+                                <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="photo-item relative group break-inside-avoid rounded-xl overflow-hidden cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=800&auto=format&fit=crop" class="w-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-4">
+                     <div class="flex justify-between items-center">
+                        <span class="text-xs font-mono text-gray-300">IMG_2024_003.RAW</span>
+                        <div class="flex gap-2">
+                            <button class="p-2 bg-white/10 hover:bg-white text-white hover:text-black rounded-full backdrop-blur-md transition">
+                                <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-32 border-t border-white/10 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-7xl font-bold mb-8">LAVORIAMO INSIEME</h2>
+            <a href="mailto:info@alex.raw" class="text-xl border-b border-white pb-1 hover:text-gray-400 hover:border-gray-400 transition">info@alex.raw</a>
+        </div>
+    </section>
+
+    <script>
+        // Inizializza le icone
+        lucide.createIcons();
+    </script>
 </body>
 </html>
