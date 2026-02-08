@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>otuics. | Visual Artist</title>
+    <title>OTUICS | Daniele Sciuto</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -11,21 +11,27 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        logo: ['Syne', 'sans-serif'], /* Usiamo Syne come alternativa web a Coolvetica */
+                        sans: ['Inter', 'sans-serif'], /* Unico font per coerenza assoluta */
                     },
                     colors: {
                         bg: '#050505',
-                        white: '#dedede',
-                        accent: '#ff0000', /* Punto Rosso */
-                        gray: '#444444'
+                        surface: '#111111',
+                        text: '#f5f5f7', /* Apple White */
+                        muted: '#86868b', /* Apple Gray */
+                        accent: '#ffffff', /* Minimalist accent */
+                    },
+                    letterSpacing: {
+                        tighter: '-0.04em',
+                        tight: '-0.02em',
                     }
                 }
             }
@@ -33,197 +39,205 @@
     </script>
 
     <style>
-        body { background-color: #050505; color: #dedede; overflow-x: hidden; }
+        body { background-color: #050505; color: #f5f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Nasconde le pagine che non sono attive */
+        /* Gestione Pagine */
         .page-section { display: none; opacity: 0; }
         .page-section.active { display: block; opacity: 1; }
 
-        /* Cursore personalizzato (opzionale, togliere se dà fastidio su touch) */
-        ::selection { background: #ff0000; color: white; }
-
-        /* Scrollbar invisibile */
+        /* Scrollbar nascosta ma funzionale */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        .hover-underline-animation {
-            display: inline-block;
+        /* Effetto Underline minimale */
+        .nav-link {
             position: relative;
+            opacity: 0.6;
+            transition: opacity 0.3s;
         }
-        .hover-underline-animation::after {
+        .nav-link:hover { opacity: 1; }
+        .nav-link::after {
             content: '';
             position: absolute;
-            width: 100%;
-            transform: scaleX(0);
+            width: 0%;
             height: 1px;
-            bottom: 0;
+            bottom: -4px;
             left: 0;
-            background-color: #ff0000;
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
+            background-color: white;
+            transition: width 0.3s ease;
         }
-        .hover-underline-animation:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
+        .nav-link:hover::after { width: 100%; }
+
+        /* Griglia Attrezzatura */
+        .gear-item {
+            border-bottom: 1px solid #222;
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #86868b;
         }
+        .gear-item span.highlight { color: #f5f5f7; font-weight: 500; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-white selection:text-black">
 
-    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <a href="#" onclick="router('home')" class="font-logo font-extrabold text-3xl tracking-tighter leading-none hover:opacity-80 transition">
-            otuics<span class="text-accent">.</span>
+    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center backdrop-blur-md bg-bg/80 border-b border-white/5">
+        <a href="#" onclick="router('home')" class="font-extrabold text-xl tracking-tighter hover:opacity-80 transition">
+            otuics.
         </a>
         
-        <div class="hidden md:flex gap-10 text-xs font-medium tracking-widest uppercase">
-            <button onclick="router('works')" class="hover-underline-animation">Works</button>
-            <button onclick="router('philosophy')" class="hover-underline-animation">Philosophy</button>
-            <button onclick="router('contact')" class="hover-underline-animation">Contact</button>
+        <div class="hidden md:flex gap-8 text-sm font-medium">
+            <button onclick="router('works')" class="nav-link">Portfolio</button>
+            <button onclick="router('about')" class="nav-link">About</button>
+            <button onclick="router('contact')" class="nav-link">Contact</button>
         </div>
 
-        <button onclick="toggleModal()" class="flex items-center gap-2 border border-white/20 px-4 py-2 rounded-full text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition">
-            <span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
-            Private Area
+        <button onclick="toggleModal()" class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full text-xs font-medium hover:bg-white hover:text-black transition">
+            Client Area
         </button>
     </nav>
 
-    <main id="app-container" class="min-h-screen pt-24 pb-10 px-4 md:px-10 relative">
+    <main id="app-container" class="min-h-screen pt-32 pb-10 px-6 md:px-12 relative max-w-7xl mx-auto">
         
-        <section id="home" class="page-section active h-[80vh] flex flex-col justify-center">
+        <section id="home" class="page-section active h-[70vh] flex flex-col justify-center">
             <div class="hero-anim">
-                <p class="text-gray text-xs uppercase tracking-[0.4em] mb-4">Visual Art & Photography</p>
-                <h1 class="font-logo text-6xl md:text-9xl font-bold leading-none uppercase mix-blend-overlay">
-                    Beyond<br>Reality<span class="text-accent">.</span>
+                <p class="text-muted text-xs font-semibold uppercase tracking-widest mb-6">Daniele Sciuto — 1999</p>
+                <h1 class="text-6xl md:text-9xl font-bold tracking-tighter leading-[0.9] mb-8">
+                    Visual<br>Narratives.
                 </h1>
-                <div class="mt-8 flex gap-4">
-                    <button onclick="router('works')" class="px-6 py-3 bg-white text-black font-bold text-xs uppercase tracking-widest rounded hover:bg-accent hover:text-white transition duration-300">
-                        Explore Works
+                <p class="text-muted text-lg max-w-xl leading-relaxed mb-10">
+                    Fotografia di eventi, nightlife e reportage matrimoniale.
+                    Un approccio tecnico all'emozione.
+                </p>
+                <div class="flex gap-4">
+                    <button onclick="router('works')" class="px-8 py-3 bg-white text-black font-semibold text-sm rounded-full hover:bg-gray-200 transition">
+                        Vedi Lavori
+                    </button>
+                    <button onclick="router('contact')" class="px-8 py-3 border border-white/20 text-white font-semibold text-sm rounded-full hover:bg-white/10 transition">
+                        Contattami
                     </button>
                 </div>
-            </div>
-            
-            <div class="absolute top-1/2 right-0 -translate-y-1/2 w-1/2 h-full -z-10 opacity-20 pointer-events-none">
-                 <div class="w-full h-full bg-gradient-to-l from-accent/20 to-transparent rounded-full blur-[120px]"></div>
             </div>
         </section>
 
         <section id="works" class="page-section">
-            <div class="mb-12 border-b border-gray/30 pb-4 flex justify-between items-end">
-                <h2 class="font-logo text-4xl md:text-6xl uppercase">Selected Works</h2>
-                <span class="text-xs text-gray font-mono">2023 — 2026</span>
+            <div class="mb-12 flex justify-between items-end border-b border-white/10 pb-6">
+                <h2 class="text-4xl font-bold tracking-tighter">Selected Works</h2>
+                <span class="text-xs text-muted font-mono">2021 — 2025</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
-                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-gray/10">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800" class="w-full h-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0">
-                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <span class="font-logo text-2xl uppercase">Neon City</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="group relative aspect-[4/5] overflow-hidden rounded-lg bg-surface cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black/80 to-transparent translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">
+                        <span class="text-lg font-semibold">Nightlife</span>
+                        <p class="text-xs text-muted">Club Culture & Lights</p>
                     </div>
                 </div>
-                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-gray/10">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800" class="w-full h-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0">
-                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <span class="font-logo text-2xl uppercase">Abstract</span>
+                <div class="group relative aspect-[4/5] overflow-hidden rounded-lg bg-surface cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1511285560982-1351cdeb9821?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black/80 to-transparent translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">
+                        <span class="text-lg font-semibold">Wedding</span>
+                        <p class="text-xs text-muted">Reportage</p>
                     </div>
                 </div>
-                <div class="group relative aspect-[3/4] overflow-hidden cursor-pointer bg-gray/10">
-                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=800" class="w-full h-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0">
-                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                        <span class="font-logo text-2xl uppercase">Portraits</span>
+                <div class="group relative aspect-[4/5] overflow-hidden rounded-lg bg-surface cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black/80 to-transparent translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">
+                        <span class="text-lg font-semibold">Portrait</span>
+                        <p class="text-xs text-muted">Studio & Outdoors</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="philosophy" class="page-section max-w-4xl mx-auto py-10">
-            <h2 class="font-logo text-4xl md:text-7xl uppercase mb-10 leading-[0.9]">
-                Non scatto foto.<br>
-                Fermo il <span class="text-accent">tempo</span>.
-            </h2>
-            <div class="text-lg md:text-xl text-gray-300 font-light space-y-8 leading-relaxed">
-                <p>
-                    La mia visione non è documentare la realtà, ma interpretarla. In un mondo saturo di immagini, cerco il silenzio. Cerco quel momento impercettibile tra un respiro e l'altro.
-                </p>
-                <p>
-                    Utilizzo tecnologia digitale avanzata fusa con una sensibilità analogica per creare non solo file, ma eredità visive.
-                </p>
-            </div>
-            <div class="mt-20 grid grid-cols-2 gap-8 border-t border-gray/20 pt-8">
+        <section id="about" class="page-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                
                 <div>
-                    <h4 class="text-xs uppercase text-gray tracking-widest mb-2">Vision</h4>
-                    <p class="font-logo text-xl">Minimalist & Raw</p>
+                    <h2 class="text-4xl font-bold tracking-tighter mb-8">Daniele Sciuto.</h2>
+                    <div class="space-y-6 text-muted text-lg font-light leading-relaxed">
+                        <p>
+                            Nato nel 1999 a Reggio Calabria, il mio viaggio visivo inizia nel 2016. Quello che è partito come un hobby con una Canon 600D sui campi da basket e calcio, si è presto trasformato in un'ossessione per la luce e il movimento.
+                        </p>
+                        <p>
+                            La ricerca tecnica mi ha spinto a esplorare diversi ecosistemi. Dal 2019 ho abbracciato il mondo video con Fujifilm (X-T3) per poi passare, nel 2020, alla tecnologia Sony (A7S II, A7R) che ha definito il mio standard per anni.
+                        </p>
+                        <p>
+                            Dal 2021 mi sono specializzato nella fotografia notturna (Discoteca) e nel Wedding Reportage.
+                        </p>
+                        <p class="text-white font-medium">
+                            Nel 2025, il cerchio si chiude. Il ritorno a Canon con la serie R segna la mia maturità stilistica: prestazioni assolute al servizio della narrazione pura.
+                        </p>
+                    </div>
                 </div>
+
                 <div>
-                    <h4 class="text-xs uppercase text-gray tracking-widest mb-2">Focus</h4>
-                    <p class="font-logo text-xl">Editorial & Emotion</p>
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-muted mb-6 border-b border-white/10 pb-2">Technical Arsenal (2025)</h3>
+                    
+                    <div class="mb-8">
+                        <h4 class="text-sm font-bold text-white mb-2">Cameras</h4>
+                        <div class="gear-item">
+                            <span>Main Body</span>
+                            <span class="highlight">Canon EOS R6</span>
+                        </div>
+                        <div class="gear-item">
+                            <span>Secondary</span>
+                            <span class="highlight">Canon EOS R</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h4 class="text-sm font-bold text-white mb-2">Prime Lenses</h4>
+                        <div class="gear-item"><span>Wide Prime</span> <span class="highlight">28mm f/1.8 USM</span></div>
+                        <div class="gear-item"><span>Street Prime</span> <span class="highlight">Sigma 35mm f/1.4 Art</span></div>
+                        <div class="gear-item"><span>Standard</span> <span class="highlight">50mm f/1.4 USM</span></div>
+                        <div class="gear-item"><span>Portrait Master</span> <span class="highlight">85mm f/1.2L USM</span></div>
+                        <div class="gear-item"><span>Detail</span> <span class="highlight">100mm f/2.8 Macro</span></div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-bold text-white mb-2">Zoom Lenses</h4>
+                        <div class="gear-item"><span>Fisheye</span> <span class="highlight">Canon 8-15mm f/4L</span></div>
+                        <div class="gear-item"><span>Ultra Wide</span> <span class="highlight">Tokina 16-28mm f/2.8</span></div>
+                        <div class="gear-item"><span>Standard Zoom</span> <span class="highlight">Canon 24-70mm f/2.8L</span></div>
+                        <div class="gear-item"><span>Telephoto</span> <span class="highlight">Canon 70-200mm f/2.8L</span></div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="contact" class="page-section h-[60vh] flex flex-col justify-center items-center text-center">
-            <p class="text-xs uppercase tracking-widest text-gray mb-4">Start a Project</p>
-            <a href="mailto:otuicsart@gmail.com" class="font-logo text-4xl md:text-8xl font-bold hover:text-accent transition duration-300">
-                otuicsart<br>@gmail.com
+            <p class="text-xs uppercase tracking-widest text-muted mb-6">Available for Commission</p>
+            <a href="mailto:contatti@otuics.com" class="text-5xl md:text-8xl font-bold tracking-tighter hover:text-gray-300 transition duration-300">
+                Let's Talk.
             </a>
-            <p class="mt-8 text-gray-500 text-sm">Rispondo solitamente entro 24h</p>
+            <div class="mt-12 flex gap-8 text-sm font-medium">
+                <a href="#" class="border-b border-white/30 hover:border-white pb-1">Instagram</a>
+                <a href="#" class="border-b border-white/30 hover:border-white pb-1">WhatsApp</a>
+            </div>
         </section>
 
     </main>
 
-    <footer class="border-t border-white/10 bg-[#080808] pt-20 pb-10 px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
-            <div class="col-span-2 md:col-span-1">
-                <span class="font-logo font-bold text-2xl lowercase tracking-tighter">otuics<span class="text-accent">.</span></span>
-                <p class="text-xs text-gray mt-4 max-w-[150px]">Visual Artist based in Italy. Available worldwide.</p>
-            </div>
-
-            <div>
-                <h4 class="text-[10px] uppercase text-gray tracking-widest mb-6">Sitemap</h4>
-                <ul class="space-y-3 text-sm font-medium">
-                    <li><button onclick="router('home')" class="hover:text-accent transition">Home</button></li>
-                    <li><button onclick="router('works')" class="hover:text-accent transition">Works</button></li>
-                    <li><button onclick="router('philosophy')" class="hover:text-accent transition">Philosophy</button></li>
-                    <li><button onclick="toggleModal()" class="hover:text-accent transition">Client Area</button></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-[10px] uppercase text-gray tracking-widest mb-6">Socials</h4>
-                <ul class="space-y-3 text-sm font-medium">
-                    <li><a href="https://instagram.com/otuicsart" target="_blank" class="hover:text-accent transition">Instagram</a></li>
-                    <li><a href="https://facebook.com/otuics" target="_blank" class="hover:text-accent transition">Facebook</a></li>
-                    <li><a href="https://twitter.com/otuics" target="_blank" class="hover:text-accent transition">Twitter/X</a></li>
-                    <li><a href="#" class="text-gray cursor-not-allowed">LinkedIn (N/D)</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-[10px] uppercase text-gray tracking-widest mb-6">Info</h4>
-                <ul class="space-y-3 text-sm text-gray-400">
-                    <li>P.IVA: <span class="text-gray-600">N/D</span></li>
-                    <li>Sede: <span class="text-gray-600">Italy</span></li>
-                    <li>Privacy Policy</li>
-                    <li>Cookie Policy</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="flex justify-between items-end border-t border-white/5 pt-8">
-            <p class="text-[10px] text-gray uppercase tracking-widest">&copy; 2026 otuics.</p>
-            <p class="text-[10px] text-gray uppercase tracking-widest">Designed by Code</p>
+    <footer class="border-t border-white/5 bg-bg py-10 px-6 text-center md:text-left">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-muted">
+            <p>&copy; 2026 Otuics — Daniele Sciuto.</p>
+            <p class="mt-2 md:mt-0">Reggio Calabria, IT</p>
         </div>
     </footer>
 
-    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md opacity-0 pointer-events-none transition duration-500">
-        <div class="bg-[#111] border border-white/10 p-10 rounded-2xl w-full max-w-sm text-center relative transform scale-90 transition duration-500" id="loginContent">
-            <button onclick="toggleModal()" class="absolute top-4 right-4 text-gray hover:text-white"><i data-lucide="x"></i></button>
+    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition duration-500">
+        <div class="bg-[#111] border border-white/10 p-8 rounded-2xl w-full max-w-sm text-center relative transform scale-95 transition duration-500" id="loginContent">
+            <button onclick="toggleModal()" class="absolute top-4 right-4 text-muted hover:text-white"><i data-lucide="x" width="20"></i></button>
             
-            <span class="font-logo font-bold text-2xl lowercase mb-2 block">otuics<span class="text-accent">.</span></span>
-            <p class="text-xs text-gray uppercase tracking-widest mb-8">Client Access</p>
+            <h3 class="font-bold text-xl mb-1">Private Gallery</h3>
+            <p class="text-xs text-muted mb-6">Enter your access code</p>
             
-            <input type="password" placeholder="Passcode" class="w-full bg-black border-b border-gray focus:border-accent text-center py-3 text-xl tracking-[0.5em] text-white focus:outline-none transition mb-8 placeholder:text-gray/20 placeholder:tracking-normal placeholder:text-sm">
+            <input type="password" class="w-full bg-black border border-white/10 rounded-lg py-3 px-4 text-center text-white focus:border-white/40 focus:outline-none transition mb-4 placeholder:text-muted/30" placeholder="PASSCODE">
             
-            <button class="w-full bg-white text-black font-bold py-4 rounded hover:bg-accent hover:text-white transition uppercase text-xs tracking-widest">
-                Enter Archive
+            <button class="w-full bg-white text-black font-semibold py-3 rounded-lg hover:bg-gray-200 transition text-sm">
+                Enter
             </button>
         </div>
     </div>
@@ -231,68 +245,59 @@
     <script>
         lucide.createIcons();
 
-        // ROUTER VIRTUALE: Gestisce il cambio pagina senza ricaricare
+        // ROUTER SYSTEM
         function router(pageId) {
-            // 1. Prendi la sezione attuale e quella nuova
             const currentSection = document.querySelector('.page-section.active');
             const newSection = document.getElementById(pageId);
 
-            // Se stiamo già su quella pagina, non fare nulla
-            if (currentSection.id === pageId) return;
+            if (!currentSection || currentSection.id === pageId) return;
 
-            // 2. Animazione di uscita (Fade Out & Slide Up)
+            // Fade Out
             gsap.to(currentSection, {
                 opacity: 0,
-                y: -20,
-                duration: 0.5,
+                y: -10,
+                duration: 0.4,
                 ease: "power2.inOut",
                 onComplete: () => {
-                    // Nascondi la vecchia
                     currentSection.classList.remove('active');
                     currentSection.style.display = "none";
 
-                    // Prepara la nuova (Reset posizione)
                     newSection.style.display = "block";
                     newSection.classList.add('active');
                     
-                    // 3. Animazione di entrata (Fade In & Slide Up da basso)
+                    // Fade In
                     gsap.fromTo(newSection, 
-                        { opacity: 0, y: 30 }, 
-                        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+                        { opacity: 0, y: 20 }, 
+                        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
                     );
-
-                    // Scroll to top fluido
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
         }
 
-        // ANIMAZIONE INIZIALE HOME
+        // INIT ANIMATION
         window.onload = () => {
             gsap.from(".hero-anim", {
                 opacity: 0,
-                y: 50,
-                duration: 1,
-                delay: 0.2,
+                y: 40,
+                duration: 1.2,
                 ease: "power3.out"
             });
         };
 
-        // GESTIONE MODAL LOGIN
+        // MODAL LOGIC
         const modal = document.getElementById('loginModal');
         const loginContent = document.getElementById('loginContent');
 
         function toggleModal() {
             if (modal.classList.contains('opacity-0')) {
-                // Open
                 modal.classList.remove('opacity-0', 'pointer-events-none');
-                loginContent.classList.remove('scale-90');
+                loginContent.classList.remove('scale-95');
                 loginContent.classList.add('scale-100');
             } else {
-                // Close
                 modal.classList.add('opacity-0', 'pointer-events-none');
                 loginContent.classList.remove('scale-100');
-                loginContent.classList.add('scale-90');
+                loginContent.classList.add('scale-95');
             }
         }
     </script>
