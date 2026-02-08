@@ -43,13 +43,18 @@
       background: #ff0000; 
       color: #fff; 
     }
-    
-    .gradient-text {
-      background: linear-gradient(180deg, #ffffff 0%, #6b7280 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
+
+    /* Liquid Glass Effect */
+    .liquid-glass-top {
+      background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
+      backdrop-filter: saturate(180%) blur(30px);
+      -webkit-backdrop-filter: saturate(180%) blur(30px);
+    }
+
+    .liquid-glass-bottom {
+      background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
+      backdrop-filter: saturate(180%) blur(30px);
+      -webkit-backdrop-filter: saturate(180%) blur(30px);
     }
 
     .glass {
@@ -68,7 +73,7 @@
       position: fixed;
       inset: 0;
       top: 70px;
-      bottom: 90px;
+      bottom: 80px;
       opacity: 0;
       visibility: hidden;
       transform: scale(0.98);
@@ -102,25 +107,6 @@
       box-shadow: 0 20px 60px rgba(255, 0, 0, 0.15);
     }
 
-    .lang-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 12px;
-      min-width: 120px;
-    }
-
-    .lang-dropdown.show {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     .portfolio-card {
       position: relative;
       overflow: hidden;
@@ -150,21 +136,82 @@
       pointer-events: none;
     }
 
-    .nav-indicator {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: currentColor;
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
+    /* Photo Slider */
+    .photo-slider {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
-    .nav-item.active .nav-indicator {
+    .photo-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .photo-slide.active {
       opacity: 1;
+    }
+
+    .photo-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%);
+    }
+
+    /* PIN Modal */
+    .pin-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pin-modal.show {
+      display: flex;
+    }
+
+    .pin-input {
+      width: 50px;
+      height: 60px;
+      font-size: 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .pin-input:focus {
+      outline: none;
+      border-color: #ff0000;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .pin-error {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
   </style>
 </head>
@@ -172,62 +219,81 @@
 <body>
 
   <!-- TOP NAV -->
-  <nav class="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10">
+  <nav class="fixed top-0 left-0 right-0 z-50 liquid-glass-top">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[70px] flex items-center justify-between">
-      <div class="text-3xl sm:text-4xl font-black tracking-tight">
+      <div class="text-3xl sm:text-4xl font-normal tracking-tight">
         otuics<span class="text-otuics-red text-4xl sm:text-5xl">.</span>
       </div>
 
-      <div class="relative">
-        <button id="langBtn" class="glass px-4 py-2 rounded-full border border-white/10 hover:border-white/20 transition text-sm font-semibold tracking-wide">
-          <span id="currentLang">IT</span>
-        </button>
-        <div id="langDropdown" class="lang-dropdown glass-strong rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-          <button class="lang-option w-full px-5 py-3 text-left hover:bg-white/10 transition text-sm font-medium" data-lang="it">IT</button>
-          <button class="lang-option w-full px-5 py-3 text-left hover:bg-white/10 transition text-sm font-medium" data-lang="en">EN</button>
-          <button class="lang-option w-full px-5 py-3 text-left hover:bg-white/10 transition text-sm font-medium" data-lang="es">ES</button>
-          <button class="lang-option w-full px-5 py-3 text-left hover:bg-white/10 transition text-sm font-medium" data-lang="fr">FR</button>
-        </div>
-      </div>
+      <button onclick="openPinModal()" class="glass px-5 py-2.5 rounded-full border border-white/10 hover:border-white/20 transition text-sm font-semibold tracking-wide">
+        Area Riservata
+      </button>
     </div>
   </nav>
+
+  <!-- PIN MODAL -->
+  <div id="pinModal" class="pin-modal">
+    <div class="glass-strong rounded-3xl p-8 sm:p-10 border border-white/10 max-w-md w-full mx-4">
+      <h3 class="text-2xl font-bold text-white mb-2 text-center">Area Riservata</h3>
+      <p class="text-sm text-gray-400 mb-8 text-center">Inserisci il codice di 6 cifre</p>
+      
+      <div class="flex gap-3 justify-center mb-6">
+        <input type="text" maxlength="1" class="pin-input" id="pin1" />
+        <input type="text" maxlength="1" class="pin-input" id="pin2" />
+        <input type="text" maxlength="1" class="pin-input" id="pin3" />
+        <input type="text" maxlength="1" class="pin-input" id="pin4" />
+        <input type="text" maxlength="1" class="pin-input" id="pin5" />
+        <input type="text" maxlength="1" class="pin-input" id="pin6" />
+      </div>
+
+      <p id="pinError" class="text-otuics-red text-sm text-center mb-4 h-5"></p>
+
+      <div class="flex gap-3">
+        <button onclick="closePinModal()" class="flex-1 px-6 py-3 rounded-full border border-white/20 glass font-semibold text-sm hover:bg-white/10 transition">
+          Annulla
+        </button>
+        <button onclick="verifyPin()" class="flex-1 px-6 py-3 rounded-full bg-otuics-red text-white font-semibold text-sm hover:bg-red-600 transition">
+          Accedi
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- PAGES -->
   <main>
 
     <!-- HOME -->
     <div id="page-home" class="page-view active">
-      <div class="relative min-h-full flex items-center justify-center px-4 sm:px-6">
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-          <div class="absolute w-[700px] h-[700px] bg-otuics-red/8 rounded-full blur-[200px] top-1/4 -left-40"></div>
-          <div class="absolute w-[600px] h-[600px] bg-otuics-red/5 rounded-full blur-[180px] bottom-1/4 -right-40"></div>
+      <div class="photo-slider">
+        <div class="photo-slide active">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=90" alt="Wedding" />
         </div>
+        <div class="photo-slide">
+          <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1920&q=90" alt="Nightlife" />
+        </div>
+        <div class="photo-slide">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1920&q=90" alt="Portrait" />
+        </div>
+        <div class="photo-slide">
+          <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&q=90" alt="Corporate" />
+        </div>
+        <div class="photo-slide">
+          <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=90" alt="Sport" />
+        </div>
+        <div class="photo-slide">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=90" alt="Landscape" />
+        </div>
+        <div class="photo-overlay"></div>
+      </div>
 
-        <div class="relative z-10 text-center max-w-6xl mx-auto py-12">
-          <h1 class="text-7xl sm:text-8xl md:text-9xl lg:text-[11rem] font-black tracking-[-0.03em] leading-[0.85]">
-            <span class="gradient-text">Light</span><br/>
-            <span class="gradient-text">& Time</span><span class="text-otuics-red">.</span>
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="text-center px-4">
+          <h1 class="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] font-black tracking-[-0.04em] leading-[0.8] text-white drop-shadow-2xl">
+            otuics<span class="text-otuics-red">.</span>
           </h1>
-
-          <p class="mt-12 text-2xl sm:text-3xl md:text-4xl text-white font-semibold max-w-4xl mx-auto leading-tight">
-            Non scatto: costruisco<span class="text-otuics-red">.</span><br/>
-            Ogni frame è intenzione<span class="text-otuics-red">.</span>
+          <p class="mt-8 text-xl sm:text-2xl md:text-3xl text-white font-semibold drop-shadow-lg">
+            Visual Creator
           </p>
-
-          <p class="mt-8 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto font-medium">
-            Energia che tiene l'attenzione. Colore che definisce il brand. Movimento che racconta senza parole<span class="text-otuics-red">.</span>
-          </p>
-
-          <div class="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onclick="goToPage('portfolio')"
-                    class="w-full sm:w-auto px-12 py-4 rounded-full bg-white text-black font-bold text-base hover:bg-white/90 transition shadow-2xl">
-              Portfolio
-            </button>
-            <button onclick="goToPage('about')"
-                    class="w-full sm:w-auto px-12 py-4 rounded-full glass border border-white/20 font-semibold text-base hover:bg-white/10 transition">
-              Chi sono
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -523,54 +589,112 @@
   </main>
 
   <!-- BOTTOM NAV -->
-  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/10">
-    <div class="max-w-lg mx-auto px-2 h-[90px] pb-6 flex items-center justify-around">
-      <button onclick="goToPage('home')" class="nav-item relative flex flex-col items-center gap-1.5 text-gray-500 active transition-colors" data-page="home">
-        <div class="nav-indicator"></div>
-        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span class="text-[11px] font-semibold tracking-wide">Home</span>
+  <nav class="fixed bottom-0 left-0 right-0 z-50 liquid-glass-bottom">
+    <div class="max-w-lg mx-auto px-4 h-[80px] pb-5 flex items-center justify-around">
+      <button onclick="goToPage('home')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="home">
+        <span class="text-xs font-semibold tracking-wide">Home</span>
       </button>
 
-      <button onclick="goToPage('portfolio')" class="nav-item relative flex flex-col items-center gap-1.5 text-gray-500 transition-colors" data-page="portfolio">
-        <div class="nav-indicator"></div>
-        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
-        <span class="text-[11px] font-semibold tracking-wide">Portfolio</span>
+      <button onclick="goToPage('portfolio')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="portfolio">
+        <span class="text-xs font-semibold tracking-wide">Portfolio</span>
       </button>
 
-      <button onclick="goToPage('gear')" class="nav-item relative flex flex-col items-center gap-1.5 text-gray-500 transition-colors" data-page="gear">
-        <div class="nav-indicator"></div>
-        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-        <span class="text-[11px] font-semibold tracking-wide">Gear</span>
+      <button onclick="goToPage('gear')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="gear">
+        <span class="text-xs font-semibold tracking-wide">Gear</span>
       </button>
 
-      <button onclick="goToPage('about')" class="nav-item relative flex flex-col items-center gap-1.5 text-gray-500 transition-colors" data-page="about">
-        <div class="nav-indicator"></div>
-        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <span class="text-[11px] font-semibold tracking-wide">About</span>
+      <button onclick="goToPage('about')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="about">
+        <span class="text-xs font-semibold tracking-wide">About</span>
       </button>
     </div>
   </nav>
 
   <script>
-    // Language Dropdown
-    const langBtn = document.getElementById('langBtn');
-    const langDropdown = document.getElementById('langDropdown');
+    // Photo Slider
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.photo-slide');
+    const totalSlides = slides.length;
 
-    langBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      langDropdown.classList.toggle('show');
-    });
+    function showNextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % totalSlides;
+      slides[currentSlide].classList.add('active');
+    }
 
-    document.addEventListener('click', () => {
-      langDropdown.classList.remove('show');
-    });
+    setInterval(showNextSlide, 4000);
 
-    document.querySelectorAll('.lang-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.getAttribute('data-lang').toUpperCase();
-        document.getElementById('currentLang').textContent = lang;
-        langDropdown.classList.remove('show');
+    // PIN Modal
+    const CORRECT_PIN = '123456'; // Cambia questo con il PIN che vuoi
+
+    function openPinModal() {
+      document.getElementById('pinModal').classList.add('show');
+      document.getElementById('pin1').focus();
+    }
+
+    function closePinModal() {
+      document.getElementById('pinModal').classList.remove('show');
+      clearPinInputs();
+    }
+
+    function clearPinInputs() {
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById('pin' + i).value = '';
+      }
+      document.getElementById('pinError').textContent = '';
+    }
+
+    // Auto-advance to next input
+    for (let i = 1; i <= 6; i++) {
+      const input = document.getElementById('pin' + i);
+      
+      input.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (value.length === 1 && i < 6) {
+          document.getElementById('pin' + (i + 1)).focus();
+        }
       });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && i > 1) {
+          document.getElementById('pin' + (i - 1)).focus();
+        }
+      });
+
+      // Only allow numbers
+      input.addEventListener('keypress', (e) => {
+        if (!/[0-9]/.test(e.key)) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    function verifyPin() {
+      let enteredPin = '';
+      for (let i = 1; i <= 6; i++) {
+        enteredPin += document.getElementById('pin' + i).value;
+      }
+
+      if (enteredPin === CORRECT_PIN) {
+        document.getElementById('pinError').textContent = '';
+        closePinModal();
+        // Qui puoi reindirizzare o mostrare contenuto riservato
+        alert('Accesso consentito! (Qui puoi reindirizzare a una pagina protetta)');
+      } else {
+        document.getElementById('pinError').textContent = 'PIN non valido';
+        document.querySelectorAll('.pin-input').forEach(input => {
+          input.classList.add('pin-error');
+          setTimeout(() => input.classList.remove('pin-error'), 500);
+        });
+        clearPinInputs();
+        document.getElementById('pin1').focus();
+      }
+    }
+
+    // Press Enter to verify
+    document.getElementById('pin6').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        verifyPin();
+      }
     });
 
     // Page Navigation
@@ -587,10 +711,10 @@
 
       navItems.forEach(n => {
         if (n.getAttribute('data-page') === pageId) {
-          n.classList.add('active', 'text-white');
+          n.classList.add('text-white');
           n.classList.remove('text-gray-500');
         } else {
-          n.classList.remove('active', 'text-white');
+          n.classList.remove('text-white');
           n.classList.add('text-gray-500');
         }
       });
@@ -599,7 +723,7 @@
       document.getElementById('page-' + pageId).scrollTop = 0;
     }
 
-    // Init nav
+    // Init
     document.querySelector('.nav-item[data-page="home"]').classList.add('text-white');
     document.querySelector('.nav-item[data-page="home"]').classList.remove('text-gray-500');
   </script>
