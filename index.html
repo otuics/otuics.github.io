@@ -1,315 +1,431 @@
-<!DOCTYPE html>
-<html lang="it">
+<!doctype html>
+<html lang="it" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTUICS | Daniele Sciuto</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        bg: '#000000',     /* NERO PURO */
-                        surface: '#090909', /* Appena percettibile stacco */
-                        card: '#111111',
-                        text: '#ededed',    /* Bianco quasi puro per contrasto alto */
-                        muted: '#666666',   /* Grigio medio */
-                        accent: '#dc2626',  /* ROSSO CILIEGIA VIBRANTE */
-                    }
-                }
-            }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <title>otuics. — Visual Creator</title>
+
+  <!-- Font (Inter). Se vuoi 100% Apple: lascia system font e rimuovi questo blocco. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind v3 Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'otuics-black': '#000000',
+            'otuics-red':   '#ff0000',
+            'otuics-white': '#f5f5f7',
+            'otuics-gray':  '#86868b',
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 30px 80px rgba(0,0,0,0.55)',
+          }
         }
-    </script>
+      }
+    }
+  </script>
 
-    <style>
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-        
-        /* Utility per il punto rosso */
-        .dot { color: var(--accent); }
-
-        .page-section { display: none; opacity: 0; }
-        .page-section.active { display: block; opacity: 1; }
-
-        .brand-icon { fill: white; height: 24px; opacity: 0.6; transition: opacity 0.3s; }
-        .brand-icon:hover { opacity: 1; }
-
-        .lens-showcase {
-            filter: drop-shadow(0 30px 50px rgba(0,0,0,0.9)); /* Ombre più profonde */
-            will-change: transform;
-        }
-        
-        /* Nav Link Hover Effect */
-        .nav-link:hover { color: white; }
-        .nav-link::after {
-            content: ''; display: block; width: 0; height: 2px; background: var(--accent); transition: width .3s;
-        }
-        .nav-link:hover::after { width: 100%; }
-    </style>
+  <style>
+    body { margin: 0; background: #000; overflow-x: hidden; }
+    ::selection { background: #ff0000; color: #fff; }
+    .text-gradient {
+      background: linear-gradient(180deg, #ffffff, #a1a1aa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    /* Scrollbar minimal (se vuoi 100% “invisibile”, possiamo nasconderla del tutto) */
+    ::-webkit-scrollbar { width: 8px; background: #000; }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 999px; }
+  </style>
 </head>
-<body class="antialiased selection:bg-accent selection:text-white">
 
-    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
-        <a href="#" onclick="router('home')" class="font-black text-2xl tracking-tighter hover:opacity-80 transition leading-none">
-            otuics<span class="dot">.</span>
-        </a>
-        
-        <div class="hidden md:flex gap-10 text-sm font-semibold text-muted uppercase tracking-widest">
-            <button onclick="router('home')" class="nav-link">Studio</button>
-            <button onclick="router('showcase')" class="nav-link">Gear</button>
-            <button onclick="router('contact')" class="nav-link">Contact</button>
+<body class="bg-otuics-black text-otuics-white font-sans antialiased">
+
+  <!-- NAV -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-black/75 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#top" class="text-2xl font-semibold tracking-tight">
+        otuics<span class="text-otuics-red text-3xl">.</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-otuics-gray">
+        <a href="#story" class="hover:text-otuics-white transition-colors">Story</a>
+        <a href="#gear" class="hover:text-otuics-white transition-colors">Gear</a>
+        <a href="#showcase" class="hover:text-otuics-white transition-colors">Showcase</a>
+        <a href="#contact" class="hover:text-otuics-white transition-colors">Contact</a>
+      </div>
+
+      <button id="menuBtn" class="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
+              aria-label="Apri menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="w-5 h-[2px] bg-white block relative">
+          <span class="w-5 h-[2px] bg-white block absolute -top-2 left-0"></span>
+          <span class="w-5 h-[2px] bg-white block absolute top-2 left-0"></span>
+        </span>
+      </button>
+    </div>
+
+    <div id="mobileMenu" class="md:hidden hidden border-t border-white/10 bg-black/85 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4 text-base text-otuics-gray">
+        <a href="#story" class="hover:text-white">Story</a>
+        <a href="#gear" class="hover:text-white">Gear</a>
+        <a href="#showcase" class="hover:text-white">Showcase</a>
+        <a href="#contact" class="hover:text-white">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="top" class="relative min-h-[100svh] flex items-center justify-center pt-20 overflow-hidden">
+    <!-- Glow rosso -->
+    <div class="pointer-events-none absolute w-[700px] h-[700px] bg-otuics-red/10 rounded-full blur-[140px]
+                top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+
+    <!-- Floating PNG (scontornati) -->
+    <img src="assets/lenses/hero-lens-1.png" alt="" class="pointer-events-none select-none hidden sm:block absolute -left-10 top-24 w-[280px] opacity-80"
+         data-float data-rot="-10" data-depth="70" />
+    <img src="assets/lenses/hero-lens-2.png" alt="" class="pointer-events-none select-none hidden sm:block absolute -right-10 bottom-10 w-[340px] opacity-80"
+         data-float data-rot="12" data-depth="90" />
+
+    <div class="relative z-10 text-center px-6">
+      <p class="text-otuics-gray text-sm md:text-base tracking-[0.35em] uppercase" data-fade>
+        Daniele Sciuto
+      </p>
+
+      <h1 class="mt-5 text-5xl md:text-8xl font-semibold tracking-tighter leading-[0.95]" data-fade>
+        Mastering Light <br class="hidden sm:block" />
+        & Time<span class="text-otuics-red">.</span>
+      </h1>
+
+      <p class="mt-6 text-lg md:text-2xl text-otuics-gray max-w-2xl mx-auto" data-fade>
+        Visual Creator. Reggio Calabria<span class="text-otuics-red">.</span>
+      </p>
+
+      <!-- Brand logos (SVG bianchi) -->
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-6 opacity-80" data-fade>
+        <img src="assets/brands/canon.svg" alt="Canon" class="h-6 md:h-7" />
+        <img src="assets/brands/sony.svg" alt="Sony" class="h-6 md:h-7" />
+        <img src="assets/brands/sigma.svg" alt="Sigma" class="h-6 md:h-7" />
+        <img src="assets/brands/dji.svg" alt="DJI" class="h-6 md:h-7" />
+      </div>
+    </div>
+  </header>
+
+  <!-- STORY + GEAR -->
+  <section id="story" class="scroll-mt-24 py-24 px-6 md:px-12 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-20 items-start">
+
+      <!-- Story -->
+      <div class="space-y-10">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight border-l-4 border-otuics-red pl-4" data-fade>
+          The Journey<span class="text-otuics-red">.</span>
+        </h2>
+
+        <article class="group" data-fade>
+          <p class="text-otuics-red font-semibold text-xl">2016</p>
+          <h3 class="mt-1 text-xl font-semibold text-white">
+            L’Inizio<span class="text-otuics-red">.</span>
+          </h3>
+          <p class="mt-2 text-otuics-gray">
+            Canon 600D, Sigma 17-50, Canon 55-250: ritratti, basket e calcio<span class="text-otuics-red">.</span>
+          </p>
+        </article>
+
+        <article class="group" data-fade>
+          <p class="text-otuics-red font-semibold text-xl">2019</p>
+          <h3 class="mt-1 text-xl font-semibold text-white">
+            Video Era<span class="text-otuics-red">.</span>
+          </h3>
+          <p class="mt-2 text-otuics-gray">
+            Fujifilm X‑T3: il movimento diventa protagonista<span class="text-otuics-red">.</span>
+          </p>
+        </article>
+
+        <article class="group" data-fade>
+          <p class="text-otuics-red font-semibold text-xl">2020</p>
+          <h3 class="mt-1 text-xl font-semibold text-white">
+            Full Frame Sony<span class="text-otuics-red">.</span>
+          </h3>
+          <p class="mt-2 text-otuics-gray">
+            A7S II, A7R1, A7R2: inizia il mondo dei matrimoni<span class="text-otuics-red">.</span>
+          </p>
+        </article>
+
+        <article class="group" data-fade>
+          <p class="text-otuics-red font-semibold text-xl">2021</p>
+          <h3 class="mt-1 text-xl font-semibold text-white">
+            Nightlife Specialist<span class="text-otuics-red">.</span>
+          </h3>
+          <p class="mt-2 text-otuics-gray">
+            Dominare la luce scarsa: energia, ritmo, istinto<span class="text-otuics-red">.</span>
+          </p>
+        </article>
+
+        <article class="group" data-fade>
+          <p class="text-otuics-red font-semibold text-xl">2025</p>
+          <h3 class="mt-1 text-xl font-semibold text-white">
+            Back to Canon Color Science<span class="text-otuics-red">.</span>
+          </h3>
+          <p class="mt-2 text-otuics-gray">
+            Canon R6 + EOS R: colore “definitivo” per il mio stile<span class="text-otuics-red">.</span>
+          </p>
+        </article>
+      </div>
+
+      <!-- Gear (sticky desktop) -->
+      <aside id="gear" class="scroll-mt-24 md:sticky md:top-24 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft" data-fade>
+        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">
+          Technical Arsenal<span class="text-otuics-red">.</span>
+        </h2>
+
+        <div class="mt-7 space-y-6 text-sm md:text-base">
+          <div>
+            <p class="text-otuics-gray uppercase text-xs tracking-widest">Bodies</p>
+            <ul class="mt-3 space-y-2 font-medium">
+              <li class="flex items-center justify-between gap-3">
+                <span>Canon EOS R6</span>
+                <span class="text-otuics-red text-[11px] border border-otuics-red/80 px-2 py-0.5 rounded-full">MAIN</span>
+              </li>
+              <li class="text-otuics-gray">Canon EOS R (Backup)</li>
+            </ul>
+          </div>
+
+          <div class="h-px bg-white/10"></div>
+
+          <div>
+            <p class="text-otuics-gray uppercase text-xs tracking-widest">Lenses</p>
+            <ul class="mt-3 space-y-2 font-medium text-white/85">
+              <li>Canon 28mm f/1.8</li>
+              <li class="text-white">Sigma 35mm f/1.4 Art</li>
+              <li>Canon 50mm f/1.4</li>
+              <li class="text-white">
+                Canon 85mm f/1.2L <span class="ml-2 text-[11px] text-otuics-red">LEGEND</span>
+              </li>
+              <li>Canon 100mm f/2.8 Macro</li>
+              <li>Canon 8-15mm L Fisheye</li>
+              <li>Tokina 16-28mm f/2.8</li>
+              <li class="text-white">Canon 24-70mm f/2.8L</li>
+              <li class="text-white">Canon 70-200mm f/2.8L</li>
+            </ul>
+          </div>
+
+          <div class="h-px bg-white/10"></div>
+
+          <div>
+            <p class="text-otuics-gray uppercase text-xs tracking-widest">Stabilization</p>
+            <p class="mt-3 font-medium text-white/85">DJI Ronin S</p>
+          </div>
         </div>
-         <button class="md:hidden text-white"><i data-lucide="menu"></i></button>
-    </nav>
+      </aside>
 
-    <main class="pt-32 pb-20">
-        
-        <section id="home" class="page-section active px-6 max-w-7xl mx-auto">
-            
-            <div class="py-20 text-left hero-anim">
-                <p class="text-xs font-bold uppercase tracking-[0.3em] text-accent mb-6">Visual Creator — 1999</p>
-                <h1 class="text-6xl md:text-9xl font-black tracking-tighter leading-none mb-6">
-                    MASTERING<br>LIGHT & TIME<span class="dot">.</span>
-                </h1>
-            </div>
+    </div>
+  </section>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 border-t border-white/10 pt-20 hero-anim">
-                
-                <div class="pr-0 lg:pr-20">
-                    <h2 class="text-3xl font-bold mb-10 text-white tracking-tight">The Journey<span class="dot">.</span></h2>
-                    <div class="space-y-10 text-muted leading-relaxed font-light text-lg">
-                        <div>
-                            <strong class="text-white block mb-2 uppercase tracking-widest text-sm">2016 — Le Origini</strong>
-                            <p>Tutto inizia a Reggio Calabria con una Canon 600D. Campi da basket, partite di calcio, terra e sudore. Lì imparo a congelare l'attimo<span class="dot">.</span></p>
-                        </div>
-                        
-                        <div>
-                             <strong class="text-white block mb-2 uppercase tracking-widest text-sm">2019 — L'Era Mirrorless</strong>
-                            <p>La necessità di evolvere nel video mi porta prima in Fujifilm (X-T3) e poi nel mondo Sony (A7S II, A7R). Sono gli anni della sperimentazione tecnica e dell'inizio dei matrimoni<span class="dot">.</span></p>
-                        </div>
-                        
-                        <div>
-                             <strong class="text-white block mb-2 uppercase tracking-widest text-sm">2021 — Nightlife Specialist</strong>
-                            <p>La discoteca diventa il mio studio. Luci stroboscopiche e condizioni estreme affinano il mio stile<span class="dot">.</span></p>
-                        </div>
-                        
-                        <div>
-                             <strong class="text-white block mb-2 uppercase tracking-widest text-sm text-accent">2025 — Ritorno alle Origini</strong>
-                            <p class="text-white font-medium">Il passaggio definitivo a Canon EOS R e R6. Una scelta di maturità per una scienza colore senza compromessi<span class="dot">.</span></p>
-                        </div>
-                    </div>
+  <!-- SHOWCASE -->
+  <section id="showcase" class="scroll-mt-24 relative">
+    <!-- Panel 1 -->
+    <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div data-fade>
+          <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
+            The Holy Trinity<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
+            Tokina 16-28mm, Canon 24-70mm L, Canon 70-200mm L: versatilità totale per eventi<span class="text-otuics-red">.</span>
+          </p>
+        </div>
 
-                    <div class="mt-16 flex gap-12 items-center opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition duration-500">
-                        <svg class="brand-icon w-24" viewBox="0 0 100 20"><path d="M12.8,10.6c-0.8-1.5-2.2-2.3-4.1-2.3c-3.5,0-5.8,2.7-5.8,6.8c0,3.7,2.1,6.8,5.8,6.8c1.8,0,3.5-1,4.2-2.6 l3.3,1.3c-1.5,3-4.2,4.6-7.5,4.6C3.5,25.2,0,21.3,0,15.1c0-6,3.6-10.1,8.7-10.1c3.4,0,6.1,1.7,7.5,4.7L12.8,10.6z M38.7,15.1 c0-6.1-3.6-10.1-8.7-10.1c-3.1,0-5.6,1.4-7.1,3.8l0.2-3.4h-3.3v19.4h3.4v-8.9c0-3.6,1.9-5.8,4.7-5.8c2.9,0,4.4,2,4.4,5.3v9.4 h3.4V15.1z M53.8,15.1c0-6.2-3.5-10.1-8.7-10.1c-5.1,0-8.7,3.9-8.7,10.1c0,6.1,3.6,10.1,8.7,10.1C50.2,25.2,53.8,21.3,53.8,15.1z M40,15.1c0-4.1,2.2-6.8,5.2-6.8c2.9,0,5.2,2.7,5.2,6.8c0,4.1-2.2,6.8-5.2,6.8C42.2,21.9,40,19.2,40,15.1z M69.1,15.1 c0-6.1-3.6-10.1-8.7-10.1c-3.1,0-5.6,1.4-7.1,3.8l0.2-3.4h-3.3v19.4h3.4v-8.9c0-3.6,1.9-5.8,4.7-5.8c2.9,0,4.4,2,4.4,5.3v9.4 h3.4V15.1z" fill="white"/></svg>
-                        <svg class="brand-icon w-24" viewBox="0 0 100 20"><text x="0" y="15" font-family="sans-serif" font-weight="900" font-size="20" fill="white">SONY</text></svg>
-                    </div>
-                </div>
+        <div class="relative flex justify-center md:justify-end">
+          <img src="assets/lenses/trinity.png" alt="Tokina 16-28, Canon 24-70, Canon 70-200"
+               class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
+               data-lens data-rot="-6" data-depth="110" />
+        </div>
+      </div>
+    </div>
 
-                <div class="bg-card p-10 rounded-3xl border border-white/5 hover:border-accent/30 transition duration-500">
-                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-accent mb-10">Full Equipment List (2025)<span class="dot">.</span></h2>
-                    
-                    <div class="grid grid-cols-1 gap-10 text-sm">
-                        <div>
-                            <h3 class="text-white font-bold mb-4 border-b border-white/10 pb-2 uppercase tracking-wider text-xs">Cameras</h3>
-                            <ul class="space-y-3 text-muted font-medium">
-                                <li class="flex justify-between"><span class="text-white">Canon EOS R6</span> <span>Main Body</span></li>
-                                <li class="flex justify-between"><span class="text-white">Canon EOS R</span> <span>Backup</span></li>
-                            </ul>
-                        </div>
+    <!-- Panel 2 -->
+    <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="md:order-2" data-fade>
+          <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
+            The Legend<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
+            Canon 85mm f/1.2L: lento, pesante, ma <span class="text-white">magico</span>. Il Re del ritratto<span class="text-otuics-red">.</span>
+          </p>
+        </div>
 
-                        <div>
-                            <h3 class="text-white font-bold mb-4 border-b border-white/10 pb-2 uppercase tracking-wider text-xs">Prime Lenses</h3>
-                            <ul class="space-y-3 text-muted font-medium">
-                                <li class="flex justify-between"><span>Canon 28mm f/1.8 USM</span></li>
-                                <li class="flex justify-between"><span class="text-white">Sigma 35mm f/1.4 Art</span> <span class="text-accent">Strobist</span></li>
-                                <li class="flex justify-between"><span>Canon 50mm f/1.4 USM</span></li>
-                                <li class="flex justify-between"><span class="text-white">Canon 85mm f/1.2L USM</span> <span class="text-accent">The Legend</span></li>
-                                <li class="flex justify-between"><span>Canon 100mm f/2.8 Macro</span></li>
-                            </ul>
-                        </div>
+        <div class="relative flex justify-center md:justify-start md:order-1">
+          <img src="assets/lenses/85mm.png" alt="Canon 85mm f/1.2L"
+               class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
+               data-lens data-legend data-rot="10" data-depth="140" />
+        </div>
+      </div>
+    </div>
 
-                        <div>
-                            <h3 class="text-white font-bold mb-4 border-b border-white/10 pb-2 uppercase tracking-wider text-xs">Zoom Lenses</h3>
-                            <ul class="space-y-3 text-muted font-medium">
-                                <li class="flex justify-between"><span>Canon 8-15mm f/4L</span> <span>Fisheye</span></li>
-                                <li class="flex justify-between"><span>Tokina 16-28mm f/2.8</span> <span>Ultra Wide</span></li>
-                                <li class="flex justify-between"><span class="text-white">Canon 24-70mm f/2.8L</span> <span>Standard</span></li>
-                                <li class="flex justify-between"><span class="text-white">Canon 70-200mm f/2.8L</span> <span>Tele</span></li>
-                            </ul>
-                        </div>
+    <!-- Panel 3 -->
+    <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div data-fade>
+          <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
+            Low Light & Motion<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
+            Sigma 35mm Art + Canon 50mm f/1.4 + Ronin S: energia quando la luce manca<span class="text-otuics-red">.</span>
+          </p>
+        </div>
 
-                        <div>
-                            <h3 class="text-white font-bold mb-4 border-b border-white/10 pb-2 uppercase tracking-wider text-xs">Stabilization</h3>
-                            <ul class="space-y-3 text-muted font-medium">
-                                <li class="flex justify-between"><span class="text-white">DJI Ronin S</span> <span class="text-accent">Gimbal</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-             <div class="mt-32 text-center">
-                <p class="text-[10px] uppercase tracking-widest text-muted animate-pulse">Scroll for Deep Dive<span class="dot">.</span></p>
-                <div class="w-[1px] h-16 bg-gradient-to-b from-accent to-transparent mx-auto mt-6"></div>
-            </div>
-        </section>
+        <div class="relative flex justify-center md:justify-end">
+          <img src="assets/lenses/nightlife.png" alt="Setup nightlife: Sigma 35mm, Canon 50mm, DJI Ronin S"
+               class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
+               data-lens data-rot="-8" data-depth="120" />
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- FOOTER -->
+  <footer id="contact" class="scroll-mt-24 py-20 border-t border-white/10 text-center px-6">
+    <h2 class="text-3xl md:text-4xl font-semibold tracking-tight" data-fade>
+      Let’s Create<span class="text-otuics-red">.</span>
+    </h2>
 
-        <section id="showcase" class="min-h-screen flex items-center justify-center relative py-32 overflow-hidden bg-black border-t border-white/5">
-            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-                <div class="order-2 md:order-1 gs-reveal pl-0 md:pl-10">
-                    <span class="text-accent font-bold text-xs uppercase tracking-[0.2em] mb-4 block">Versatility</span>
-                    <h2 class="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">The Holy<br>Trinity<span class="dot">.</span></h2>
-                    <p class="text-xl text-muted leading-relaxed mb-8 font-light">
-                        Copertura focale assoluta. Dai 16mm ai 200mm. 
-                        Questo trio di zoom f/2.8 rappresenta lo standard industriale per eventi e matrimoni<span class="dot">.</span>
-                    </p>
-                    <ul class="space-y-6 text-sm text-muted font-medium">
-                        <li class="flex items-start"><span class="text-accent mr-4">/01</span> <div><strong class="text-white block text-base">Tokina 16-28mm 2.8</strong> Architettura e interni ampi.</div></li>
-                        <li class="flex items-start"><span class="text-accent mr-4">/02</span> <div><strong class="text-white block text-base">Canon 24-70mm 2.8L</strong> Il "tuttofare" per eccellenza.</div></li>
-                        <li class="flex items-start"><span class="text-accent mr-4">/03</span> <div><strong class="text-white block text-base">Canon 70-200mm 2.8L</strong> Ritratti rubati e compressione dei piani.</div></li>
-                    </ul>
-                </div>
-                <div class="order-1 md:order-2 relative h-[50vh] flex items-center justify-center">
-                    <img src="https://pngimg.com/d/camera_lens_PNG122.png" class="lens-showcase w-full max-w-lg object-contain" alt="Zoom Trinity">
-                </div>
-            </div>
-        </section>
+    <a href="mailto:otuicsart@gmail.com"
+       class="mt-7 inline-block text-xl md:text-3xl text-otuics-gray hover:text-white transition-colors underline decoration-otuics-red underline-offset-8"
+       data-fade>
+      otuicsart@gmail.com
+    </a>
 
-        <section class="min-h-[90vh] bg-black flex flex-col items-center justify-center py-32 relative border-t border-b border-white/5">
-            <div class="text-center gs-reveal max-w-4xl px-6 mb-10">
-                <span class="text-accent font-bold text-xs uppercase tracking-[0.2em] mb-4 block">The Portrait King</span>
-                <h2 class="text-6xl md:text-9xl font-black mb-6 tracking-tighter text-white">85mm f/1.2L<span class="dot">.</span></h2>
-                <p class="text-muted text-xl md:text-2xl font-light max-w-2xl mx-auto leading-relaxed">
-                    Lento. Pesante. Costoso. <br>Ma possiede una "magia" ottica che nessun'altra lente moderna riesce a replicare<span class="dot">.</span>
-                </p>
-            </div>
-            
-            <div class="gs-reveal relative z-10">
-                 <img src="https://pngimg.com/d/camera_lens_PNG59.png" class="lens-showcase w-72 md:w-[500px] object-contain" alt="Canon 85mm">
-            </div>
-            
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-black text-[#0a0a0a] pointer-events-none select-none whitespace-nowrap z-0 tracking-tighter">
-                LEGEND
-            </div>
-        </section>
+    <p class="mt-10 text-sm text-white/40" data-fade>
+      © 2026 otuics<span class="text-otuics-red">.</span> All rights reserved<span class="text-otuics-red">.</span>
+    </p>
+  </footer>
 
-        <section class="min-h-screen py-32 max-w-7xl mx-auto px-6 bg-black">
-            <div class="mb-24 gs-reveal text-center md:text-left">
-                <h2 class="text-5xl md:text-7xl font-black tracking-tighter mb-4">Low Light & Motion<span class="dot">.</span></h2>
-                <p class="text-muted text-xl font-light">Quando il sole tramonta, entrano in gioco le aperture f/1.4 e la stabilizzazione.</p>
-            </div>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-card p-10 rounded-3xl border border-white/5 gs-reveal hover:border-accent/50 transition cursor-default group">
-                    <div class="h-48 flex items-center justify-center mb-10">
-                        <img src="https://pngimg.com/d/camera_lens_PNG125.png" class="h-full object-contain opacity-80 group-hover:opacity-100 transition duration-500 group-hover:scale-110" alt="35mm">
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-white tracking-tight">The Night Primes<span class="dot">.</span></h3>
-                    <p class="text-base text-muted font-light leading-relaxed">
-                        <strong class="text-white font-medium">Sigma 35mm 1.4 Art</strong> e <strong class="text-white font-medium">Canon 50mm 1.4</strong>. 
-                        Nitidezza chirurgica anche al buio. Essenziali per la discoteca.
-                    </p>
-                </div>
+  <script>
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn?.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+    mobileMenu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }));
 
-                <div class="bg-card p-10 rounded-3xl border border-white/5 gs-reveal hover:border-accent/50 transition cursor-default group md:col-span-2 flex flex-col md:flex-row items-center gap-12">
-                    <div class="w-full md:w-1/2 order-2 md:order-1">
-                        <h3 class="text-3xl font-bold mb-4 text-white tracking-tight">DJI Ronin S<span class="dot">.</span></h3>
-                        <p class="text-base text-muted font-light leading-relaxed mb-8">
-                            La stabilità cinematografica. Supporta il peso della R6 + ottiche serie L senza sforzo.
-                            Fondamentale per le riprese video dinamiche, tracking shot e movimenti fluidi durante gli eventi.
-                        </p>
-                        <span class="text-xs border border-accent text-accent px-4 py-2 rounded-full uppercase tracking-widest font-bold">3-Axis Gimbal</span>
-                    </div>
-                    <div class="w-full md:w-1/2 flex justify-center h-64 order-1 md:order-2">
-                        <img src="https://pngimg.com/uploads/steadicam/steadicam_PNG14.png" class="h-full object-contain opacity-80 group-hover:scale-110 transition duration-500" alt="Ronin S">
-                    </div>
-                </div>
-            </div>
-        </section>
+    // GSAP
+    gsap.registerPlugin(ScrollTrigger);
 
-        <section id="contact" class="py-40 text-center border-t border-white/5 bg-black">
-            <h2 class="text-4xl md:text-6xl font-black mb-10 tracking-tighter text-white">Ready to create<span class="dot">?</span></h2>
-            <a href="mailto:contatti@otuics.com" class="text-2xl md:text-4xl text-muted hover:text-accent transition font-bold tracking-tight">otuicsart@gmail.com</a>
-            
-            <div class="mt-32 flex justify-center gap-8 mb-8">
-                 <a href="#" class="text-muted hover:text-accent transition"><i data-lucide="instagram"></i></a>
-                 <a href="#" class="text-muted hover:text-accent transition"><i data-lucide="twitter"></i></a>
-            </div>
-            <p class="text-xs text-muted uppercase tracking-widest">&copy; 2026 Otuics <span class="dot">.</span> Daniele Sciuto</p>
-        </section>
+    // Preferenze motion
+    const mm = gsap.matchMedia();
 
-    </main>
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      // niente animazioni pesanti
+    });
 
-    <script>
-        lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
 
-        // --- ANIMAZIONI ---
-        
-        // 1. Hero Reveal
-        gsap.from(".hero-anim", {
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "power4.out"
+      // Fade-in up (testi)
+      gsap.utils.toArray("[data-fade]").forEach((el) => {
+        gsap.from(el, {
+          y: 24,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 80%" }
         });
+      });
 
-        // 2. Section Revelations on Scroll
-        const revealElements = document.querySelectorAll(".gs-reveal");
-        revealElements.forEach(element => {
-            gsap.fromTo(element, 
-                { y: 80, opacity: 0 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    duration: 1,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: element,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
-                }
-            );
-        });
-
-        // 3. Parallax Effect on Lenses
-        gsap.utils.toArray(".lens-showcase").forEach(lens => {
-            gsap.to(lens, {
-                y: -50,
-                rotation: 2,
-                scale: 1.05,
-                scrollTrigger: {
-                    trigger: lens,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: 1
-                }
-            });
-        });
-
-        // Router Semplice
-        function router(sectionId) {
-            const el = document.getElementById(sectionId);
-            if(el) {
-                el.scrollIntoView({ behavior: 'smooth' });
+      // Float hero PNG (parallax leggero)
+      gsap.utils.toArray("[data-float]").forEach((el) => {
+        const depth = Number(el.getAttribute("data-depth") || 70);
+        const rot = Number(el.getAttribute("data-rot") || 0);
+        gsap.fromTo(el,
+          { y: depth * 0.3, rotate: rot, opacity: 0.0 },
+          {
+            y: -depth * 0.3,
+            rotate: -rot,
+            opacity: 0.85,
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#top",
+              start: "top top",
+              end: "bottom top",
+              scrub: 1
             }
-        }
-    </script>
+          }
+        );
+      });
+
+      // Lenses 3D-ish parallax/rotate
+      gsap.utils.toArray("[data-lens]").forEach((el) => {
+        const depth = Number(el.getAttribute("data-depth") || 120);
+        const rot = Number(el.getAttribute("data-rot") || 0);
+
+        gsap.fromTo(el,
+          { y: depth * 0.25, rotate: rot, scale: 0.96, opacity: 0.9 },
+          {
+            y: -depth * 0.25,
+            rotate: -rot,
+            scale: 1.0,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el.closest(".panel"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1
+            }
+          }
+        );
+      });
+
+      // Apple-like pin panels (solo desktop)
+      mm.add("(min-width: 768px)", () => {
+        gsap.utils.toArray(".panel").forEach((panel) => {
+          ScrollTrigger.create({
+            trigger: panel,
+            start: "top top",
+            end: "+=100%",
+            pin: true,
+            pinSpacing: true
+          });
+        });
+      });
+
+      // “The Legend” extra punch
+      const legend = document.querySelector("[data-legend]");
+      if (legend) {
+        gsap.fromTo(legend,
+          { filter: "drop-shadow(0 0 0 rgba(255,0,0,0))" },
+          {
+            filter: "drop-shadow(0 0 40px rgba(255,0,0,0.25))",
+            scrollTrigger: {
+              trigger: legend.closest(".panel"),
+              start: "top 60%",
+              end: "bottom 40%",
+              scrub: 1
+            }
+          }
+        );
+      }
+    });
+  </script>
 </body>
 </html>
