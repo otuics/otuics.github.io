@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTUICS | Visual Artist</title>
+    <title>OTUICS | Daniele Sciuto - Visual Artist</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -23,9 +21,10 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         bg: '#050505',
-                        surface: '#111111',
+                        surface: '#0a0a0a',
                         text: '#f5f5f7',
                         muted: '#86868b',
+                        accent: '#0071e3'
                     }
                 }
             }
@@ -33,317 +32,655 @@
     </script>
 
     <style>
-        body { background-color: #050505; color: #f5f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #050505; 
+            color: #f5f5f7; 
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
         
-        /* Navigazione */
         .page-section { display: none; opacity: 0; }
         .page-section.active { display: block; opacity: 1; }
         
-        /* Nasconde scrollbar */
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
 
-        /* Effetti Ottici */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
-        /* SVG Logos fill */
-        .brand-logo { fill: #ffffff; opacity: 0.4; transition: opacity 0.3s; }
-        .brand-logo:hover { opacity: 1; }
+        .brand-logo { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: brightness(0.6);
+        }
+        .brand-logo:hover { 
+            filter: brightness(1.2);
+            transform: scale(1.05);
+        }
 
-        /* Immagine rotante */
+        .lens-showcase {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lens-image-container {
+            perspective: 1500px;
+            transform-style: preserve-3d;
+        }
+
         .floating-lens {
             will-change: transform;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 30px 60px rgba(0,0,0,0.7)) brightness(1.1);
+            transition: filter 0.3s;
+        }
+
+        .parallax-bg-text {
+            font-size: clamp(60px, 15vw, 200px);
+            font-weight: 900;
+            color: #0d0d0d;
+            pointer-events: none;
+            user-select: none;
+            letter-spacing: -0.05em;
+            line-height: 0.9;
+        }
+
+        .spec-badge {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #666666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .parallax-bg-text { font-size: clamp(40px, 12vw, 80px); }
+            .lens-showcase { min-height: 80vh; }
+        }
+
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-bg/90 backdrop-blur-md border-b border-white/5">
-        <a href="#" onclick="router('home')" class="font-extrabold text-xl tracking-tighter hover:opacity-80 transition">
-            otuics.
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 w-full z-50 px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center bg-bg/80 backdrop-blur-xl border-b border-white/5">
+        <a href="#" onclick="router('home')" class="font-black text-xl md:text-2xl tracking-tighter hover:opacity-70 transition-opacity duration-300">
+            otuics<span class="text-muted">.</span>
         </a>
         
-        <div class="hidden md:flex gap-8 text-sm font-medium">
-            <button onclick="router('works')" class="hover:text-white text-muted transition">Portfolio</button>
-            <button onclick="router('gear')" class="hover:text-white text-muted transition">The Gear</button>
-            <button onclick="router('contact')" class="hover:text-white text-muted transition">Contact</button>
+        <div class="hidden md:flex gap-6 lg:gap-10 text-sm font-medium">
+            <button onclick="router('home')" class="nav-link hover:text-white text-muted transition">Home</button>
+            <button onclick="router('works')" class="nav-link hover:text-white text-muted transition">Portfolio</button>
+            <button onclick="router('gear')" class="nav-link hover:text-white text-muted transition">The Gear</button>
+            <button onclick="router('story')" class="nav-link hover:text-white text-muted transition">Storia</button>
+            <button onclick="router('contact')" class="nav-link hover:text-white text-muted transition">Contatti</button>
         </div>
 
-        <button onclick="toggleModal()" class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full text-xs font-medium hover:bg-white hover:text-black transition">
+        <button onclick="toggleMobileMenu()" class="md:hidden text-muted hover:text-white">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <button onclick="toggleModal()" class="hidden md:flex items-center gap-2 bg-white/5 hover:bg-white hover:text-black px-5 py-2.5 rounded-full text-xs font-semibold transition-all duration-300 border border-white/10">
+            <i data-lucide="lock" class="w-3 h-3"></i>
             Client Area
         </button>
     </nav>
 
-    <main id="app-container" class="min-h-screen pt-24 relative max-w-7xl mx-auto px-4 sm:px-6">
-        
-        <section id="home" class="page-section active h-[80vh] flex flex-col justify-center items-start">
-            <div class="hero-anim">
-                <p class="text-muted text-xs font-semibold uppercase tracking-[0.2em] mb-6">Daniele Sciuto — 1999</p>
-                <h1 class="text-6xl md:text-9xl font-bold tracking-tighter leading-[0.9] mb-8 bg-gradient-to-br from-white to-gray-600 bg-clip-text text-transparent">
-                    Visual<br>Narratives.
-                </h1>
-                <p class="text-muted text-lg max-w-xl leading-relaxed mb-10">
-                    Dal reportage sportivo all'intimità del ritratto.
-                    <span class="text-white">Sony Alpha Veteran</span> convertito alla scienza del colore <span class="text-white">Canon R</span>.
-                </p>
-                <button onclick="router('gear')" class="group flex items-center gap-2 text-sm font-semibold text-white border-b border-white/30 pb-1 hover:border-white transition">
-                    Esplora l'Attrezzatura <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
-                </button>
-            </div>
-        </section>
-
-        <section id="gear" class="page-section pb-20">
-            
-            <div class="text-center py-20">
-                <h2 class="text-4xl md:text-6xl font-bold tracking-tighter mb-4">The Arsenal.</h2>
-                <p class="text-muted max-w-lg mx-auto mb-16">
-                    Una collezione curata negli anni. Dal 2016 al 2025.
-                    Passando per Fujifilm e Sony, approdando alla perfezione Canon.
-                </p>
-                
-                <div class="flex justify-center items-center gap-12 md:gap-20 flex-wrap opacity-80">
-                    <svg class="brand-logo h-6 md:h-8" viewBox="0 0 100 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.8,10.6c-0.8-1.5-2.2-2.3-4.1-2.3c-3.5,0-5.8,2.7-5.8,6.8c0,3.7,2.1,6.8,5.8,6.8c1.8,0,3.5-1,4.2-2.6 l3.3,1.3c-1.5,3-4.2,4.6-7.5,4.6C3.5,25.2,0,21.3,0,15.1c0-6,3.6-10.1,8.7-10.1c3.4,0,6.1,1.7,7.5,4.7L12.8,10.6z M38.7,15.1 c0-6.1-3.6-10.1-8.7-10.1c-3.1,0-5.6,1.4-7.1,3.8l0.2-3.4h-3.3v19.4h3.4v-8.9c0-3.6,1.9-5.8,4.7-5.8c2.9,0,4.4,2,4.4,5.3v9.4 h3.4V15.1z M53.8,15.1c0-6.2-3.5-10.1-8.7-10.1c-5.1,0-8.7,3.9-8.7,10.1c0,6.1,3.6,10.1,8.7,10.1C50.2,25.2,53.8,21.3,53.8,15.1z M40,15.1c0-4.1,2.2-6.8,5.2-6.8c2.9,0,5.2,2.7,5.2,6.8c0,4.1-2.2,6.8-5.2,6.8C42.2,21.9,40,19.2,40,15.1z M69.1,15.1 c0-6.1-3.6-10.1-8.7-10.1c-3.1,0-5.6,1.4-7.1,3.8l0.2-3.4h-3.3v19.4h3.4v-8.9c0-3.6,1.9-5.8,4.7-5.8c2.9,0,4.4,2,4.4,5.3v9.4 h3.4V15.1z"/>
-                    </svg>
-                    <svg class="brand-logo h-5 md:h-7" viewBox="0 0 100 25">
-                        <text x="0" y="20" font-family="Arial, sans-serif" font-weight="bold" font-size="22" fill="white">SIGMA</text>
-                    </svg>
-                    <svg class="brand-logo h-5 md:h-7" viewBox="0 0 100 25">
-                        <text x="0" y="20" font-family="Arial, sans-serif" font-weight="bold" font-size="22" fill="white">Tokina</text>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="relative glass-panel rounded-2xl p-8 md:p-12 mb-24 overflow-hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div class="z-10">
-                        <span class="text-accent text-xs font-bold uppercase tracking-widest mb-2 block">The Workhorse</span>
-                        <h3 class="text-4xl font-bold mb-4">Canon EOS R6</h3>
-                        <p class="text-muted mb-6">
-                            Il cuore del sistema. Dopo aver abbandonato la Sony A7R II, cercavo affidabilità pura. 
-                            20fps, IBIS incredibile e colori che raccontano la storia senza filtri.
-                        </p>
-                        <ul class="space-y-2 text-sm text-gray-400">
-                            <li class="flex items-center gap-2"><div class="w-1 h-1 bg-white rounded-full"></div> 20.1 MP Full-Frame CMOS</li>
-                            <li class="flex items-center gap-2"><div class="w-1 h-1 bg-white rounded-full"></div> 4K 60p Internal</li>
-                            <li class="flex items-center gap-2"><div class="w-1 h-1 bg-white rounded-full"></div> Dual Pixel CMOS AF II</li>
-                        </ul>
-                    </div>
-                    <div class="relative h-[300px] flex items-center justify-center">
-                        <img src="https://pngimg.com/uploads/camera_lens/camera_lens_PNG109.png" alt="Canon Camera" class="w-full max-w-sm object-contain drop-shadow-2xl">
-                    </div>
-                </div>
-            </div>
-
-            <div class="min-h-[100vh] flex flex-col justify-center items-center py-20 relative">
-                
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] font-bold text-[#111] pointer-events-none select-none whitespace-nowrap parallax-text">
-                    85mm 1.2
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full z-10">
-                    
-                    <div class="order-2 md:order-1 px-4">
-                        <h3 class="text-5xl font-bold mb-2">The Bokeh King.</h3>
-                        <p class="text-xl text-white mb-6">Canon EF 85mm f/1.2L USM</p>
-                        <p class="text-muted leading-relaxed mb-6">
-                            Non è solo una lente, è una firma. Estremamente pesante, lento nella messa a fuoco, ma restituisce un look onirico impossibile da replicare digitalmente.
-                            La mia scelta primaria per i ritratti posati.
-                        </p>
-                        <div class="flex gap-4 text-xs font-mono uppercase text-muted border-t border-white/10 pt-4">
-                            <span>Glass: L-Series</span>
-                            <span>Aperture: f/1.2</span>
-                            <span>Weight: 1025g</span>
-                        </div>
-                    </div>
-
-                    <div class="order-1 md:order-2 flex justify-center perspective-container h-[400px] flex items-center">
-                        <img src="https://pngimg.com/d/camera_lens_PNG59.png" 
-                             class="floating-lens w-64 md:w-80 object-contain" 
-                             alt="85mm Lens">
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-32 py-20">
-                
-                <div class="flex flex-col md:flex-row items-center gap-10 lens-card">
-                    <div class="w-full md:w-1/2 flex justify-center">
-                         <img src="https://pngimg.com/d/camera_lens_PNG125.png" class="w-64 object-contain opacity-80" alt="35mm Sigma">
-                    </div>
-                    <div class="w-full md:w-1/2">
-                        <h3 class="text-3xl font-bold">Sigma 35mm f/1.4 Art</h3>
-                        <p class="text-muted mt-4">
-                            Il narratore. La lente che non lascia mai la fotocamera durante i reportage.
-                            Nitidezza chirurgica unita a un carattere moderno.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row-reverse items-center gap-10 lens-card">
-                    <div class="w-full md:w-1/2 flex justify-center">
-                         <img src="https://www.pngall.com/wp-content/uploads/2/Camera-Lens-PNG-HD-Image.png" class="w-64 object-contain opacity-80" alt="70-200mm">
-                    </div>
-                    <div class="w-full md:w-1/2 text-right md:text-left">
-                        <h3 class="text-3xl font-bold">Canon 70-200mm f/2.8L</h3>
-                        <p class="text-muted mt-4">
-                            Il cecchino. Compressione dei piani e isolamento del soggetto.
-                            Fondamentale per catturare emozioni a distanza senza invadere la scena.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="text-center pt-20">
-                    <p class="text-xs text-muted uppercase tracking-widest mb-4">Complete Kit List</p>
-                    <div class="inline-block text-left bg-surface p-8 rounded-lg max-w-md mx-auto w-full text-sm text-gray-400 font-mono">
-                        <p>+ Canon EOS R (Backup)</p>
-                        <p>+ Canon 28mm f/1.8 USM</p>
-                        <p>+ Canon 50mm f/1.4 USM</p>
-                        <p>+ Canon 100mm f/2.8 Macro</p>
-                        <p>+ Canon 8-15mm f/4L Fisheye</p>
-                        <p>+ Tokina 16-28mm f/2.8</p>
-                        <p>+ Canon 24-70mm f/2.8L</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="contact" class="page-section h-[60vh] flex flex-col justify-center items-center text-center">
-            <p class="text-xs uppercase tracking-widest text-muted mb-6">Available for Commission</p>
-            <a href="mailto:contatti@otuics.com" class="text-4xl md:text-7xl font-bold tracking-tighter hover:text-white transition duration-300 text-gray-300">
-                otuicsart<br>@gmail.com
-            </a>
-        </section>
-
-    </main>
-
-    <footer class="border-t border-white/5 bg-bg py-10 px-6 text-center md:text-left">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-muted">
-            <p>&copy; 2026 Otuics — Daniele Sciuto.</p>
-            <div class="flex gap-4 mt-2 md:mt-0">
-                <a href="#" class="hover:text-white">Instagram</a>
-                <a href="#" class="hover:text-white">LinkedIn</a>
-            </div>
-        </div>
-    </footer>
-
-    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 pointer-events-none transition duration-500">
-        <div class="bg-[#111] border border-white/10 p-8 rounded-2xl w-full max-w-sm text-center transform scale-95 transition" id="loginContent">
-            <button onclick="toggleModal()" class="absolute top-4 right-4 text-muted hover:text-white"><i data-lucide="x" width="20"></i></button>
-            <h3 class="font-bold text-xl mb-1">Private Gallery</h3>
-            <p class="text-xs text-muted mb-6">Enter access code</p>
-            <input type="password" class="w-full bg-black border border-white/10 rounded-lg py-3 px-4 text-center text-white mb-4 placeholder:text-muted/30" placeholder="••••">
-            <button class="w-full bg-white text-black font-bold py-3 rounded-lg text-sm">UNLOCK</button>
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg opacity-0 pointer-events-none transition-all duration-500 md:hidden">
+        <div class="flex flex-col items-center justify-center h-full gap-8 text-2xl font-semibold">
+            <button onclick="router('home'); toggleMobileMenu();" class="text-muted hover:text-white transition">Home</button>
+            <button onclick="router('works'); toggleMobileMenu();" class="text-muted hover:text-white transition">Portfolio</button>
+            <button onclick="router('gear'); toggleMobileMenu();" class="text-muted hover:text-white transition">The Gear</button>
+            <button onclick="router('story'); toggleMobileMenu();" class="text-muted hover:text-white transition">Storia</button>
+            <button onclick="router('contact'); toggleMobileMenu();" class="text-muted hover:text-white transition">Contatti</button>
+            <button onclick="toggleModal(); toggleMobileMenu();" class="mt-4 bg-white/10 px-8 py-3 rounded-full text-base">Client Area</button>
         </div>
     </div>
 
-    <script>
-        lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
+    <main id="app-container" class="min-h-screen pt-20 relative">
+        
+        <!-- HOME SECTION -->
+        <section id="home" class="page-section active">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[85vh] flex flex-col justify-center">
+                <div class="hero-anim max-w-4xl">
+                    <p class="text-muted text-xs md:text-sm font-bold uppercase tracking-[0.3em] mb-6 md:mb-8">
+                        Daniele Sciuto — Visual Artist
+                    </p>
+                    <h1 class="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-[0.85] mb-8 md:mb-10 gradient-text">
+                        Visual<br>Narratives<span class="text-white/40">.</span>
+                    </h1>
+                    <p class="text-muted text-base md:text-xl max-w-2xl leading-relaxed mb-10 md:mb-12">
+                        Dal reportage sportivo all'intimità del ritratto notturno.
+                        <span class="text-white font-semibold">Dieci anni</span> di evoluzione tecnica attraverso 
+                        <span class="text-white font-semibold">Canon</span>, 
+                        <span class="text-white font-semibold">Fujifilm</span> e 
+                        <span class="text-white font-semibold">Sony</span>, 
+                        per approdare alla perfezione del sistema <span class="text-white font-semibold">Canon R</span>.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="router('gear')" class="group flex items-center justify-center sm:justify-start gap-2 text-sm md:text-base font-bold text-white border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300">
+                            Esplora l'Arsenal
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button onclick="router('story')" class="text-sm md:text-base font-semibold text-muted hover:text-white transition">
+                            La Mia Storia →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        // --- ANIMAZIONI ATTREZZATURA (ScrollTrigger) ---
-        function initGearAnimations() {
-            // 1. Rotazione Lente 85mm
-            // Ruota di 180 gradi e si muove leggermente su Y mentre scorri
-            gsap.fromTo(".floating-lens", 
-                { rotation: -45, y: 50, scale: 0.9 },
-                { 
-                    rotation: 135, // Ruota mentre scorri
-                    y: -50,        // Sale leggermente
-                    scale: 1,
-                    scrollTrigger: {
-                        trigger: ".floating-lens",
-                        start: "top bottom", // Inizia quando la cima dell'oggetto tocca il fondo schermo
-                        end: "bottom top",   // Finisce quando il fondo tocca la cima
-                        scrub: 1.5           // Ritardo per fluidità (smoothness)
-                    }
-                }
-            );
-
-            // 2. Parallax Testo Sfondo
-            gsap.to(".parallax-text", {
-                y: 100, // Il testo si muove più lentamente dello scroll
-                opacity: 0.2,
-                scrollTrigger: {
-                    trigger: ".parallax-text",
-                    start: "top center",
-                    end: "bottom top",
-                    scrub: 1
-                }
-            });
-
-            // 3. Fade In & Slide per le altre lenti
-            gsap.utils.toArray(".lens-card").forEach(card => {
-                gsap.from(card, {
-                    opacity: 0,
-                    y: 100,
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
-            });
-        }
-
-        // --- ROUTER & GESTIONE PAGINE ---
-        function router(pageId) {
-            const currentSection = document.querySelector('.page-section.active');
-            const newSection = document.getElementById(pageId);
-
-            if (!currentSection || currentSection.id === pageId) return;
-
-            gsap.to(currentSection, {
-                opacity: 0,
-                y: -10,
-                duration: 0.4,
-                onComplete: () => {
-                    currentSection.classList.remove('active');
-                    currentSection.style.display = "none";
-                    newSection.style.display = "block";
-                    newSection.classList.add('active');
+        <!-- GEAR SECTION -->
+        <section id="gear" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                
+                <!-- Header -->
+                <div class="text-center py-12 md:py-20 mb-12">
+                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 gradient-text">The Arsenal.</h2>
+                    <p class="text-muted text-base md:text-lg max-w-2xl mx-auto mb-16 leading-relaxed">
+                        Una collezione curata negli anni. Dal 2016 al 2025.<br class="hidden sm:block">
+                        Passando per <span class="text-white font-semibold">Fujifilm X-T3</span> e <span class="text-white font-semibold">Sony Alpha</span>, approdando al sistema <span class="text-white font-semibold">Canon RF</span>.
+                    </p>
                     
-                    window.scrollTo({ top: 0, behavior: 'auto' });
+                    <!-- Brand Logos -->
+                    <div class="flex justify-center items-center gap-8 md:gap-16 flex-wrap">
+                        <!-- Canon Logo -->
+                        <svg class="brand-logo h-8 md:h-10 cursor-pointer" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z M32,41c-5.5,0-10-4.5-10-10s4.5-10,10-10s10,4.5,10,10S37.5,41,32,41z M67,15c-8.8,0-16,7.2-16,16s7.2,16,16,16c4.2,0,8-1.6,10.9-4.3l-4.2-4.2C72,40.2,69.6,41,67,41c-5.5,0-10-4.5-10-10s4.5-10,10-10c2.6,0,5,1,6.7,2.6l4.2-4.2C75,16.6,71.2,15,67,15z M95,15c-8.8,0-16,7.2-16,16s7.2,16,16,16c4.4,0,8.4-1.8,11.3-4.7l-4.2-4.2C100.3,40,97.8,41,95,41c-5.5,0-10-4.5-10-10s4.5-10,10-10c2.8,0,5.3,1,7.1,2.9l4.2-4.2C103.4,16.8,99.4,15,95,15z M130,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S138.8,15,130,15z M130,41c-5.5,0-10-4.5-10-10s4.5-10,10-10s10,4.5,10,10S135.5,41,130,41z M169,16v11.1c-1.9-1.4-4.2-2.2-6.7-2.2c-6.3,0-11.3,5.1-11.3,11.3s5.1,11.3,11.3,11.3c2.5,0,4.8-0.8,6.7-2.2V46h6V16H169z M162.3,41c-3.3,0-6-2.7-6-6s2.7-6,6-6s6,2.7,6,6S165.6,41,162.3,41z"/>
+                        </svg>
+                        
+                        <!-- Sigma Logo -->
+                        <svg class="brand-logo h-6 md:h-8 cursor-pointer" viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="28" font-family="Arial, sans-serif" font-weight="900" font-size="26" fill="#ffffff" letter-spacing="2">SIGMA</text>
+                        </svg>
+                        
+                        <!-- Tokina Logo -->
+                        <svg class="brand-logo h-6 md:h-8 cursor-pointer" viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="28" font-family="Arial, sans-serif" font-weight="700" font-size="24" fill="#ffffff" letter-spacing="1">TOKINA</text>
+                        </svg>
+                    </div>
+                </div>
 
-                    // Se andiamo alla pagina Gear, inizializziamo/aggiorniamo le animazioni
-                    if(pageId === 'gear') {
-                        // Piccolo timeout per assicurarsi che il DOM sia renderizzato
-                        setTimeout(() => {
-                            ScrollTrigger.refresh();
-                            initGearAnimations(); 
-                        }, 100);
-                    }
+                <!-- CAMERA BODIES -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-20">
+                    
+                    <!-- Canon R6 -->
+                    <div class="glass-panel rounded-2xl p-6 md:p-10 hover:border-white/10 transition-all duration-500 group">
+                        <div class="flex items-start justify-between mb-4">
+                            <span class="spec-badge text-accent border-accent/20">Primary Body</span>
+                            <svg class="h-5 opacity-40 group-hover:opacity-80 transition" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z M32,41c-5.5,0-10-4.5-10-10s4.5-10,10-10s10,4.5,10,10S37.5,41,32,41z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-black mb-3 tracking-tight">Canon EOS R6</h3>
+                        <p class="text-muted text-sm md:text-base mb-6 leading-relaxed">
+                            Il cuore pulsante del sistema. Dopo Sony A7R II, cercavo affidabilità assoluta. 
+                            <span class="text-white font-semibold">20fps meccanico</span>, IBIS da 8 stop e colori Canon che raccontano senza filtri.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                20.1 MP FF CMOS
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                4K 60p 10-bit
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                Dual Pixel AF II
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                ISO 102,400
+                            </div>
+                        </div>
+                    </div>
 
-                    gsap.fromTo(newSection, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 });
-                }
-            });
-        }
+                    <!-- Canon EOS R -->
+                    <div class="glass-panel rounded-2xl p-6 md:p-10 hover:border-white/10 transition-all duration-500 group">
+                        <div class="flex items-start justify-between mb-4">
+                            <span class="spec-badge text-muted/60 border-white/5">Backup Body</span>
+                            <svg class="h-5 opacity-30 group-hover:opacity-60 transition" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z M32,41c-5.5,0-10-4.5-10-10s4.5-10,10-10s10,4.5,10,10S37.5,41,32,41z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-black mb-3 tracking-tight">Canon EOS R</h3>
+                        <p class="text-muted text-sm md:text-base mb-6 leading-relaxed">
+                            La sicurezza del doppio corpo. Sempre pronto come <span class="text-white font-semibold">backup affidabile</span> o per montaggio dual-cam con focali complementari durante i matrimoni.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                                30.3 MP FF CMOS
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                                4K 30p
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                                Dual Pixel AF
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <div class="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                                RF Mount
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        // Init Animazioni iniziali
-        window.onload = () => {
-            gsap.from(".hero-anim", { opacity: 0, y: 40, duration: 1.2, ease: "power3.out" });
-        };
+                <!-- LENSES TITLE -->
+                <div class="text-center mb-16 mt-32">
+                    <h3 class="text-3xl md:text-5xl font-black tracking-tighter mb-4">The Glass Collection</h3>
+                    <p class="text-muted text-sm md:text-base">Nove ottiche. Ogni focale, una storia diversa.</p>
+                </div>
 
-        // Modal
-        const modal = document.getElementById('loginModal');
-        const loginContent = document.getElementById('loginContent');
-        function toggleModal() {
-            if (modal.classList.contains('opacity-0')) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                loginContent.classList.remove('scale-95');
-                loginContent.classList.add('scale-100');
-            } else {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                loginContent.classList.remove('scale-100');
-                loginContent.classList.add('scale-95');
-            }
-        }
-    </script>
-</body>
-</html>
+            </div>
+
+            <!-- LENS 1: Canon 85mm f/1.2L - HERO LENS -->
+            <div class="lens-showcase relative overflow-hidden">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                    <div class="parallax-bg-text parallax-text-1 opacity-100">85mm</div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                        
+                        <div class="order-2 lg:order-1 text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 mb-4 spec-badge">
+                                <svg class="h-4 opacity-60" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z"/>
+                                </svg>
+                                <span>L-Series Glass</span>
+                            </div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-3 tracking-tighter leading-none">The Bokeh<br>King.</h3>
+                            <p class="text-xl md:text-2xl text-white/70 mb-6 font-light">Canon EF 85mm f/1.2L USM</p>
+                            <p class="text-muted text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                                Non è solo una lente, è una <span class="text-white font-semibold">firma visiva</span>. Pesante, lenta nella messa a fuoco, ma regala un look onirico impossibile da replicare. 
+                                La mia prima scelta per <span class="text-white font-semibold">ritratti posati</span> e ambienti controllati.
+                            </p>
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-3 text-xs font-mono uppercase text-muted pt-4 border-t border-white/10">
+                                <span class="spec-badge">Aperture: f/1.2</span>
+                                <span class="spec-badge">Weight: 1025g</span>
+                                <span class="spec-badge">Angle: 28.5°</span>
+                            </div>
+                        </div>
+
+                        <div class="order-1 lg:order-2 flex justify-center items-center h-[350px] md:h-[450px]">
+                            <div class="lens-image-container">
+                                <img src="https://pngimg.com/d/camera_lens_PNG59.png" 
+                                     class="floating-lens floating-lens-1 w-64 md:w-80 lg:w-96 object-contain" 
+                                     alt="85mm Lens">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LENS 2: Sigma 35mm f/1.4 Art -->
+            <div class="lens-showcase relative overflow-hidden bg-gradient-to-b from-transparent via-surface/30 to-transparent">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                    <div class="parallax-bg-text parallax-text-2 opacity-100">35mm</div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                        
+                        <div class="flex justify-center items-center h-[350px] md:h-[450px]">
+                            <div class="lens-image-container">
+                                <img src="https://pngimg.com/d/camera_lens_PNG125.png" 
+                                     class="floating-lens floating-lens-2 w-64 md:w-80 object-contain" 
+                                     alt="35mm Lens">
+                            </div>
+                        </div>
+
+                        <div class="text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 mb-4 spec-badge">
+                                <svg class="h-4 opacity-60" viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg">
+                                    <text x="0" y="28" font-family="Arial" font-weight="900" font-size="26" fill="#ffffff">Σ</text>
+                                </svg>
+                                <span>Art Series</span>
+                            </div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-3 tracking-tighter leading-none">The Story<br>Teller.</h3>
+                            <p class="text-xl md:text-2xl text-white/70 mb-6 font-light">Sigma 35mm f/1.4 DG HSM Art</p>
+                            <p class="text-muted text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                                La lente che <span class="text-white font-semibold">non lascia mai</span> la fotocamera durante i reportage. 
+                                Nitidezza chirurgica unita a un carattere moderno. Perfetta per <span class="text-white font-semibold">street</span> e <span class="text-white font-semibold">discoteche</span>, 
+                                dove serve velocità decisionale e angolo di campo generoso.
+                            </p>
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-3 text-xs font-mono uppercase text-muted pt-4 border-t border-white/10">
+                                <span class="spec-badge">Aperture: f/1.4</span>
+                                <span class="spec-badge">Weight: 665g</span>
+                                <span class="spec-badge">Angle: 63.4°</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LENS 3: Canon 70-200mm f/2.8L -->
+            <div class="lens-showcase relative overflow-hidden">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                    <div class="parallax-bg-text parallax-text-3 opacity-100">70-200</div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                        
+                        <div class="order-2 lg:order-1 text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 mb-4 spec-badge">
+                                <svg class="h-4 opacity-60" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z"/>
+                                </svg>
+                                <span>L-Series Zoom</span>
+                            </div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-3 tracking-tighter leading-none">The<br>Sniper.</h3>
+                            <p class="text-xl md:text-2xl text-white/70 mb-6 font-light">Canon EF 70-200mm f/2.8L IS II USM</p>
+                            <p class="text-muted text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                                <span class="text-white font-semibold">Compressione dei piani</span> e isolamento chirurgico del soggetto. 
+                                Fondamentale per catturare emozioni a distanza durante cerimonie e reportage sportivi. 
+                                La stabilizzazione a <span class="text-white font-semibold">4 stop</span> è una garanzia.
+                            </p>
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-3 text-xs font-mono uppercase text-muted pt-4 border-t border-white/10">
+                                <span class="spec-badge">Aperture: f/2.8</span>
+                                <span class="spec-badge">Weight: 1490g</span>
+                                <span class="spec-badge">IS: 4 Stop</span>
+                            </div>
+                        </div>
+
+                        <div class="order-1 lg:order-2 flex justify-center items-center h-[350px] md:h-[450px]">
+                            <div class="lens-image-container">
+                                <img src="https://www.pngall.com/wp-content/uploads/2/Camera-Lens-PNG-HD-Image.png" 
+                                     class="floating-lens floating-lens-3 w-72 md:w-96 object-contain" 
+                                     alt="70-200mm Lens">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LENS 4: Canon 24-70mm f/2.8L -->
+            <div class="lens-showcase relative overflow-hidden bg-gradient-to-b from-transparent via-surface/30 to-transparent">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                    <div class="parallax-bg-text parallax-text-4 opacity-100">24-70</div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                        
+                        <div class="flex justify-center items-center h-[350px] md:h-[450px]">
+                            <div class="lens-image-container">
+                                <img src="https://pngimg.com/uploads/camera_lens/camera_lens_PNG109.png" 
+                                     class="floating-lens floating-lens-4 w-56 md:w-72 object-contain" 
+                                     alt="24-70mm Lens">
+                            </div>
+                        </div>
+
+                        <div class="text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 mb-4 spec-badge">
+                                <svg class="h-4 opacity-60" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z"/>
+                                </svg>
+                                <span>Standard Zoom</span>
+                            </div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-3 tracking-tighter leading-none">The<br>Swiss Knife.</h3>
+                            <p class="text-xl md:text-2xl text-white/70 mb-6 font-light">Canon EF 24-70mm f/2.8L II USM</p>
+                            <p class="text-muted text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                                Lo <span class="text-white font-semibold">standard definitivo</span>. Quando non sai cosa ti aspetta, questa è la risposta. 
+                                Versatilità assoluta per <span class="text-white font-semibold">matrimoni</span>, eventi corporate e situazioni dinamiche dove servono più focali in pochi secondi.
+                            </p>
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-3 text-xs font-mono uppercase text-muted pt-4 border-t border-white/10">
+                                <span class="spec-badge">Aperture: f/2.8</span>
+                                <span class="spec-badge">Weight: 805g</span>
+                                <span class="spec-badge">Range: Wide to Portrait</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LENS 5: Canon 50mm f/1.4 -->
+            <div class="lens-showcase relative overflow-hidden">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                    <div class="parallax-bg-text parallax-text-5 opacity-100">50mm</div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                        
+                        <div class="order-2 lg:order-1 text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 mb-4 spec-badge">
+                                <svg class="h-4 opacity-60" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#ffffff" d="M32,15c-8.8,0-16,7.2-16,16s7.2,16,16,16s16-7.2,16-16S40.8,15,32,15z"/>
+                                </svg>
+                                <span>Classic Prime</span>
+                            </div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-3 tracking-tighter leading-none">The<br>Classic.</h3>
+                            <p class="text-xl md:text-2xl text-white/70 mb-6 font-light">Canon EF 50mm f/1.4 USM</p>
+                            <p class="text-muted text-sm md:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                                Il <span class="text-white font-semibold">cinquantino</span> che tutti dovrebbero avere. Leggero, veloce, naturale. 
+                                Perfetto per <span class="text-white font-semibold">documentare</span> senza interferire. Una focale che vede come l'occhio umano.
+                            </p>
+                            <div class="flex flex-wrap justify-center lg:justify-start gap-3 text-xs font-mono uppercase text-muted pt-4 border-t border-white/10">
+                                <span class="spec-badge">Aperture: f/1.4</span>
+                                <span class="spec-badge">Weight: 290g</span>
+                                <span class="spec-badge">Compact</span>
+                            </div>
+                        </div>
+
+                        <div class="order-1 lg:order-2 flex justify-center items-center h-[350px] md:h-[450px]">
+                            <div class="lens-image-container">
+                                <img src="https://pngimg.com/d/camera_lens_PNG46.png" 
+                                     class="floating-lens floating-lens-5 w-48 md:w-64 object-contain" 
+                                     alt="50mm Lens">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REST OF LENSES - Compact Grid -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    
+                    <!-- 28mm f/1.8 -->
+                    <div class="glass-panel rounded-xl p-6 hover:border-white/10 transition-all duration-500 lens-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-2xl font-black">Canon 28mm f/1.8 USM</h4>
+                            <span class="text-xs spec-badge">Wide Prime</span>
+                        </div>
+                        <p class="text-muted text-sm leading-relaxed mb-4">
+                            Ampiezza respirabile. Perfetto per <span class="text-white font-semibold">architettura</span> e ambienti interni senza distorsione eccessiva.
+                        </p>
+                        <div class="flex gap-2 text-xs font-mono text-gray-500">
+                            <span>f/1.8</span> • <span>310g</span> • <span>Wide Angle</span>
+                        </div>
+                    </div>
+
+                    <!-- 100mm f/2.8 Macro -->
+                    <div class="glass-panel rounded-xl p-6 hover:border-white/10 transition-all duration-500 lens-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-2xl font-black">Canon 100mm f/2.8 Macro</h4>
+                            <span class="text-xs spec-badge">1:1 Macro</span>
+                        </div>
+                        <p class="text-muted text-sm leading-relaxed mb-4">
+                            Il mondo microscopico. Rapporto <span class="text-white font-semibold">1:1</span> per dettagli impossibili e ritratti ravvicinati ultra-nitidi.
+                        </p>
+                        <div class="flex gap-2 text-xs font-mono text-gray-500">
+                            <span>f/2.8</span> • <span>600g</span> • <span>1:1 Magnification</span>
+                        </div>
+                    </div>
+
+                    <!-- 8-15mm Fisheye -->
+                    <div class="glass-panel rounded-xl p-6 hover:border-white/10 transition-all duration-500 lens-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-2xl font-black">Canon 8-15mm f/4L Fisheye</h4>
+                            <span class="text-xs spec-badge">Fisheye</span>
+                        </div>
+                        <p class="text-muted text-sm leading-relaxed mb-4">
+                            Prospettiva <span class="text-white font-semibold">estrema</span>. Per situazioni creative che richiedono un impatto visivo potente e distorsioni artistiche.
+                        </p>
+                        <div class="flex gap-2 text-xs font-mono text-gray-500">
+                            <span>f/4</span> • <span>540g</span> • <span>180° FOV</span>
+                        </div>
+                    </div>
+
+                    <!-- 16-28mm Tokina -->
+                    <div class="glass-panel rounded-xl p-6 hover:border-white/10 transition-all duration-500 lens-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-2xl font-black">Tokina 16-28mm f/2.8</h4>
+                            <span class="text-xs spec-badge">Ultra-Wide Zoom</span>
+                        </div>
+                        <p class="text-muted text-sm leading-relaxed mb-4">
+                            Il tuttofare ultra-wide. Apertura costante <span class="text-white font-semibold">f/2.8</span> per paesaggi notturni e situazioni di luce critica.
+                        </p>
+                        <div class="flex gap-2 text-xs font-mono text-gray-500">
+                            <span>f/2.8</span> • <span>950g</span> • <span>Ultra-Wide</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Final CTA -->
+                <div class="text-center pt-12 border-t border-white/5">
+                    <p class="text-xs text-muted uppercase tracking-widest mb-6">Arsenal Totale: 2 Corpi + 9 Ottiche</p>
+                    <p class="text-white/60 text-sm max-w-2xl mx-auto mb-8">
+                        Una collezione costruita in <span class="text-white font-semibold">dieci anni</span> di evoluzione tecnica e creativa. 
+                        Ogni lente ha una storia, ogni scatto ha il suo vetro perfetto.
+                    </p>
+                    <button onclick="router('story')" class="text-sm font-semibold text-white hover:text-muted transition border-b border-white/30 pb-1">
+                        Scopri la Storia →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STORY SECTION -->
+        <section id="story" class="page-section">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4 gradient-text">La Storia.</h2>
+                    <p class="text-muted text-sm md:text-base">Dieci anni di evoluzione. Dal reportage sportivo alla fotografia notturna.</p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-8 md:p-12 mb-12">
+                    
+                    <!-- Timeline -->
+                    <div class="space-y-10">
+                        
+                        <!-- 2016 -->
+                        <div class="flex gap-6">
+                            <div class="flex flex-col items-center pt-1">
+                                <div class="timeline-dot"></div>
+                            </div>
+                            <div class="flex-1 pb-8">
+                                <span class="text-accent font-bold text-sm">2016</span>
+                                <h3 class="text-xl md:text-2xl font-bold mt-1 mb-3">Gli Inizi</h3>
+                                <p class="text-muted text-sm md:text-base leading-relaxed">
+                                    Tutto inizia con una <span class="text-white font-semibold">Canon 600D</span>, uno Sigma 17-50mm f/2.8 e un Canon 55-250mm. 
+                                    Prime sperimentazioni con <span class="text-white font-semibold">fotografia ritrattistica</span> e reportage sportivo: 
+                                    calcio, basket, azione pura. Scopro l'importanza del momento decisivo.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2019 -->
+                        <div class="flex gap-6">
+                            <div class="flex flex-col items-center pt-1">
+                                <div class="timeline-dot"></div>
+                            </div>
+                            <div class="flex-1 pb-8">
+                                <span class="text-accent font-bold text-sm">2019</span>
+                                <h3 class="text-xl md:text-2xl font-bold mt-1 mb-3">Transizione al Video</h3>
+                                <p class="text-muted text-sm md:text-base leading-relaxed">
+                                    Passo al mondo <span class="text-white font-semibold">Fujifilm</span> con la X-T3. 
+                                    Inizio a esplorare il video, affascinato dai colori Fuji e dalla praticità del formato APS-C. 
+                                    È l'anno in cui capisco che l'immagine in movimento è la naturale evoluzione della fotografia.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2020 -->
+                        <div class="flex gap-6">
+                            <div class="flex flex-col items-center pt-1">
+                                <div class="timeline-dot"></div>
+                            </div>
+                            <div class="flex-1 pb-8">
+                                <span class="text-accent font-bold text-sm">2020</span>
+                                <h3 class="text-xl md:text-2xl font-bold mt-1 mb-3">Era Sony: Full-Frame</h3>
+                                <p class="text-muted text-sm md:text-base leading-relaxed">
+                                    Salto definitivo al <span class="text-white font-semibold">Full-Frame</span> con Sony A7S II e A7R. 
+                                    La A7S II diventa la mia compagna per video in low-light, mentre la A7R gestisce lavori fotografici ad alta risoluzione. 
+                                    Sistema dual-body definitivo per massima flessibilità.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2021 -->
+                        <div class="flex gap-6">
+                            <div class="flex flex-col items-center pt-1">
+                                <div class="timeline-dot"></div>
+                            </div>
+                            <div class="flex-1 pb-8">
+                                <span class="text-accent font-bold text-sm">2021</span>
+                                <h3 class="text-xl md:text-2xl font-bold mt-1 mb-3">Ma
