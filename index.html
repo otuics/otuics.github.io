@@ -30,6 +30,7 @@
     * { 
       -webkit-font-smoothing: antialiased; 
       -moz-osx-font-smoothing: grayscale; 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     }
     
     body { 
@@ -44,17 +45,17 @@
       color: #fff; 
     }
 
-    /* Liquid Glass Effect */
+    /* Liquid Glass Effect - Enhanced Blur */
     .liquid-glass-top {
-      background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
-      backdrop-filter: saturate(180%) blur(30px);
-      -webkit-backdrop-filter: saturate(180%) blur(30px);
+      background: linear-gradient(180deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 40%, rgba(0,0,0,0.70) 70%, transparent 100%);
+      backdrop-filter: saturate(180%) blur(50px);
+      -webkit-backdrop-filter: saturate(180%) blur(50px);
     }
 
     .liquid-glass-bottom {
-      background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
-      backdrop-filter: saturate(180%) blur(30px);
-      -webkit-backdrop-filter: saturate(180%) blur(30px);
+      background: linear-gradient(0deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 40%, rgba(0,0,0,0.70) 70%, transparent 100%);
+      backdrop-filter: saturate(180%) blur(50px);
+      -webkit-backdrop-filter: saturate(180%) blur(50px);
     }
 
     .glass {
@@ -64,9 +65,9 @@
     }
 
     .glass-strong {
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: saturate(180%) blur(40px);
-      -webkit-backdrop-filter: saturate(180%) blur(40px);
+      background: rgba(0, 0, 0, 0.80);
+      backdrop-filter: saturate(180%) blur(60px);
+      -webkit-backdrop-filter: saturate(180%) blur(60px);
     }
 
     .page-view {
@@ -80,6 +81,7 @@
       transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
 
     .page-view.active {
@@ -97,14 +99,27 @@
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+
+    .card-glass.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .card-glass.in-view {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), 0 0 80px rgba(255, 0, 0, 0.15);
+      border-color: rgba(255, 0, 0, 0.3);
     }
     
     .card-glass:hover {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(255, 0, 0, 0.25);
-      transform: scale(1.02) translateY(-2px);
-      box-shadow: 0 20px 60px rgba(255, 0, 0, 0.15);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 20px 60px rgba(255, 0, 0, 0.2);
     }
 
     .portfolio-card {
@@ -112,6 +127,19 @@
       overflow: hidden;
       aspect-ratio: 1;
       cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+
+    .portfolio-card.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .portfolio-card.in-view {
+      transform: scale(1.05);
+      box-shadow: 0 0 50px rgba(255, 0, 0, 0.4), 0 0 100px rgba(255, 0, 0, 0.2);
     }
 
     .portfolio-card img {
@@ -183,6 +211,7 @@
 
     .pin-modal.show {
       display: flex;
+      animation: fadeIn 0.3s ease;
     }
 
     .pin-input {
@@ -196,6 +225,7 @@
       color: white;
       font-weight: 600;
       transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
     }
 
     .pin-input:focus {
@@ -213,6 +243,16 @@
       25% { transform: translateX(-10px); }
       75% { transform: translateX(10px); }
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Scroll Animation Classes */
+    .scroll-animate {
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
   </style>
 </head>
 
@@ -221,7 +261,7 @@
   <!-- TOP NAV -->
   <nav class="fixed top-0 left-0 right-0 z-50 liquid-glass-top">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[70px] flex items-center justify-between">
-      <div class="text-3xl sm:text-4xl font-normal tracking-tight">
+      <div class="text-3xl sm:text-4xl font-medium tracking-tight" style="font-weight: 550;">
         otuics<span class="text-otuics-red text-4xl sm:text-5xl">.</span>
       </div>
 
@@ -301,7 +341,7 @@
     <!-- PORTFOLIO -->
     <div id="page-portfolio" class="page-view">
       <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
-        <div class="mb-10">
+        <div class="mb-10 scroll-animate">
           <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight">
             Portfolio<span class="text-otuics-red">.</span>
           </h2>
@@ -312,7 +352,7 @@
 
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=90" alt="Wedding" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Wedding<span class="text-otuics-red">.</span></h3>
@@ -320,7 +360,7 @@
             </div>
           </div>
 
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=90" alt="Nightlife" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Nightlife<span class="text-otuics-red">.</span></h3>
@@ -328,7 +368,7 @@
             </div>
           </div>
 
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1200&q=90" alt="Portrait" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Ritratti<span class="text-otuics-red">.</span></h3>
@@ -336,7 +376,7 @@
             </div>
           </div>
 
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=90" alt="Corporate" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Corporate<span class="text-otuics-red">.</span></h3>
@@ -344,7 +384,7 @@
             </div>
           </div>
 
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=90" alt="Sport" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Sport<span class="text-otuics-red">.</span></h3>
@@ -352,7 +392,7 @@
             </div>
           </div>
 
-          <div class="portfolio-card card-glass rounded-3xl">
+          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=90" alt="Landscape" loading="lazy" />
             <div class="portfolio-overlay">
               <h3 class="text-2xl sm:text-3xl font-bold text-white">Paesaggi<span class="text-otuics-red">.</span></h3>
@@ -367,7 +407,7 @@
     <!-- GEAR -->
     <div id="page-gear" class="page-view">
       <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
-        <div class="mb-10">
+        <div class="mb-10 scroll-animate">
           <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white">
             Gear<span class="text-otuics-red">.</span>
           </h2>
@@ -378,7 +418,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
           
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <div class="flex items-center gap-4 mb-6">
               <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center">
                 <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
@@ -395,7 +435,7 @@
             </ul>
           </div>
 
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <div class="flex items-center gap-4 mb-6">
               <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center">
                 <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
@@ -408,7 +448,7 @@
 
         </div>
 
-        <div class="card-glass rounded-3xl p-8 mb-6">
+        <div class="card-glass rounded-3xl p-8 mb-6 scroll-animate">
           <div class="flex items-center gap-4 mb-8">
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center">
               <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/></svg>
@@ -468,29 +508,29 @@
         </div>
 
         <div class="space-y-4">
-          <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-white">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-white scroll-animate">
             Kit Configurations<span class="text-otuics-red">.</span>
           </h3>
 
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition">
+          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
             <h4 class="text-xl font-bold mb-2 text-white">Wedding Kit<span class="text-otuics-red">.</span></h4>
             <p class="text-sm text-gray-400 mb-3">Copertura completa + ritratti premium</p>
             <p class="text-sm font-mono text-gray-300">24-70mm f/2.8L + 85mm f/1.2L + 70-200mm f/2.8L</p>
           </div>
 
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition">
+          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
             <h4 class="text-xl font-bold mb-2 text-white">Nightlife Kit<span class="text-otuics-red">.</span></h4>
             <p class="text-sm text-gray-400 mb-3">Luce scarsa + movimento dinamico</p>
             <p class="text-sm font-mono text-gray-300">35mm f/1.4 Art + 50mm f/1.4 + Ronin S</p>
           </div>
 
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition">
+          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
             <h4 class="text-xl font-bold mb-2 text-white">Event Trinity<span class="text-otuics-red">.</span></h4>
             <p class="text-sm text-gray-400 mb-3">Versatilità massima per corporate/sport</p>
             <p class="text-sm font-mono text-gray-300">16-28mm f/2.8 + 24-70mm f/2.8L + 70-200mm f/2.8L</p>
           </div>
 
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition">
+          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
             <h4 class="text-xl font-bold mb-2 text-white">Portrait Kit<span class="text-otuics-red">.</span></h4>
             <p class="text-sm text-gray-400 mb-3">Isolamento soggetto + rendering magico</p>
             <p class="text-sm font-mono text-gray-300">85mm f/1.2L + 50mm f/1.4 + 100mm f/2.8 Macro</p>
@@ -503,42 +543,42 @@
     <!-- ABOUT -->
     <div id="page-about" class="page-view">
       <div class="px-4 sm:px-6 py-12 max-w-5xl mx-auto">
-        <div class="mb-10">
+        <div class="mb-10 scroll-animate">
           <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white">
             Storia<span class="text-otuics-red">.</span>
           </h2>
         </div>
 
         <div class="space-y-5 mb-8">
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <p class="text-otuics-red font-bold text-xl mb-3">2016</p>
             <p class="text-lg leading-relaxed text-gray-300">
               Ho iniziato con una <span class="text-white font-semibold">Canon 600D</span>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto<span class="text-otuics-red">.</span>
             </p>
           </div>
 
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <p class="text-otuics-red font-bold text-xl mb-3">2019</p>
             <p class="text-lg leading-relaxed text-gray-300">
               Passaggio al video: <span class="text-white font-semibold">Fujifilm X-T3</span>. Ho scoperto che il movimento cambia tutto. Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="text-otuics-red">.</span>
             </p>
           </div>
 
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <p class="text-otuics-red font-bold text-xl mb-3">2020</p>
             <p class="text-lg leading-relaxed text-gray-300">
               Salto al full frame con <span class="text-white font-semibold">Sony A7S II, A7R1, A7R2</span>. Comincio a lavorare sui matrimoni: luce variabile, emozioni irripetibili, zero margine di errore. Sony mi ha insegnato l'affidabilità sotto stress<span class="text-otuics-red">.</span>
             </p>
           </div>
 
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <p class="text-otuics-red font-bold text-xl mb-3">2021</p>
             <p class="text-lg leading-relaxed text-gray-300">
               Specializzazione in <span class="text-white font-semibold">fotografia nightlife e discoteche</span>. Buio, velocità, energia pura. ISO alti, messa a fuoco istantanea, composizione nel flusso. La nightlife mi ha dato il ritmo<span class="text-otuics-red">.</span>
             </p>
           </div>
 
-          <div class="card-glass rounded-3xl p-8">
+          <div class="card-glass rounded-3xl p-8 scroll-animate">
             <p class="text-otuics-red font-bold text-xl mb-3">2025</p>
             <p class="text-lg leading-relaxed text-gray-300">
               Ritorno a Canon: <span class="text-white font-semibold">EOS R6 + EOS R</span>. Color science definitiva. I colori Canon sono "miei": pelle pulita, toni caldi naturali, look riconoscibile senza post-produzione pesante<span class="text-otuics-red">.</span>
@@ -546,7 +586,7 @@
           </div>
         </div>
 
-        <div class="card-glass rounded-3xl p-8 sm:p-10 border-2 border-otuics-red/20">
+        <div class="card-glass rounded-3xl p-8 sm:p-10 border-2 border-otuics-red/20 scroll-animate">
           <h3 class="text-3xl sm:text-4xl font-bold mb-6 text-white">
             Contatti<span class="text-otuics-red">.</span>
           </h3>
@@ -610,6 +650,44 @@
   </nav>
 
   <script>
+    // Sound Effects using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playClickSound() {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    function playTransitionSound() {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(900, audioContext.currentTime + 0.15);
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    }
+
     // Photo Slider
     let currentSlide = 0;
     const slides = document.querySelectorAll('.photo-slide');
@@ -623,15 +701,50 @@
 
     setInterval(showNextSlide, 4000);
 
+    // Scroll Animation with Intersection Observer
+    const observerOptions = {
+      threshold: 0.3,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          
+          // Add in-view class for center elements
+          const rect = entry.boundingClientRect;
+          const viewportHeight = window.innerHeight;
+          const elementCenter = rect.top + rect.height / 2;
+          const viewportCenter = viewportHeight / 2;
+          
+          if (Math.abs(elementCenter - viewportCenter) < 150) {
+            entry.target.classList.add('in-view');
+          } else {
+            entry.target.classList.remove('in-view');
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all scroll-animate elements
+    function observeElements() {
+      document.querySelectorAll('.scroll-animate').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
     // PIN Modal
-    const CORRECT_PIN = '123456'; // Cambia questo con il PIN che vuoi
+    const CORRECT_PIN = '123456';
 
     function openPinModal() {
+      playClickSound();
       document.getElementById('pinModal').classList.add('show');
       document.getElementById('pin1').focus();
     }
 
     function closePinModal() {
+      playClickSound();
       document.getElementById('pinModal').classList.remove('show');
       clearPinInputs();
     }
@@ -649,8 +762,11 @@
       
       input.addEventListener('input', (e) => {
         const value = e.target.value;
-        if (value.length === 1 && i < 6) {
-          document.getElementById('pin' + (i + 1)).focus();
+        if (value.length === 1) {
+          playClickSound();
+          if (i < 6) {
+            document.getElementById('pin' + (i + 1)).focus();
+          }
         }
       });
 
@@ -660,7 +776,6 @@
         }
       });
 
-      // Only allow numbers
       input.addEventListener('keypress', (e) => {
         if (!/[0-9]/.test(e.key)) {
           e.preventDefault();
@@ -675,11 +790,12 @@
       }
 
       if (enteredPin === CORRECT_PIN) {
+        playTransitionSound();
         document.getElementById('pinError').textContent = '';
         closePinModal();
-        // Qui puoi reindirizzare o mostrare contenuto riservato
-        alert('Accesso consentito! (Qui puoi reindirizzare a una pagina protetta)');
+        alert('Accesso consentito!');
       } else {
+        playClickSound();
         document.getElementById('pinError').textContent = 'PIN non valido';
         document.querySelectorAll('.pin-input').forEach(input => {
           input.classList.add('pin-error');
@@ -690,7 +806,6 @@
       }
     }
 
-    // Press Enter to verify
     document.getElementById('pin6').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         verifyPin();
@@ -702,6 +817,8 @@
 
     function goToPage(pageId) {
       if (currentPage === pageId) return;
+
+      playTransitionSound();
 
       const pages = document.querySelectorAll('.page-view');
       const navItems = document.querySelectorAll('.nav-item');
@@ -720,12 +837,51 @@
       });
 
       currentPage = pageId;
-      document.getElementById('page-' + pageId).scrollTop = 0;
+      const targetPage = document.getElementById('page-' + pageId);
+      targetPage.scrollTop = 0;
+
+      // Re-observe elements when page changes
+      setTimeout(() => {
+        observeElements();
+      }, 100);
     }
+
+    // Add click sound to all buttons
+    document.querySelectorAll('button, a').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (!e.target.closest('.pin-input')) {
+          playClickSound();
+        }
+      });
+    });
+
+    // Scroll tracking for each page
+    document.querySelectorAll('.page-view').forEach(page => {
+      page.addEventListener('scroll', () => {
+        if (page.classList.contains('active')) {
+          const scrollAnimateElements = page.querySelectorAll('.scroll-animate');
+          scrollAnimateElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const elementCenter = rect.top + rect.height / 2;
+            const viewportCenter = viewportHeight / 2;
+            
+            if (Math.abs(elementCenter - viewportCenter) < 200) {
+              el.classList.add('in-view');
+            } else {
+              el.classList.remove('in-view');
+            }
+          });
+        }
+      });
+    });
 
     // Init
     document.querySelector('.nav-item[data-page="home"]').classList.add('text-white');
     document.querySelector('.nav-item[data-page="home"]').classList.remove('text-gray-500');
+    
+    // Initial observation
+    setTimeout(observeElements, 100);
   </script>
 
 </body>
