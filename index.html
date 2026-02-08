@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -30,7 +30,7 @@
   </script>
 
   <style>
-    body { margin:0; background:#000; overflow-x:hidden; }
+    body { margin:0; background:#000; overflow:hidden; }
     ::selection { background:#ff0000; color:#fff; }
     
     .gradient-text {
@@ -38,7 +38,6 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      color: transparent;
     }
 
     .gradient-text-red {
@@ -48,6 +47,26 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .page-view {
+      position: fixed;
+      inset: 0;
+      top: 60px;
+      bottom: 80px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .page-view.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .page-view::-webkit-scrollbar { width: 8px; background: #000; }
+    .page-view::-webkit-scrollbar-thumb { background: #333; border-radius: 999px; }
+
     .card-hover {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -56,384 +75,494 @@
       border-color: rgba(255, 0, 0, 0.3);
     }
 
-    .snap-container {
-      scroll-snap-type: y mandatory;
-      overflow-y: scroll;
-      height: 100vh;
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: rgba(0, 0, 0, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      overflow: hidden;
     }
 
-    .snap-section {
-      scroll-snap-align: start;
-      min-height: 100vh;
+    .lang-dropdown.show {
+      display: block;
     }
 
-    ::-webkit-scrollbar { width: 8px; background: #000; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 999px; }
-
-    @media (max-width: 768px) {
-      .grid-feature { grid-template-columns: repeat(2, 1fr) !important; }
+    .parallax-element {
+      will-change: transform;
     }
   </style>
 </head>
 
 <body class="bg-otuics-black text-otuics-white font-sans antialiased">
 
-  <!-- NAV -->
+  <!-- TOP NAV -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <button onclick="scrollToSection('home')" class="text-xl font-semibold tracking-tight">
-        otuics<span class="text-otuics-red text-2xl">.</span>
-      </button>
-
-      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-otuics-gray">
-        <button onclick="scrollToSection('portfolio')" class="hover:text-white transition-colors">Portfolio</button>
-        <button onclick="scrollToSection('skills')" class="hover:text-white transition-colors">Skills</button>
-        <button onclick="scrollToSection('about')" class="hover:text-white transition-colors">About</button>
+      <div class="text-2xl sm:text-3xl font-bold tracking-tight">
+        otuics<span class="text-otuics-red text-3xl sm:text-4xl">.</span>
       </div>
 
       <!-- Language Selector -->
-      <div class="flex items-center gap-2 text-xs font-medium text-otuics-gray">
-        <button class="hover:text-white transition-colors px-2 py-1 rounded bg-white/10">IT</button>
-        <button class="hover:text-white transition-colors px-2 py-1 rounded hover:bg-white/10">EN</button>
-        <button class="hover:text-white transition-colors px-2 py-1 rounded hover:bg-white/10">ES</button>
+      <div class="relative">
+        <button id="langBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 transition text-sm font-medium">
+          <span id="currentLang">IT</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div id="langDropdown" class="lang-dropdown">
+          <button class="lang-option w-full px-4 py-3 text-left hover:bg-white/10 transition text-sm" data-lang="it">🇮🇹 Italiano</button>
+          <button class="lang-option w-full px-4 py-3 text-left hover:bg-white/10 transition text-sm" data-lang="en">🇬🇧 English</button>
+          <button class="lang-option w-full px-4 py-3 text-left hover:bg-white/10 transition text-sm" data-lang="es">🇪🇸 Español</button>
+          <button class="lang-option w-full px-4 py-3 text-left hover:bg-white/10 transition text-sm" data-lang="fr">🇫🇷 Français</button>
+          <button class="lang-option w-full px-4 py-3 text-left hover:bg-white/10 transition text-sm" data-lang="de">🇩🇪 Deutsch</button>
+        </div>
       </div>
     </div>
   </nav>
 
-  <main class="snap-container">
+  <!-- PAGES -->
+  <main>
 
     <!-- HOME -->
-    <section id="home" class="snap-section relative flex items-center justify-center px-4 sm:px-6 pt-16">
-      <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute w-[600px] h-[600px] bg-otuics-red/10 rounded-full blur-[180px] top-1/4 -left-32"></div>
-        <div class="absolute w-[500px] h-[500px] bg-otuics-red/5 rounded-full blur-[160px] bottom-1/4 -right-32"></div>
-      </div>
-
-      <div class="relative z-10 text-center max-w-5xl mx-auto">
-        <h1 class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9]">
-          <span class="gradient-text">Mastering</span><br/>
-          <span class="gradient-text">Light & Time</span><span class="gradient-text-red">.</span>
-        </h1>
-
-        <p class="mt-8 text-lg sm:text-xl md:text-2xl text-otuics-gray max-w-3xl mx-auto font-light">
-          Creo immagini e video costruiti con intenzione:<br class="hidden sm:block"/>
-          ritmo, colore, energia<span class="text-otuics-red">.</span>
-        </p>
-
-        <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onclick="scrollToSection('portfolio')"
-                  class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-black font-semibold text-base hover:bg-white/90 transition">
-            Esplora Portfolio
-          </button>
-          <button onclick="scrollToSection('about')"
-                  class="w-full sm:w-auto px-8 py-4 rounded-full border border-white/20 bg-white/5 font-semibold text-base hover:bg-white/10 transition">
-            Chi sono
-          </button>
+    <div id="page-home" class="page-view active">
+      <div class="relative min-h-full flex items-center justify-center px-4 sm:px-6">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+          <div class="parallax-element absolute w-[600px] h-[600px] bg-otuics-red/10 rounded-full blur-[180px] top-1/4 -left-32" data-speed="0.3"></div>
+          <div class="parallax-element absolute w-[500px] h-[500px] bg-otuics-red/5 rounded-full blur-[160px] bottom-1/4 -right-32" data-speed="0.5"></div>
         </div>
 
-        <div class="mt-16 flex flex-wrap items-center justify-center gap-8 opacity-60">
-          <img src="https://cdn.worldvectorlogo.com/logos/canon-2.svg" alt="Canon" class="h-6 invert" />
-          <img src="https://cdn.worldvectorlogo.com/logos/sony-logo.svg" alt="Sony" class="h-5 invert" />
-          <img src="https://cdn.worldvectorlogo.com/logos/sigma-6.svg" alt="Sigma" class="h-5 invert" />
-          <img src="https://cdn.worldvectorlogo.com/logos/dji.svg" alt="DJI" class="h-6 invert" />
+        <div class="relative z-10 text-center max-w-5xl mx-auto py-12">
+          <h1 class="text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-[0.85]">
+            <span class="gradient-text">Light</span><br/>
+            <span class="gradient-text">& Time</span><span class="gradient-text-red">.</span>
+          </h1>
+
+          <p class="mt-10 text-xl sm:text-2xl md:text-3xl text-otuics-white font-light max-w-3xl mx-auto leading-tight">
+            Non scatto: costruisco<span class="text-otuics-red">.</span><br/>
+            Ogni frame è intenzione<span class="text-otuics-red">.</span>
+          </p>
+
+          <p class="mt-6 text-base sm:text-lg text-otuics-gray max-w-2xl mx-auto">
+            Energia che tiene l'attenzione. Colore che definisce il brand. Movimento che racconta senza parole<span class="text-otuics-red">.</span>
+          </p>
+
+          <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button onclick="goToPage('portfolio')"
+                    class="w-full sm:w-auto px-10 py-4 rounded-full bg-white text-black font-bold text-base hover:bg-white/90 transition shadow-2xl">
+              Portfolio
+            </button>
+            <button onclick="goToPage('about')"
+                    class="w-full sm:w-auto px-10 py-4 rounded-full border border-white/20 bg-white/5 font-semibold text-base hover:bg-white/10 transition">
+              Chi sono
+            </button>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- PORTFOLIO (Grid iOS style) -->
-    <section id="portfolio" class="snap-section relative px-4 sm:px-6 py-24 md:py-32">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4">
-          Portfolio<span class="text-otuics-red">.</span>
-        </h2>
-        <p class="text-lg sm:text-xl text-otuics-gray max-w-3xl mb-12">
-          Categorie specializzate: ogni stile ha la sua grammatica visiva<span class="text-otuics-red">.</span>
-        </p>
+    <!-- PORTFOLIO -->
+    <div id="page-portfolio" class="page-view">
+      <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
+        <div class="parallax-element mb-8" data-speed="0.2">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight">
+            Portfolio<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-4 text-lg sm:text-xl text-otuics-gray max-w-3xl">
+            Ogni categoria ha la sua grammatica: timing, composizione, intenzione<span class="text-otuics-red">.</span>
+          </p>
+        </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           
-          <!-- Wedding -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80" 
                    alt="Wedding" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Wedding<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Emozioni, momenti irripetibili</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Emozioni irripetibili, timing perfetto</p>
             </div>
           </div>
 
-          <!-- Nightlife -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80" 
                    alt="Nightlife" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Nightlife<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Energia, colore, movimento</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Buio, velocità, energia pura</p>
             </div>
           </div>
 
-          <!-- Ritratti -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80" 
                    alt="Ritratti" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Ritratti<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Personalità, presenza, intimità</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Presenza che non si dimentica</p>
             </div>
           </div>
 
-          <!-- Eventi Corporate -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80" 
                    alt="Corporate" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Corporate<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Professionalità, brand image</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Brand image coerente</p>
             </div>
           </div>
 
-          <!-- Sport -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80" 
                    alt="Sport" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Sport<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Dinamica, timing perfetto</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Azione congelata, dinamica viva</p>
             </div>
           </div>
 
-          <!-- Paesaggi -->
           <div class="card-hover rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden aspect-square flex flex-col">
             <div class="flex-1 relative overflow-hidden">
               <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" 
                    alt="Paesaggi" class="w-full h-full object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             </div>
             <div class="p-4 sm:p-6">
               <h3 class="text-xl sm:text-2xl font-bold">Paesaggi<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Luce naturale, composizione</p>
+              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Luce naturale, composizione studiata</p>
             </div>
           </div>
 
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- SKILLS (Grid iOS style features) -->
-    <section id="skills" class="snap-section relative px-4 sm:px-6 py-24 md:py-32">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4">
-          Attrezzatura & Abilità<span class="text-otuics-red">.</span>
-        </h2>
-        <p class="text-lg sm:text-xl text-otuics-gray max-w-3xl mb-12">
-          Ecosystem completo per ogni scenario: velocità, affidabilità, qualità<span class="text-otuics-red">.</span>
-        </p>
+    <!-- GEAR -->
+    <div id="page-gear" class="page-view">
+      <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
+        <div class="parallax-element mb-8" data-speed="0.2">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight">
+            Gear<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-4 text-lg sm:text-xl text-otuics-gray max-w-3xl">
+            Non è "lista attrezzatura": è sistema di lavoro veloce, affidabile, ripetibile<span class="text-otuics-red">.</span>
+          </p>
+        </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           
-          <!-- Canon R6 -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-red-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-otuics-red/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">📷</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Canon R6<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Main body: velocità e affidabilità</p>
-            </div>
+          <!-- Bodies -->
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+              <span class="text-3xl">📷</span> Bodies<span class="text-otuics-red">.</span>
+            </h3>
+            <ul class="space-y-3 text-otuics-gray">
+              <li class="flex items-center justify-between text-white font-medium">
+                <span>Canon EOS R6</span>
+                <span class="text-xs px-2 py-1 rounded-full bg-otuics-red/20 text-otuics-red border border-otuics-red/50">MAIN</span>
+              </li>
+              <li>Canon EOS R (Backup)</li>
+              <li>Canon 600D (Archive/B-Cam)</li>
+            </ul>
           </div>
 
-          <!-- Low Light -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-yellow-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">🌙</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Low Light<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Controllo luce scarsa, colore pulito</p>
-            </div>
-          </div>
-
-          <!-- 85mm Legend -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-purple-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">👁️</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">85mm f/1.2L<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Il Re del ritratto: magico</p>
-            </div>
-          </div>
-
-          <!-- Video -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-blue-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">🎬</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Video Pro<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">DJI Ronin S: movimenti fluidi</p>
-            </div>
-          </div>
-
-          <!-- Editing -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-green-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">⚡</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Fast Editing<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Workflow ottimizzato, look coerente</p>
-            </div>
-          </div>
-
-          <!-- Trinity Zooms -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-orange-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">🔭</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Holy Trinity<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">16-28, 24-70, 70-200: copertura totale</p>
-            </div>
-          </div>
-
-          <!-- Color Science -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-pink-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">🎨</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Color Science<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Canon: pelle pulita, toni naturali</p>
-            </div>
-          </div>
-
-          <!-- Timing -->
-          <div class="card-hover rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/10 to-transparent p-5 sm:p-6 aspect-square flex flex-col justify-between">
-            <div>
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-3">
-                <span class="text-2xl sm:text-3xl">⏱️</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold">Timing Perfetto<span class="text-otuics-red">.</span></h3>
-              <p class="text-xs sm:text-sm text-otuics-gray mt-1">Anticipare momenti, storytelling veloce</p>
-            </div>
+          <!-- Stabilization -->
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+              <span class="text-3xl">🎬</span> Stabilization<span class="text-otuics-red">.</span>
+            </h3>
+            <ul class="space-y-3 text-otuics-gray">
+              <li class="text-white font-medium">DJI Ronin S</li>
+              <li class="text-sm">Gimbal 3-axis per video dinamici e movimenti fluidi</li>
+            </ul>
           </div>
 
         </div>
-      </div>
-    </section>
 
-    <!-- ABOUT & CONTACT -->
-    <section id="about" class="snap-section relative px-4 sm:px-6 py-24 md:py-32">
-      <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <!-- Lenses -->
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-3">
+            <span class="text-3xl">🔭</span> Lenses<span class="text-otuics-red">.</span>
+          </h3>
           
-          <div>
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6">
-              Storia<span class="text-otuics-red">.</span>
-            </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-otuics-red font-semibold mb-3">Prime Lenses</p>
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-otuics-red"></span>
+                  <span class="text-white font-medium">Canon EF 85mm f/1.2L USM</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 50mm f/1.4 USM</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Sigma 35mm f/1.4 DG HSM Art</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 28mm f/1.8 USM</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 100mm f/2.8 Macro USM</span>
+                </li>
+              </ul>
+            </div>
 
-            <div class="space-y-8">
-              <article class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p class="text-otuics-red font-bold text-lg">2016</p>
-                <h3 class="mt-2 text-xl font-bold">Canon 600D: imparare a vedere<span class="text-otuics-red">.</span></h3>
-                <p class="mt-3 text-otuics-gray">Ritratti, basket, calcio. Costruire occhio e disciplina<span class="text-otuics-red">.</span></p>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p class="text-otuics-red font-bold text-lg">2019</p>
-                <h3 class="mt-2 text-xl font-bold">Video con Fujifilm X‑T3<span class="text-otuics-red">.</span></h3>
-                <p class="mt-3 text-otuics-gray">Movimento, ritmo, tagli: nasce il linguaggio visivo<span class="text-otuics-red">.</span></p>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p class="text-otuics-red font-bold text-lg">2020</p>
-                <h3 class="mt-2 text-xl font-bold">Sony full frame + matrimoni<span class="text-otuics-red">.</span></h3>
-                <p class="mt-3 text-otuics-gray">Affidabilità, luce variabile, consegna premium<span class="text-otuics-red">.</span></p>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p class="text-otuics-red font-bold text-lg">2021</p>
-                <h3 class="mt-2 text-xl font-bold">Nightlife specialist<span class="text-otuics-red">.</span></h3>
-                <p class="mt-3 text-otuics-gray">Il mio terreno naturale: velocità, energia, impatto<span class="text-otuics-red">.</span></p>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p class="text-otuics-red font-bold text-lg">2025</p>
-                <h3 class="mt-2 text-xl font-bold">Back to Canon<span class="text-otuics-red">.</span></h3>
-                <p class="mt-3 text-otuics-gray">R6 + EOS R: color science definitiva, look riconoscibile<span class="text-otuics-red">.</span></p>
-              </article>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-otuics-red font-semibold mb-3">Zoom Lenses</p>
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 8-15mm f/4L Fisheye USM</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Tokina AT-X 16-28mm f/2.8 Pro FX</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 24-70mm f/2.8L II USM</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                  <span class="text-otuics-gray">Canon EF 70-200mm f/2.8L IS II USM</span>
+                </li>
+              </ul>
             </div>
           </div>
+        </div>
 
-          <div class="flex flex-col justify-center">
-            <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-otuics-red/10 to-transparent p-8 sm:p-10">
-              <h2 class="text-3xl sm:text-4xl font-bold mb-6">
-                Let's Create<span class="text-otuics-red">.</span>
-              </h2>
+        <!-- Kit Configurations -->
+        <div class="space-y-4">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-6">
+            Kit Configurations<span class="text-otuics-red">.</span>
+          </h3>
 
-              <p class="text-lg text-otuics-gray mb-8">
-                Se hai un evento, un brand o una storia da rendere memorabile, scriviamo insieme il brief e costruiamo contenuti che tengono l'attenzione<span class="text-otuics-red">.</span>
-              </p>
+          <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-red-500/10 to-transparent p-6">
+            <h4 class="text-xl font-bold mb-2">Wedding Kit<span class="text-otuics-red">.</span></h4>
+            <p class="text-sm text-otuics-gray mb-3">Copertura completa + ritratti premium</p>
+            <p class="text-sm">24-70mm f/2.8L + 85mm f/1.2L + 70-200mm f/2.8L</p>
+          </div>
 
-              <a href="mailto:otuicsart@gmail.com"
-                 class="inline-block text-2xl sm:text-3xl font-semibold text-white hover:text-otuics-red transition-colors mb-8">
-                otuicsart@gmail.com
-              </a>
+          <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-purple-500/10 to-transparent p-6">
+            <h4 class="text-xl font-bold mb-2">Nightlife Kit<span class="text-otuics-red">.</span></h4>
+            <p class="text-sm text-otuics-gray mb-3">Luce scarsa + movimento dinamico</p>
+            <p class="text-sm">35mm f/1.4 Art + 50mm f/1.4 + Ronin S</p>
+          </div>
 
-              <div class="rounded-2xl border border-white/10 bg-black/40 p-6">
-                <p class="text-xs uppercase tracking-widest text-otuics-gray mb-2">Base & Availability</p>
-                <p class="text-white font-medium">📍 Reggio Calabria</p>
-                <p class="text-otuics-gray text-sm mt-1">Trasferte Italia/Europa su richiesta</p>
-              </div>
+          <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-blue-500/10 to-transparent p-6">
+            <h4 class="text-xl font-bold mb-2">Event Trinity<span class="text-otuics-red">.</span></h4>
+            <p class="text-sm text-otuics-gray mb-3">Versatilità massima per corporate/sport</p>
+            <p class="text-sm">16-28mm f/2.8 + 24-70mm f/2.8L + 70-200mm f/2.8L</p>
+          </div>
 
-              <p class="mt-8 text-sm text-white/40">
-                © 2026 otuics<span class="text-otuics-red">.</span> All rights reserved<span class="text-otuics-red">.</span>
-              </p>
+          <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-green-500/10 to-transparent p-6">
+            <h4 class="text-xl font-bold mb-2">Portrait Kit<span class="text-otuics-red">.</span></h4>
+            <p class="text-sm text-otuics-gray mb-3">Isolamento soggetto + rendering magico</p>
+            <p class="text-sm">85mm f/1.2L + 50mm f/1.4 + 100mm f/2.8 Macro</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="page-about" class="page-view">
+      <div class="px-4 sm:px-6 py-12 max-w-5xl mx-auto">
+        <div class="parallax-element mb-8" data-speed="0.2">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight">
+            Storia<span class="text-otuics-red">.</span>
+          </h2>
+        </div>
+
+        <div class="prose prose-invert max-w-none">
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 mb-6">
+            <p class="text-otuics-red font-bold text-xl mb-2">2016</p>
+            <p class="text-lg sm:text-xl leading-relaxed text-otuics-gray">
+              Ho iniziato con una <span class="text-white font-semibold">Canon 600D</span>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto. In quegli anni ho costruito l'occhio e la disciplina: se non vedi la luce prima di premere il pulsante, hai già perso<span class="text-otuics-red">.</span>
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 mb-6">
+            <p class="text-otuics-red font-bold text-xl mb-2">2019</p>
+            <p class="text-lg sm:text-xl leading-relaxed text-otuics-gray">
+              Passaggio al video: <span class="text-white font-semibold">Fujifilm X-T3</span>. Ho scoperto che il movimento cambia tutto. Non era più "congelare un istante", ma "costruire un ritmo". Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Comincio a pensare in termini di narrazione, non solo di belle immagini. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="text-otuics-red">.</span>
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 mb-6">
+            <p class="text-otuics-red font-bold text-xl mb-2">2020</p>
+            <p class="text-lg sm:text-xl leading-relaxed text-otuics-gray">
+              Salto al full frame con <span class="text-white font-semibold">Sony A7S II, A7R1, poi A7R2</span>. Comincio a lavorare sui matrimoni: luce variabile, emozioni irripetibili, zero margine di errore. Imparo l'affidabilità sotto stress, la gestione della batteria, la velocità di consegna. Sony mi ha insegnato a fidarmi del sistema anche quando la situazione è fuori controllo. Ogni matrimonio è un test: o funziona tutto, o è un disastro<span class="text-otuics-red">.</span>
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 mb-6">
+            <p class="text-otuics-red font-bold text-xl mb-2">2021</p>
+            <p class="text-lg sm:text-xl leading-relaxed text-otuics-gray">
+              Mi specializzo in <span class="text-white font-semibold">fotografia nightlife e discoteche</span>. È il mio terreno naturale: buio, velocità, energia pura. Qui si capisce chi sa davvero controllare la luce difficile e chi improvvisa. ISO alti, messa a fuoco velocissima, composizione istintiva. Ogni scatto è una scommessa, ma quando funziona è magia. La nightlife mi ha dato il ritmo: o sei dentro il flusso, o resti indietro<span class="text-otuics-red">.</span>
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 mb-8">
+            <p class="text-otuics-red font-bold text-xl mb-2">2025</p>
+            <p class="text-lg sm:text-xl leading-relaxed text-otuics-gray">
+              Ritorno a Canon: <span class="text-white font-semibold">EOS R6 come main body, EOS R come backup</span>. Perché? Color science. I colori Canon sono "miei": pelle pulita, toni caldi senza essere finti, contrasti che reggono anche nei social compressi. Non è nostalgia: è scegliere lo strumento che rende il mio look riconoscibile senza doverci lavorare sopra in post. È efficienza e identità allo stesso tempo<span class="text-otuics-red">.</span>
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-otuics-red/30 bg-gradient-to-br from-otuics-red/10 to-transparent p-8 sm:p-10">
+            <h3 class="text-2xl sm:text-3xl font-bold mb-4">Contatti<span class="text-otuics-red">.</span></h3>
+            <p class="text-lg text-otuics-gray mb-6">
+              Se hai un progetto che richiede controllo visivo totale, timing perfetto e consegna premium, scriviamo il brief e costruiamo qualcosa che funziona<span class="text-otuics-red">.</span>
+            </p>
+            <a href="mailto:otuicsart@gmail.com" class="inline-block text-2xl sm:text-3xl font-bold text-white hover:text-otuics-red transition mb-6">
+              otuicsart@gmail.com
+            </a>
+            <div class="mt-6 rounded-2xl border border-white/10 bg-black/40 p-5">
+              <p class="text-xs uppercase tracking-widest text-otuics-gray mb-2">Base</p>
+              <p class="text-white font-medium">📍 Reggio Calabria, Italia</p>
+              <p class="text-sm text-otuics-gray mt-1">Trasferte Italia/Europa su richiesta</p>
             </div>
           </div>
 
         </div>
       </div>
-    </section>
+    </div>
 
   </main>
 
+  <!-- BOTTOM NAV (iOS Style) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-white/10">
+    <div class="max-w-lg mx-auto px-4 h-20 flex items-center justify-around">
+      <button onclick="goToPage('home')" class="nav-item flex flex-col items-center gap-1 text-otuics-gray hover:text-white transition" data-page="home">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+
+      <button onclick="goToPage('portfolio')" class="nav-item flex flex-col items-center gap-1 text-otuics-gray hover:text-white transition" data-page="portfolio">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-[10px] font-medium">Portfolio</span>
+      </button>
+
+      <button onclick="goToPage('gear')" class="nav-item flex flex-col items-center gap-1 text-otuics-gray hover:text-white transition" data-page="gear">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-[10px] font-medium">Gear</span>
+      </button>
+
+      <button onclick="goToPage('about')" class="nav-item flex flex-col items-center gap-1 text-otuics-gray hover:text-white transition" data-page="about">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-[10px] font-medium">About</span>
+      </button>
+    </div>
+  </nav>
+
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <script>
-    gsap.registerPlugin(ScrollToPlugin);
+    gsap.registerPlugin(ScrollTrigger);
 
-    function scrollToSection(id) {
-      const target = document.getElementById(id);
-      if (!target) return;
+    // Language Dropdown
+    const langBtn = document.getElementById('langBtn');
+    const langDropdown = document.getElementById('langDropdown');
+    const currentLang = document.getElementById('currentLang');
 
-      gsap.to(window, {
-        duration: 0.8,
-        scrollTo: { y: target, autoKill: false },
-        ease: "power2.inOut"
+    langBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langDropdown.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+      langDropdown.classList.remove('show');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.getAttribute('data-lang').toUpperCase();
+        currentLang.textContent = lang;
+        langDropdown.classList.remove('show');
+        // Qui potresti caricare traduzioni
       });
+    });
+
+    // Page Navigation
+    let currentPage = 'home';
+
+    function goToPage(pageId) {
+      if (currentPage === pageId) return;
+
+      const pages = document.querySelectorAll('.page-view');
+      const navItems = document.querySelectorAll('.nav-item');
+
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(`page-${pageId}`).classList.add('active');
+
+      navItems.forEach(n => {
+        if (n.getAttribute('data-page') === pageId) {
+          n.classList.remove('text-otuics-gray');
+          n.classList.add('text-white');
+        } else {
+          n.classList.add('text-otuics-gray');
+          n.classList.remove('text-white');
+        }
+      });
+
+      currentPage = pageId;
+
+      // Reset scroll
+      document.getElementById(`page-${pageId}`).scrollTop = 0;
     }
 
-    // Animazioni card hover
+    // Parallax
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.parallax-element').forEach((el) => {
+        const speed = parseFloat(el.getAttribute('data-speed') || 0.3);
+        gsap.to(el, {
+          y: () => window.scrollY * speed,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+          }
+        });
+      });
+
+      // Card animations
       gsap.utils.toArray('.card-hover').forEach((card) => {
         gsap.from(card, {
           scrollTrigger: {
@@ -447,6 +576,9 @@
         });
       });
     }
+
+    // Init nav
+    document.querySelector('.nav-item[data-page="home"]').classList.add('text-white');
   </script>
 
 </body>
