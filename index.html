@@ -1,17 +1,15 @@
 <!doctype html>
-<html lang="it" class="scroll-smooth">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
   <title>otuics. — Visual Creator</title>
 
-  <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Tailwind v3 Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -35,38 +33,38 @@
   </script>
 
   <style>
-    body { margin: 0; background: #000; overflow-x: hidden; }
-    ::selection { background: #ff0000; color: #fff; }
-    .text-gradient {
-      background: linear-gradient(180deg, #ffffff, #a1a1aa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
+    body { margin:0; background:#000; overflow:hidden; }
+    ::selection { background:#ff0000; color:#fff; }
+    .text-gradient{
+      background:linear-gradient(180deg,#fff,#a1a1aa);
+      -webkit-background-clip:text; background-clip:text;
+      -webkit-text-fill-color:transparent; color:transparent;
     }
-    ::-webkit-scrollbar { width: 8px; background: #000; }
-    ::-webkit-scrollbar-thumb { background: #222; border-radius: 999px; }
+    /* ogni sezione non deve far vedere altro */
+    .view-section { position:absolute; inset:0; overflow:hidden; }
+    /* per contenuti lunghi: scroller interno */
+    .section-scroll { height:100svh; overflow:auto; -webkit-overflow-scrolling:touch; }
+    .section-scroll::-webkit-scrollbar { width:8px; background:#000; }
+    .section-scroll::-webkit-scrollbar-thumb { background:#222; border-radius:999px; }
   </style>
 </head>
 
 <body class="bg-otuics-black text-otuics-white font-sans antialiased">
 
-  <!-- TRANSITION OVERLAY -->
-  <div id="transitionOverlay"
-       class="fixed inset-0 z-[100] bg-black opacity-0 invisible pointer-events-none">
-  </div>
+  <!-- overlay dissolvenza -->
+  <div id="transitionOverlay" class="fixed inset-0 z-[100] bg-black opacity-0 invisible pointer-events-none"></div>
 
   <!-- NAV -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-black/75 backdrop-blur-md border-b border-white/10">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-black/75 backdrop-blur-md border-b border-white/10">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <button data-nav="portfolio" class="text-2xl font-semibold tracking-tight">
+      <button class="text-2xl font-semibold tracking-tight" data-goto="home" aria-label="Vai alla Home">
         otuics<span class="text-otuics-red text-3xl">.</span>
       </button>
 
       <div class="hidden md:flex items-center gap-8 text-sm font-medium text-otuics-gray">
-        <button data-nav="portfolio" class="hover:text-otuics-white transition-colors">Portfolio</button>
-        <button data-nav="skills" class="hover:text-otuics-white transition-colors">Attrezzatura & Abilità</button>
-        <button data-nav="about" class="hover:text-otuics-white transition-colors">Storia & Contatti</button>
+        <button data-goto="portfolio" class="hover:text-white transition-colors">Portfolio</button>
+        <button data-goto="skills" class="hover:text-white transition-colors">Attrezzatura & Abilità</button>
+        <button data-goto="about" class="hover:text-white transition-colors">Storia & Contatti</button>
       </div>
 
       <button id="menuBtn"
@@ -81,254 +79,334 @@
 
     <div id="mobileMenu" class="md:hidden hidden border-t border-white/10 bg-black/85 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4 text-base text-otuics-gray">
-        <button data-nav="portfolio" class="text-left hover:text-white">Portfolio</button>
-        <button data-nav="skills" class="text-left hover:text-white">Attrezzatura & Abilità</button>
-        <button data-nav="about" class="text-left hover:text-white">Storia & Contatti</button>
+        <button data-goto="portfolio" class="text-left hover:text-white">Portfolio</button>
+        <button data-goto="skills" class="text-left hover:text-white">Attrezzatura & Abilità</button>
+        <button data-goto="about" class="text-left hover:text-white">Storia & Contatti</button>
       </div>
     </div>
   </nav>
 
-  <!-- PAGE 1: PORTFOLIO -->
-  <section id="portfolio" class="scroll-mt-24">
-    <!-- HERO -->
-    <header class="relative min-h-[100svh] flex items-center justify-center pt-20 overflow-hidden">
-      <div class="pointer-events-none absolute w-[700px] h-[700px] bg-otuics-red/10 rounded-full blur-[140px]
-                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+  <!-- STAGE (sezioni sovrapposte: ne vedi una sola) -->
+  <main id="stage" class="fixed inset-0 pt-20">
 
-      <!-- Floating PNG (scontornati) -->
-      <img src="assets/lenses/hero-lens-1.png" alt=""
-           class="pointer-events-none select-none hidden sm:block absolute -left-10 top-24 w-[280px] opacity-80"
-           data-float data-rot="-10" data-depth="70" />
-      <img src="assets/lenses/hero-lens-2.png" alt=""
-           class="pointer-events-none select-none hidden sm:block absolute -right-10 bottom-10 w-[340px] opacity-80"
-           data-float data-rot="12" data-depth="90" />
-
-      <div class="relative z-10 text-center px-6">
-        <p class="text-otuics-gray text-sm md:text-base tracking-[0.35em] uppercase" data-fade data-page-anim>
-          Daniele Sciuto
-        </p>
-
-        <h1 class="mt-5 text-5xl md:text-8xl font-semibold tracking-tighter leading-[0.95]" data-fade data-page-anim>
-          Mastering Light <br class="hidden sm:block" />
-          & Time<span class="text-otuics-red">.</span>
-        </h1>
-
-        <p class="mt-6 text-lg md:text-2xl text-otuics-gray max-w-2xl mx-auto" data-fade data-page-anim>
-          Visual Creator. Reggio Calabria<span class="text-otuics-red">.</span>
-        </p>
-
-        <div class="mt-10 flex flex-wrap items-center justify-center gap-6 opacity-80" data-fade data-page-anim>
-          <img src="assets/brands/canon.svg" alt="Canon" class="h-6 md:h-7" />
-          <img src="assets/brands/sony.svg" alt="Sony" class="h-6 md:h-7" />
-          <img src="assets/brands/sigma.svg" alt="Sigma" class="h-6 md:h-7" />
-          <img src="assets/brands/dji.svg" alt="DJI" class="h-6 md:h-7" />
-        </div>
-      </div>
-    </header>
-
-    <!-- SHOWCASE -->
-    <section id="showcase" class="relative">
-      <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
-        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div data-fade data-page-anim>
-            <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
-              The Holy Trinity<span class="text-otuics-red">.</span>
-            </h2>
-            <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
-              Tokina 16-28mm, Canon 24-70mm L, Canon 70-200mm L: versatilità totale per eventi<span class="text-otuics-red">.</span>
+    <!-- HOME (no immagini) -->
+    <section id="home" class="view-section" data-section>
+      <div class="section-scroll px-6 md:px-12">
+        <div class="max-w-7xl mx-auto min-h-[calc(100svh-5rem)] flex items-center">
+          <div class="w-full">
+            <p class="text-otuics-gray tracking-[0.35em] uppercase text-xs md:text-sm">
+              Daniele Sciuto · Visual Creator
             </p>
-          </div>
-          <div class="relative flex justify-center md:justify-end">
-            <img src="assets/lenses/trinity.png" alt="Holy Trinity"
-                 class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
-                 data-lens data-rot="-6" data-depth="110" />
-          </div>
-        </div>
-      </div>
 
-      <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
-        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div class="md:order-2" data-fade data-page-anim>
-            <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
-              The Legend<span class="text-otuics-red">.</span>
-            </h2>
-            <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
-              Canon 85mm f/1.2L: lento, pesante, ma <span class="text-white">magico</span>. Il Re del ritratto<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-          <div class="relative flex justify-center md:justify-start md:order-1">
-            <img src="assets/lenses/85mm.png" alt="Canon 85mm f/1.2L"
-                 class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
-                 data-lens data-legend data-rot="10" data-depth="140" />
-          </div>
-        </div>
-      </div>
+            <h1 class="mt-6 text-5xl md:text-8xl font-semibold tracking-tighter leading-[0.95]">
+              Mastering Light<br class="hidden sm:block" />
+              & Time<span class="text-otuics-red">.</span>
+            </h1>
 
-      <div class="panel min-h-[100svh] flex items-center px-6 md:px-20 py-24">
-        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div data-fade data-page-anim>
-            <h2 class="text-4xl md:text-6xl font-semibold tracking-tight">
-              Low Light & Motion<span class="text-otuics-red">.</span>
-            </h2>
-            <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-xl">
-              Sigma 35mm Art + Canon 50mm f/1.4 + Ronin S: energia quando la luce manca<span class="text-otuics-red">.</span>
+            <p class="mt-7 text-lg md:text-2xl text-otuics-gray max-w-3xl">
+              Creo immagini e video che sembrano semplici, ma sono costruiti con intenzione: ritmo, colore, energia e controllo della luce
+              <span class="text-otuics-red">.</span>
             </p>
-          </div>
-          <div class="relative flex justify-center md:justify-end">
-            <img src="assets/lenses/nightlife.png" alt="Nightlife setup"
-                 class="w-full max-w-[520px] drop-shadow-2xl will-change-transform"
-                 data-lens data-rot="-8" data-depth="120" />
+
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+                <p class="text-xs uppercase tracking-widest text-otuics-gray">Focus</p>
+                <p class="mt-2 text-white/90">
+                  Nightlife, eventi, ritratti, matrimoni<span class="text-otuics-red">.</span>
+                </p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+                <p class="text-xs uppercase tracking-widest text-otuics-gray">Stile</p>
+                <p class="mt-2 text-white/90">
+                  Nero assoluto, contrasti premium, punto rosso come firma<span class="text-otuics-red">.</span>
+                </p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+                <p class="text-xs uppercase tracking-widest text-otuics-gray">Obiettivo</p>
+                <p class="mt-2 text-white/90">
+                  Contenuti che tengono l’attenzione e valorizzano il brand<span class="text-otuics-red">.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-10 flex flex-wrap items-center gap-5 text-otuics-gray">
+              <span class="text-xs uppercase tracking-widest">Trusted gear ecosystem</span>
+              <span class="opacity-40">—</span>
+              <div class="flex flex-wrap items-center gap-6 opacity-90">
+                <img src="assets/brands/canon.svg" alt="Canon" class="h-6 invert" />
+                <img src="assets/brands/sony.svg" alt="Sony" class="h-6 invert" />
+                <img src="assets/brands/sigma.svg" alt="Sigma" class="h-6 invert" />
+                <img src="assets/brands/dji.svg" alt="DJI" class="h-6 invert" />
+              </div>
+            </div>
+
+            <div class="mt-14 flex items-center gap-4">
+              <button data-goto="portfolio"
+                      class="rounded-xl bg-white text-black px-6 py-3 font-semibold hover:bg-white/90 transition">
+                Entra nel Portfolio<span class="text-otuics-red">.</span>
+              </button>
+              <button data-goto="about"
+                      class="rounded-xl border border-white/15 bg-white/5 px-6 py-3 font-semibold hover:bg-white/10 transition">
+                Storia & contatti<span class="text-otuics-red">.</span>
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
     </section>
-  </section>
 
-  <!-- PAGE 2: ATTREZZATURA & ABILITÀ -->
-  <section id="skills" class="scroll-mt-24 py-24 px-6 md:px-12 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-      <div data-page-anim>
-        <h2 class="text-3xl md:text-5xl font-semibold tracking-tight" data-fade>
-          Attrezzatura & Abilità<span class="text-otuics-red">.</span>
-        </h2>
-        <p class="mt-5 text-otuics-gray text-lg max-w-xl" data-fade>
-          Setup completo e competenze operative: fotografia, video, movimento e luce difficile<span class="text-otuics-red">.</span>
-        </p>
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="view-section opacity-0 invisible" data-section>
+      <div class="section-scroll px-6 md:px-12">
+        <div class="max-w-7xl mx-auto py-12 md:py-16">
+          <h2 class="text-3xl md:text-6xl font-semibold tracking-tight">
+            Portfolio<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-3xl">
+            Tre capitoli, tre intenzioni: versatilità per eventi, magia del ritratto, e velocità nel buio
+            <span class="text-otuics-red">.</span>
+          </p>
 
-        <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4" data-fade>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p class="text-sm uppercase tracking-widest text-otuics-gray">Photo</p>
-            <p class="mt-2 text-white/90">Ritratti, eventi, nightlife, matrimoni<span class="text-otuics-red">.</span></p>
+          <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+              <h3 class="text-2xl font-semibold">
+                The Holy Trinity<span class="text-otuics-red">.</span>
+              </h3>
+              <p class="mt-3 text-otuics-gray">
+                Tokina 16-28, Canon 24-70 L, Canon 70-200 L: copertura totale e timing perfetto per ogni evento
+                <span class="text-otuics-red">.</span>
+              </p>
+              <div class="mt-5 rounded-2xl border border-white/10 bg-black overflow-hidden">
+                <img src="assets/lenses/trinity.png" alt="Holy Trinity Lenses"
+                     class="w-full h-64 object-contain p-6" data-floaty />
+              </div>
+            </article>
+
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+              <h3 class="text-2xl font-semibold">
+                The Legend<span class="text-otuics-red">.</span>
+              </h3>
+              <p class="mt-3 text-otuics-gray">
+                Canon 85mm f/1.2L: lento e pesante, ma con un rendering che trasforma il soggetto in presenza
+                <span class="text-otuics-red">.</span>
+              </p>
+              <div class="mt-5 rounded-2xl border border-white/10 bg-black overflow-hidden">
+                <img src="assets/lenses/85mm.png" alt="Canon 85mm f/1.2L"
+                     class="w-full h-64 object-contain p-6" data-legend />
+              </div>
+            </article>
+
+            <article class="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft">
+              <h3 class="text-2xl font-semibold">
+                Low Light & Motion<span class="text-otuics-red">.</span>
+              </h3>
+              <p class="mt-3 text-otuics-gray">
+                Sigma 35 Art + Canon 50 + Ronin S: luce difficile, energia alta, movimenti puliti
+                <span class="text-otuics-red">.</span>
+              </p>
+              <div class="mt-5 rounded-2xl border border-white/10 bg-black overflow-hidden">
+                <img src="assets/lenses/nightlife.png" alt="Nightlife setup"
+                     class="w-full h-64 object-contain p-6" data-floaty />
+              </div>
+            </article>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p class="text-sm uppercase tracking-widest text-otuics-gray">Video</p>
-            <p class="mt-2 text-white/90">Riprese dinamiche, stabilizzazione, storytelling<span class="text-otuics-red">.</span></p>
+
+          <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+              <h3 class="text-xl font-semibold">Cosa consegno<span class="text-otuics-red">.</span></h3>
+              <ul class="mt-4 space-y-2 text-otuics-gray">
+                <li>Selezione e editing coerente (look premium, colori consistenti)<span class="text-otuics-red">.</span></li>
+                <li>Output ottimizzati per social, web e stampa (se richiesto)<span class="text-otuics-red">.</span></li>
+                <li>Video brevi dinamici + cut lunghi (in base al progetto)<span class="text-otuics-red">.</span></li>
+              </ul>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+              <h3 class="text-xl font-semibold">Come lavoro<span class="text-otuics-red">.</span></h3>
+              <p class="mt-4 text-otuics-gray">
+                Prima l’intenzione, poi l’esecuzione: definisco mood, ritmo e vincoli (luce/location/tempo), e costruisco un risultato che “regge” anche senza spiegazioni
+                <span class="text-otuics-red">.</span>
+              </p>
+            </div>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p class="text-sm uppercase tracking-widest text-otuics-gray">Light</p>
-            <p class="mt-2 text-white/90">Low-light, flash control, color consistency<span class="text-otuics-red">.</span></p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p class="text-sm uppercase tracking-widest text-otuics-gray">Delivery</p>
-            <p class="mt-2 text-white/90">Editing rapido, look premium, output social-ready<span class="text-otuics-red">.</span></p>
-          </div>
+
         </div>
       </div>
+    </section>
 
-      <aside class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft" data-page-anim>
-        <h3 class="text-2xl md:text-3xl font-semibold tracking-tight" data-fade>
-          Technical Arsenal<span class="text-otuics-red">.</span>
-        </h3>
+    <!-- ATTREZZATURA & ABILITÀ -->
+    <section id="skills" class="view-section opacity-0 invisible" data-section>
+      <div class="section-scroll px-6 md:px-12">
+        <div class="max-w-7xl mx-auto py-12 md:py-16">
+          <h2 class="text-3xl md:text-6xl font-semibold tracking-tight">
+            Attrezzatura & Abilità<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-3xl">
+            Non è “lista gear”: è la mia grammatica operativa, fatta per essere veloce, ripetibile e pulita
+            <span class="text-otuics-red">.</span>
+          </p>
 
-        <div class="mt-7 space-y-6 text-sm md:text-base" data-fade>
-          <div>
-            <p class="text-otuics-gray uppercase text-xs tracking-widest">Bodies</p>
-            <ul class="mt-3 space-y-2 font-medium">
-              <li class="flex items-center justify-between gap-3">
-                <span>Canon EOS R6</span>
-                <span class="text-otuics-red text-[11px] border border-otuics-red/80 px-2 py-0.5 rounded-full">MAIN</span>
-              </li>
-              <li class="text-otuics-gray">Canon EOS R (Backup)</li>
-            </ul>
+          <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <aside class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+              <h3 class="text-2xl font-semibold">Technical Arsenal<span class="text-otuics-red">.</span></h3>
+
+              <div class="mt-7 space-y-6 text-sm md:text-base">
+                <div>
+                  <p class="text-otuics-gray uppercase text-xs tracking-widest">Bodies</p>
+                  <ul class="mt-3 space-y-2 font-medium">
+                    <li class="flex items-center justify-between gap-3">
+                      <span>Canon EOS R6</span>
+                      <span class="text-otuics-red text-[11px] border border-otuics-red/80 px-2 py-0.5 rounded-full">MAIN</span>
+                    </li>
+                    <li class="text-otuics-gray">Canon EOS R (Backup)</li>
+                  </ul>
+                </div>
+
+                <div class="h-px bg-white/10"></div>
+
+                <div>
+                  <p class="text-otuics-gray uppercase text-xs tracking-widest">Lenses</p>
+                  <ul class="mt-3 space-y-2 font-medium text-white/85">
+                    <li>Canon 28mm f/1.8</li>
+                    <li class="text-white">Sigma 35mm f/1.4 Art</li>
+                    <li>Canon 50mm f/1.4</li>
+                    <li class="text-white">Canon 85mm f/1.2L <span class="ml-2 text-[11px] text-otuics-red">LEGEND</span></li>
+                    <li>Canon 100mm f/2.8 Macro</li>
+                    <li>Canon 8-15mm L Fisheye</li>
+                    <li>Tokina 16-28mm f/2.8</li>
+                    <li class="text-white">Canon 24-70mm f/2.8L</li>
+                    <li class="text-white">Canon 70-200mm f/2.8L</li>
+                  </ul>
+                </div>
+
+                <div class="h-px bg-white/10"></div>
+
+                <div>
+                  <p class="text-otuics-gray uppercase text-xs tracking-widest">Stabilization</p>
+                  <p class="mt-3 font-medium text-white/85">DJI Ronin S</p>
+                </div>
+              </div>
+            </aside>
+
+            <div class="space-y-6">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+                <h3 class="text-2xl font-semibold">Core Skills<span class="text-otuics-red">.</span></h3>
+                <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-otuics-gray">
+                  <div class="rounded-xl border border-white/10 bg-black p-5">
+                    <p class="text-white font-semibold">Low-light control<span class="text-otuics-red">.</span></p>
+                    <p class="mt-2">Esposizione, colori, gestione rumore, flash quando serve<span class="text-otuics-red">.</span></p>
+                  </div>
+                  <div class="rounded-xl border border-white/10 bg-black p-5">
+                    <p class="text-white font-semibold">People direction<span class="text-otuics-red">.</span></p>
+                    <p class="mt-2">Pose naturali, micro-correzioni, energia sul set<span class="text-otuics-red">.</span></p>
+                  </div>
+                  <div class="rounded-xl border border-white/10 bg-black p-5">
+                    <p class="text-white font-semibold">Event timing<span class="text-otuics-red">.</span></p>
+                    <p class="mt-2">Anticipare momenti, storytelling veloce, consegna completa<span class="text-otuics-red">.</span></p>
+                  </div>
+                  <div class="rounded-xl border border-white/10 bg-black p-5">
+                    <p class="text-white font-semibold">Editing consistency<span class="text-otuics-red">.</span></p>
+                    <p class="mt-2">Look coerente, pelle pulita, contrasti controllati<span class="text-otuics-red">.</span></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+                <h3 class="text-2xl font-semibold">Processo<span class="text-otuics-red">.</span></h3>
+                <ol class="mt-5 space-y-2 text-otuics-gray list-decimal list-inside">
+                  <li>Brief rapido: obiettivo, mood, output, tempi<span class="text-otuics-red">.</span></li>
+                  <li>Produzione: riprese ottimizzate (luce, ritmo, copertura)<span class="text-otuics-red">.</span></li>
+                  <li>Post: selezione, colore, consegna, revisioni se previste<span class="text-otuics-red">.</span></li>
+                </ol>
+              </div>
+            </div>
           </div>
 
-          <div class="h-px bg-white/10"></div>
-
-          <div>
-            <p class="text-otuics-gray uppercase text-xs tracking-widest">Lenses</p>
-            <ul class="mt-3 space-y-2 font-medium text-white/85">
-              <li>Canon 28mm f/1.8</li>
-              <li class="text-white">Sigma 35mm f/1.4 Art</li>
-              <li>Canon 50mm f/1.4</li>
-              <li class="text-white">Canon 85mm f/1.2L <span class="ml-2 text-[11px] text-otuics-red">LEGEND</span></li>
-              <li>Canon 100mm f/2.8 Macro</li>
-              <li>Canon 8-15mm L Fisheye</li>
-              <li>Tokina 16-28mm f/2.8</li>
-              <li class="text-white">Canon 24-70mm f/2.8L</li>
-              <li class="text-white">Canon 70-200mm f/2.8L</li>
-            </ul>
-          </div>
-
-          <div class="h-px bg-white/10"></div>
-
-          <div>
-            <p class="text-otuics-gray uppercase text-xs tracking-widest">Stabilization</p>
-            <p class="mt-3 font-medium text-white/85">DJI Ronin S</p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <!-- PAGE 3: STORIA & CONTATTI -->
-  <section id="about" class="scroll-mt-24 py-24 px-6 md:px-12 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
-      <div data-page-anim>
-        <h2 class="text-3xl md:text-5xl font-semibold tracking-tight" data-fade>
-          The Journey<span class="text-otuics-red">.</span>
-        </h2>
-
-        <div class="mt-10 space-y-8" data-fade>
-          <article>
-            <p class="text-otuics-red font-semibold text-xl">2016</p>
-            <h3 class="mt-1 text-xl font-semibold text-white">L’Inizio<span class="text-otuics-red">.</span></h3>
-            <p class="mt-2 text-otuics-gray">Canon 600D, Sigma 17-50, Canon 55-250: ritratti, basket e calcio<span class="text-otuics-red">.</span></p>
-          </article>
-
-          <article>
-            <p class="text-otuics-red font-semibold text-xl">2019</p>
-            <h3 class="mt-1 text-xl font-semibold text-white">Video Era<span class="text-otuics-red">.</span></h3>
-            <p class="mt-2 text-otuics-gray">Fujifilm X‑T3: il movimento diventa protagonista<span class="text-otuics-red">.</span></p>
-          </article>
-
-          <article>
-            <p class="text-otuics-red font-semibold text-xl">2020</p>
-            <h3 class="mt-1 text-xl font-semibold text-white">Sony Full Frame<span class="text-otuics-red">.</span></h3>
-            <p class="mt-2 text-otuics-gray">A7S II, A7R1, A7R2: inizia il mondo dei matrimoni<span class="text-otuics-red">.</span></p>
-          </article>
-
-          <article>
-            <p class="text-otuics-red font-semibold text-xl">2021</p>
-            <h3 class="mt-1 text-xl font-semibold text-white">Nightlife Specialist<span class="text-otuics-red">.</span></h3>
-            <p class="mt-2 text-otuics-gray">Dominare la luce scarsa: energia, ritmo, istinto<span class="text-otuics-red">.</span></p>
-          </article>
-
-          <article>
-            <p class="text-otuics-red font-semibold text-xl">2025</p>
-            <h3 class="mt-1 text-xl font-semibold text-white">Back to Canon<span class="text-otuics-red">.</span></h3>
-            <p class="mt-2 text-otuics-gray">Canon R6 + EOS R: color science e coerenza look premium<span class="text-otuics-red">.</span></p>
-          </article>
         </div>
       </div>
+    </section>
 
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft" data-page-anim>
-        <h2 class="text-2xl md:text-4xl font-semibold tracking-tight" data-fade>
-          Let’s Create<span class="text-otuics-red">.</span>
-        </h2>
+    <!-- STORIA & CONTATTI -->
+    <section id="about" class="view-section opacity-0 invisible" data-section>
+      <div class="section-scroll px-6 md:px-12">
+        <div class="max-w-7xl mx-auto py-12 md:py-16">
+          <h2 class="text-3xl md:text-6xl font-semibold tracking-tight">
+            Storia & Contatti<span class="text-otuics-red">.</span>
+          </h2>
+          <p class="mt-5 text-lg md:text-xl text-otuics-gray max-w-3xl">
+            Una traiettoria chiara: strumenti diversi, stessa ossessione per luce e tempo
+            <span class="text-otuics-red">.</span>
+          </p>
 
-        <p class="mt-4 text-otuics-gray text-lg" data-fade>
-          Contatto diretto, zero frizione<span class="text-otuics-red">.</span>
-        </p>
+          <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+              <h3 class="text-2xl font-semibold">The Journey<span class="text-otuics-red">.</span></h3>
 
-        <a href="mailto:otuicsart@gmail.com"
-           class="mt-8 inline-block text-xl md:text-3xl text-otuics-gray hover:text-white transition-colors underline decoration-otuics-red underline-offset-8"
-           data-fade>
-          otuicsart@gmail.com
-        </a>
+              <div class="mt-6 space-y-6">
+                <article>
+                  <p class="text-otuics-red font-semibold text-xl">2016</p>
+                  <p class="mt-1 text-white font-semibold">Canon 600D: imparare a vedere<span class="text-otuics-red">.</span></p>
+                  <p class="mt-2 text-otuics-gray">Ritratti, basket, calcio. Costruire occhio e disciplina<span class="text-otuics-red">.</span></p>
+                </article>
+                <article>
+                  <p class="text-otuics-red font-semibold text-xl">2019</p>
+                  <p class="mt-1 text-white font-semibold">Video con Fujifilm X‑T3<span class="text-otuics-red">.</span></p>
+                  <p class="mt-2 text-otuics-gray">Movimento, ritmo, tagli: nasce il linguaggio<span class="text-otuics-red">.</span></p>
+                </article>
+                <article>
+                  <p class="text-otuics-red font-semibold text-xl">2020</p>
+                  <p class="mt-1 text-white font-semibold">Sony full frame + matrimoni<span class="text-otuics-red">.</span></p>
+                  <p class="mt-2 text-otuics-gray">Affidabilità, luce variabile, consegna completa<span class="text-otuics-red">.</span></p>
+                </article>
+                <article>
+                  <p class="text-otuics-red font-semibold text-xl">2021</p>
+                  <p class="mt-1 text-white font-semibold">Nightlife specialist<span class="text-otuics-red">.</span></p>
+                  <p class="mt-2 text-otuics-gray">Impatto visivo e velocità nel buio: il mio terreno naturale<span class="text-otuics-red">.</span></p>
+                </article>
+                <article>
+                  <p class="text-otuics-red font-semibold text-xl">2025</p>
+                  <p class="mt-1 text-white font-semibold">Ritorno a Canon per il colore<span class="text-otuics-red">.</span></p>
+                  <p class="mt-2 text-otuics-gray">Color science e look più “mio”, più riconoscibile<span class="text-otuics-red">.</span></p>
+                </article>
+              </div>
+            </div>
 
-        <p class="mt-10 text-sm text-white/40" data-fade>
-          © 2026 otuics<span class="text-otuics-red">.</span> All rights reserved<span class="text-otuics-red">.</span>
-        </p>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-soft">
+              <h3 class="text-2xl font-semibold">Let’s Create<span class="text-otuics-red">.</span></h3>
+              <p class="mt-4 text-otuics-gray text-lg">
+                Se hai un evento, un brand o una storia da rendere memorabile, scrivimi e lo rendiamo semplice: obiettivo chiaro, output pulito, consegna premium
+                <span class="text-otuics-red">.</span>
+              </p>
+
+              <a href="mailto:otuicsart@gmail.com"
+                 class="mt-8 inline-block text-xl md:text-3xl text-otuics-gray hover:text-white transition-colors underline decoration-otuics-red underline-offset-8">
+                otuicsart@gmail.com
+              </a>
+
+              <div class="mt-10 rounded-2xl border border-white/10 bg-black p-6">
+                <p class="text-sm text-otuics-gray uppercase tracking-widest">Availability</p>
+                <p class="mt-2 text-white/90">
+                  Reggio Calabria · Trasferte su richiesta<span class="text-otuics-red">.</span>
+                </p>
+              </div>
+
+              <p class="mt-10 text-sm text-white/40">
+                © 2026 otuics<span class="text-otuics-red">.</span> All rights reserved<span class="text-otuics-red">.</span>
+              </p>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+  </main>
 
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <script>
-    // Menu mobile
+    // Mobile menu
     const menuBtn = document.getElementById('menuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     menuBtn?.addEventListener('click', () => {
@@ -336,64 +414,91 @@
       mobileMenu.classList.toggle('hidden');
       menuBtn.setAttribute('aria-expanded', String(!isOpen));
     });
-
-    // GSAP
-    gsap.registerPlugin(ScrollTrigger); // consigliato per evitare problemi di plugin [web:12]
-
-    const overlay = document.getElementById('transitionOverlay');
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let transitioning = false;
-
     function closeMobileMenu() {
-      if (!mobileMenu) return;
-      mobileMenu.classList.add('hidden');
+      mobileMenu?.classList.add('hidden');
       menuBtn?.setAttribute('aria-expanded', 'false');
     }
 
-    function pageIntro(targetSection) {
-      if (prefersReduced.matches) return;
-      const items = targetSection.querySelectorAll('[data-page-anim] [data-fade], [data-page-anim][data-fade]');
-      if (!items.length) return;
+    // Section system (una sola visibile)
+    const overlay = document.getElementById('transitionOverlay');
+    const sections = Array.from(document.querySelectorAll('[data-section]'));
+    const sectionIds = sections.map(s => s.id);
 
+    let active = 0;
+    let locked = false;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setVisibility(idx) {
+      sections.forEach((s, i) => {
+        if (i === idx) {
+          s.classList.remove('invisible');
+          s.style.opacity = 1;
+          s.style.pointerEvents = 'auto';
+        } else {
+          s.classList.add('invisible');
+          s.style.opacity = 0;
+          s.style.pointerEvents = 'none';
+        }
+      });
+    }
+
+    function introAnimations(targetSection) {
+      if (prefersReduced) return;
+      const items = targetSection.querySelectorAll('h1,h2,h3,p,article,aside,li,button,a,img');
       gsap.fromTo(items,
-        { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", stagger: 0.04, overwrite: true }
+        { y: 10, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out', stagger: 0.01, overwrite: true }
       );
     }
 
-    function goToSection(id) {
-      const target = document.getElementById(id);
-      if (!target || transitioning) return;
+    function gotoSectionByIndex(next) {
+      next = Math.max(0, Math.min(sections.length - 1, next));
+      if (next === active || locked) return;
 
-      transitioning = true;
+      locked = true;
       closeMobileMenu();
 
-      const doJump = () => {
-        target.scrollIntoView({ behavior: "instant", block: "start" });
-        history.replaceState(null, "", `#${id}`);
+      const currentSection = sections[active];
+      const nextSection = sections[next];
+
+      // reset scroll interno se vuoi (commenta se non lo vuoi)
+      // nextSection.querySelector('.section-scroll')?.scrollTo({ top: 0, behavior: 'instant' });
+
+      const doSwitch = () => {
+        // nascondo current, mostro next
+        currentSection.classList.add('invisible');
+        currentSection.style.opacity = 0;
+        currentSection.style.pointerEvents = 'none';
+
+        nextSection.classList.remove('invisible');
+        nextSection.style.opacity = 1;
+        nextSection.style.pointerEvents = 'auto';
+
+        active = next;
+        history.replaceState(null, "", `#${sectionIds[active]}`);
       };
 
-      if (prefersReduced.matches) {
-        doJump();
-        transitioning = false;
+      if (prefersReduced) {
+        doSwitch();
+        locked = false;
         return;
       }
 
-      // Fade in overlay -> jump -> fade out overlay
       gsap.to(overlay, {
         autoAlpha: 1,
-        duration: 0.28,
-        ease: "power2.out",
+        duration: 0.22,
+        ease: 'power2.out',
         onComplete: () => {
-          doJump();
+          doSwitch();
           requestAnimationFrame(() => {
             gsap.to(overlay, {
               autoAlpha: 0,
-              duration: 0.35,
-              ease: "power2.out",
+              duration: 0.30,
+              ease: 'power2.out',
               onComplete: () => {
-                transitioning = false;
-                pageIntro(target);
+                locked = false;
+                introAnimations(nextSection);
               }
             });
           });
@@ -401,105 +506,83 @@
       });
     }
 
-    // Bind nav buttons
-    document.querySelectorAll('[data-nav]').forEach(btn => {
-      btn.addEventListener('click', () => goToSection(btn.getAttribute('data-nav')));
+    function gotoSection(id) {
+      const idx = sectionIds.indexOf(id);
+      if (idx !== -1) gotoSectionByIndex(idx);
+    }
+
+    // Nav bindings
+    document.querySelectorAll('[data-goto]').forEach(btn => {
+      btn.addEventListener('click', () => gotoSection(btn.getAttribute('data-goto')));
     });
 
-    // First load: se c'è hash, vai lì senza animazione
-    window.addEventListener('load', () => {
-      const id = location.hash?.replace('#', '');
-      if (id && document.getElementById(id)) {
-        document.getElementById(id).scrollIntoView({ behavior: "instant", block: "start" });
+    // Wheel: cambia sezione (senza vedere le altre)
+    let wheelAcc = 0;
+    window.addEventListener('wheel', (e) => {
+      if (locked) return;
+      e.preventDefault();
+
+      wheelAcc += e.deltaY;
+      const threshold = 80;
+
+      if (wheelAcc > threshold) {
+        wheelAcc = 0;
+        gotoSectionByIndex(active + 1);
+      } else if (wheelAcc < -threshold) {
+        wheelAcc = 0;
+        gotoSectionByIndex(active - 1);
       }
+    }, { passive: false });
+
+    // Touch swipe (mobile)
+    let touchY = null;
+    window.addEventListener('touchstart', (e) => {
+      touchY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      if (touchY === null || locked) return;
+      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : touchY;
+      const diff = touchY - endY;
+      const min = 55;
+
+      if (diff > min) gotoSectionByIndex(active + 1);
+      if (diff < -min) gotoSectionByIndex(active - 1);
+      touchY = null;
+    }, { passive: true });
+
+    // Keyboard
+    window.addEventListener('keydown', (e) => {
+      if (locked) return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') gotoSectionByIndex(active + 1);
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') gotoSectionByIndex(active - 1);
+      if (e.key === 'Home') gotoSectionByIndex(0);
+      if (e.key === 'End') gotoSectionByIndex(sections.length - 1);
     });
 
-    // Fade-in base (scroll)
-    if (!prefersReduced.matches) {
-      gsap.utils.toArray("[data-fade]").forEach((el) => {
-        gsap.from(el, {
-          y: 24,
-          opacity: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 80%" }
-        });
+    // Micro-animazioni immagini (solo non-Home)
+    if (!prefersReduced) {
+      gsap.utils.toArray('[data-floaty]').forEach((img) => {
+        gsap.to(img, { y: -10, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        gsap.to(img, { rotate: 1.6, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
       });
 
-      // Float hero PNG
-      gsap.utils.toArray("[data-float]").forEach((el) => {
-        const depth = Number(el.getAttribute("data-depth") || 70);
-        const rot = Number(el.getAttribute("data-rot") || 0);
-        gsap.fromTo(el,
-          { y: depth * 0.3, rotate: rot, opacity: 0.0 },
-          {
-            y: -depth * 0.3,
-            rotate: -rot,
-            opacity: 0.85,
-            ease: "none",
-            scrollTrigger: {
-              trigger: "#portfolio",
-              start: "top top",
-              end: "bottom top",
-              scrub: 1
-            }
-          }
-        );
-      });
-
-      // Lenses parallax
-      gsap.utils.toArray("[data-lens]").forEach((el) => {
-        const depth = Number(el.getAttribute("data-depth") || 120);
-        const rot = Number(el.getAttribute("data-rot") || 0);
-
-        gsap.fromTo(el,
-          { y: depth * 0.25, rotate: rot, scale: 0.96, opacity: 0.9 },
-          {
-            y: -depth * 0.25,
-            rotate: -rot,
-            scale: 1.0,
-            opacity: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el.closest(".panel"),
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1
-            }
-          }
-        );
-      });
-
-      // Pin panels (solo desktop)
-      gsap.matchMedia().add("(min-width: 768px)", () => {
-        gsap.utils.toArray(".panel").forEach((panel) => {
-          ScrollTrigger.create({
-            trigger: panel,
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            pinSpacing: true
-          });
-        });
-      });
-
-      // Legend glow
-      const legend = document.querySelector("[data-legend]");
+      const legend = document.querySelector('[data-legend]');
       if (legend) {
-        gsap.fromTo(legend,
-          { filter: "drop-shadow(0 0 0 rgba(255,0,0,0))" },
-          {
-            filter: "drop-shadow(0 0 40px rgba(255,0,0,0.25))",
-            scrollTrigger: {
-              trigger: legend.closest(".panel"),
-              start: "top 60%",
-              end: "bottom 40%",
-              scrub: 1
-            }
-          }
-        );
+        gsap.to(legend, { y: -8, duration: 2.0, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        gsap.to(legend, { filter: "drop-shadow(0 0 40px rgba(255,0,0,0.25))", duration: 1.2, ease: 'power2.out' });
       }
     }
+
+    // Init (hash)
+    (function init() {
+      const hash = location.hash?.replace('#', '');
+      const startIdx = hash ? sectionIds.indexOf(hash) : -1;
+      active = (startIdx >= 0) ? startIdx : 0;
+      setVisibility(active);
+      if (!prefersReduced) introAnimations(sections[active]);
+    })();
   </script>
+
 </body>
 </html>
