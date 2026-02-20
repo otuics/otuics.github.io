@@ -1,888 +1,393 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <meta name="theme-color" content="#000000" />
-  <title>otuics. — Visual Creator</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'otuics-red': '#ff0000',
-          },
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'sans-serif'],
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>otuics. — Visual Creator</title>
+    <style>
+        /* =========================================
+           CORE ARCHITECTURE & VARIABLES
+           ========================================= */
+        :root {
+            --bg-color: #000000;
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+            --accent-red: #ff2d55;
+            --glass-bg: rgba(30, 30, 32, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --blur: blur(24px);
+            --transition-speed: 0.5s;
+            --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
-      }
-    }
-  </script>
 
-  <style>
-    * { 
-      -webkit-font-smoothing: antialiased; 
-      -moz-osx-font-smoothing: grayscale; 
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    }
-    
-    body { 
-      margin: 0; 
-      background: #000; 
-      overflow: hidden; 
-      color: #fff;
-    }
-    
-    ::selection { 
-      background: #ff0000; 
-      color: #fff; 
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-    /* Liquid Glass Effect - Enhanced Blur */
-    .liquid-glass-top {
-      background: linear-gradient(180deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 40%, rgba(0,0,0,0.70) 70%, transparent 100%);
-      backdrop-filter: saturate(180%) blur(50px);
-      -webkit-backdrop-filter: saturate(180%) blur(50px);
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* NO SCROLLING */
+            position: relative;
+        }
 
-    .liquid-glass-bottom {
-      background: linear-gradient(0deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 40%, rgba(0,0,0,0.70) 70%, transparent 100%);
-      backdrop-filter: saturate(180%) blur(50px);
-      -webkit-backdrop-filter: saturate(180%) blur(50px);
-    }
+        /* =========================================
+           HEADER & NAVIGATION (iOS DOCK STYLE)
+           ========================================= */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none; /* Let clicks pass through empty spaces */
+        }
 
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-    }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            pointer-events: auto;
+        }
 
-    .glass-strong {
-      background: rgba(0, 0, 0, 0.80);
-      backdrop-filter: saturate(180%) blur(60px);
-      -webkit-backdrop-filter: saturate(180%) blur(60px);
-    }
+        .dot { color: var(--accent-red); }
 
-    .page-view {
-      position: fixed;
-      inset: 0;
-      top: 70px;
-      bottom: 80px;
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.98);
-      transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
-    }
+        .btn-reserved {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.2s var(--ease-apple), background 0.2s;
+        }
 
-    .page-view.active {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1);
-    }
+        .btn-reserved:hover {
+            transform: scale(1.05);
+            background: rgba(50, 50, 55, 0.8);
+        }
 
-    .page-view::-webkit-scrollbar { 
-      display: none; 
-    }
+        /* iOS Floating Dock Navigation */
+        nav {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 30px;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+        }
 
-    .card-glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      opacity: 0;
-      transform: translateY(30px) scale(0.95);
-    }
+        nav button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-apple);
+        }
 
-    .card-glass.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+        nav button:hover {
+            color: var(--text-main);
+        }
 
-    .card-glass.in-view {
-      transform: scale(1.03);
-      box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), 0 0 80px rgba(255, 0, 0, 0.15);
-      border-color: rgba(255, 0, 0, 0.3);
-    }
-    
-    .card-glass:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 0, 0, 0.25);
-      transform: scale(1.05) translateY(-2px);
-      box-shadow: 0 20px 60px rgba(255, 0, 0, 0.2);
-    }
+        nav button.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
 
-    .portfolio-card {
-      position: relative;
-      overflow: hidden;
-      aspect-ratio: 1;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      opacity: 0;
-      transform: translateY(30px) scale(0.95);
-    }
+        /* =========================================
+           VIEW MANAGEMENT (THE "PAGES")
+           ========================================= */
+        .view-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
 
-    .portfolio-card.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.98);
+            transition: opacity var(--transition-speed) var(--ease-apple),
+                        transform var(--transition-speed) var(--ease-apple),
+                        visibility var(--transition-speed);
+        }
 
-    .portfolio-card.in-view {
-      transform: scale(1.05);
-      box-shadow: 0 0 50px rgba(255, 0, 0, 0.4), 0 0 100px rgba(255, 0, 0, 0.2);
-    }
+        .view.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
 
-    .portfolio-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+        /* =========================================
+           TYPOGRAPHY & COMPONENTS
+           ========================================= */
+        h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 1rem;
+        }
 
-    .portfolio-card:hover img {
-      transform: scale(1.08);
-    }
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
 
-    .portfolio-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 35%, transparent 65%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.5rem;
-      pointer-events: none;
-    }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: transform 0.3s var(--ease-apple);
+        }
 
-    /* Photo Slider */
-    .photo-slider {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
 
-    .photo-slide {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity 1.5s ease-in-out;
-    }
+        /* Specific View Layouts */
+        /* Home */
+        #home {
+            /* Placeholder for the big background image, replace the URL */
+            background-image: radial-gradient(circle at center, rgba(30,30,40,0.8) 0%, #000000 70%), url('https://images.unsplash.com/photo-1540039155732-6761b346487e?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        #home h1 { font-size: 8rem; }
 
-    .photo-slide.active {
-      opacity: 1;
-    }
+        /* Portfolio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 3rem;
+        }
 
-    .photo-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
+        .portfolio-card {
+            height: 400px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
 
-    .photo-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%);
-    }
+        /* Replace these with your actual image paths in GitHub */
+        .card-wedding { background-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent), url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop'); }
+        .card-nightlife { background-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent), url('https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=800&auto=format&fit=crop'); }
+        .card-ritratti { background-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
 
-    /* PIN Modal */
-    .pin-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.95);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
+        .portfolio-card h3 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .portfolio-card p { color: var(--text-muted); font-size: 0.9rem; }
 
-    .pin-modal.show {
-      display: flex;
-      animation: fadeIn 0.3s ease;
-    }
+        /* Gear */
+        .gear-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 3rem;
+        }
+        
+        .gear-list { list-style: none; margin-top: 1.5rem; }
+        .gear-list li { 
+            padding: 0.8rem 0; 
+            border-bottom: 1px solid var(--glass-border); 
+            display: flex;
+            justify-content: space-between;
+        }
+        .gear-list li:last-child { border-bottom: none; }
+        .badge { background: rgba(255,45,85,0.2); color: var(--accent-red); padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.7rem; font-weight: bold;}
 
-    .pin-input {
-      width: 50px;
-      height: 60px;
-      font-size: 24px;
-      text-align: center;
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      color: white;
-      font-weight: 600;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-    }
+        /* About / Storia */
+        .timeline {
+            max-width: 800px;
+            width: 100%;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .timeline-item h3 { color: var(--accent-red); font-size: 1.5rem; margin-bottom: 1rem; }
+        .timeline-item p { color: var(--text-muted); line-height: 1.6; font-size: 1.1rem; }
 
-    .pin-input:focus {
-      outline: none;
-      border-color: #ff0000;
-      background: rgba(255,255,255,0.15);
-    }
-
-    .pin-error {
-      animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Scroll Animation Classes */
-    .scroll-animate {
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-  </style>
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header { padding: 1.5rem; }
+            h1 { font-size: 3rem !important; }
+            .portfolio-grid, .gear-grid { grid-template-columns: 1fr; }
+            .view { padding: 5rem 1.5rem; justify-content: flex-start; padding-top: 8rem; }
+            .portfolio-card { height: 250px; }
+            nav { width: 90%; justify-content: space-between; }
+            nav button { padding: 0.6rem 1rem; font-size: 0.8rem; }
+        }
+    </style>
 </head>
-
 <body>
 
-  <!-- TOP NAV -->
-  <nav class="fixed top-0 left-0 right-0 z-50 liquid-glass-top">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[70px] flex items-center justify-between">
-      <div class="text-3xl sm:text-4xl font-medium tracking-tight" style="font-weight: 550;">
-        otuics<span class="text-otuics-red text-4xl sm:text-5xl">.</span>
-      </div>
+    <header>
+        <div class="logo">otuics<span class="dot">.</span></div>
+        <button class="btn-reserved">Area Riservata</button>
+    </header>
 
-      <button onclick="openPinModal()" class="glass px-5 py-2.5 rounded-full border border-white/10 hover:border-white/20 transition text-sm font-semibold tracking-wide">
-        Area Riservata
-      </button>
-    </div>
-  </nav>
+    <div class="view-container">
+        
+        <section id="home" class="view active">
+            <h1>otuics<span class="dot">.</span></h1>
+            <p class="subtitle">Visual Creator</p>
+        </section>
 
-  <!-- PIN MODAL -->
-  <div id="pinModal" class="pin-modal">
-    <div class="glass-strong rounded-3xl p-8 sm:p-10 border border-white/10 max-w-md w-full mx-4">
-      <h3 class="text-2xl font-bold text-white mb-2 text-center">Area Riservata</h3>
-      <p class="text-sm text-gray-400 mb-8 text-center">Inserisci il codice di 6 cifre</p>
-      
-      <div class="flex gap-3 justify-center mb-6">
-        <input type="text" maxlength="1" class="pin-input" id="pin1" />
-        <input type="text" maxlength="1" class="pin-input" id="pin2" />
-        <input type="text" maxlength="1" class="pin-input" id="pin3" />
-        <input type="text" maxlength="1" class="pin-input" id="pin4" />
-        <input type="text" maxlength="1" class="pin-input" id="pin5" />
-        <input type="text" maxlength="1" class="pin-input" id="pin6" />
-      </div>
-
-      <p id="pinError" class="text-otuics-red text-sm text-center mb-4 h-5"></p>
-
-      <div class="flex gap-3">
-        <button onclick="closePinModal()" class="flex-1 px-6 py-3 rounded-full border border-white/20 glass font-semibold text-sm hover:bg-white/10 transition">
-          Annulla
-        </button>
-        <button onclick="verifyPin()" class="flex-1 px-6 py-3 rounded-full bg-otuics-red text-white font-semibold text-sm hover:bg-red-600 transition">
-          Accedi
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAGES -->
-  <main>
-
-    <!-- HOME -->
-    <div id="page-home" class="page-view active">
-      <div class="photo-slider">
-        <div class="photo-slide active">
-          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=90" alt="Wedding" />
-        </div>
-        <div class="photo-slide">
-          <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1920&q=90" alt="Nightlife" />
-        </div>
-        <div class="photo-slide">
-          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1920&q=90" alt="Portrait" />
-        </div>
-        <div class="photo-slide">
-          <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&q=90" alt="Corporate" />
-        </div>
-        <div class="photo-slide">
-          <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&q=90" alt="Sport" />
-        </div>
-        <div class="photo-slide">
-          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=90" alt="Landscape" />
-        </div>
-        <div class="photo-overlay"></div>
-      </div>
-
-      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div class="text-center px-4">
-          <h1 class="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] font-black tracking-[-0.04em] leading-[0.8] text-white drop-shadow-2xl">
-            otuics<span class="text-otuics-red">.</span>
-          </h1>
-          <p class="mt-8 text-xl sm:text-2xl md:text-3xl text-white font-semibold drop-shadow-lg">
-            Visual Creator
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- PORTFOLIO -->
-    <div id="page-portfolio" class="page-view">
-      <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
-        <div class="mb-10 scroll-animate">
-          <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight">
-            Portfolio<span class="text-otuics-red">.</span>
-          </h2>
-          <p class="mt-5 text-lg sm:text-xl text-gray-400 max-w-3xl font-medium">
-            Ogni categoria ha la sua grammatica: timing, composizione, intenzione<span class="text-otuics-red">.</span>
-          </p>
-        </div>
-
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=90" alt="Wedding" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Wedding<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Emozioni irripetibili</p>
+        <section id="portfolio" class="view">
+            <div style="text-align: center; width: 100%; max-width: 1200px; text-align: left;">
+                <h1>Portfolio<span class="dot">.</span></h1>
+                <p class="subtitle">Ogni categoria ha la sua grammatica: timing, composizione, intenzione<span class="dot">.</span></p>
             </div>
-          </div>
-
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=90" alt="Nightlife" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Nightlife<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Energia pura</p>
+            <div class="portfolio-grid">
+                <div class="portfolio-card card-wedding">
+                    <h3>Wedding<span class="dot">.</span></h3>
+                    <p>Emozioni irripetibili</p>
+                </div>
+                <div class="portfolio-card card-nightlife">
+                    <h3>Nightlife<span class="dot">.</span></h3>
+                    <p>Energia pura</p>
+                </div>
+                <div class="portfolio-card card-ritratti">
+                    <h3>Ritratti<span class="dot">.</span></h3>
+                    <p>Presenza magnetica</p>
+                </div>
             </div>
-          </div>
+        </section>
 
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1200&q=90" alt="Portrait" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Ritratti<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Presenza magnetica</p>
+        <section id="gear" class="view">
+            <div style="width: 100%; max-width: 1000px; text-align: left;">
+                <h1>Gear<span class="dot">.</span></h1>
+                <p class="subtitle">Sistema veloce, affidabile, ripetibile<span class="dot">.</span></p>
             </div>
-          </div>
-
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=90" alt="Corporate" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Corporate<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Brand image</p>
+            <div class="gear-grid">
+                <div class="glass-card">
+                    <h3>📷 Bodies<span class="dot">.</span></h3>
+                    <ul class="gear-list">
+                        <li>Canon EOS R6 <span class="badge">MAIN</span></li>
+                        <li>Canon EOS R (Backup)</li>
+                        <li>Canon 600D (Archive)</li>
+                    </ul>
+                </div>
+                <div class="glass-card">
+                    <h3>🎥 Stabilization<span class="dot">.</span></h3>
+                    <ul class="gear-list">
+                        <li>
+                            <div>
+                                <strong>DJI Ronin S</strong><br>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">3-axis gimbal per movimenti fluidi e dinamici</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
+        </section>
 
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=90" alt="Sport" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Sport<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Dinamica viva</p>
+        <section id="about" class="view">
+            <div style="width: 100%; max-width: 800px; text-align: left;">
+                <h1>Storia<span class="dot">.</span></h1>
             </div>
-          </div>
-
-          <div class="portfolio-card card-glass rounded-3xl scroll-animate">
-            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=90" alt="Landscape" loading="lazy" />
-            <div class="portfolio-overlay">
-              <h3 class="text-2xl sm:text-3xl font-bold text-white">Paesaggi<span class="text-otuics-red">.</span></h3>
-              <p class="text-sm sm:text-base text-white/80 mt-1 font-medium">Luce naturale</p>
+            <div class="timeline">
+                <div class="glass-card timeline-item">
+                    <h3>2016</h3>
+                    <p>Ho iniziato con una <strong>Canon 600D</strong>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto<span class="dot">.</span></p>
+                </div>
+                <div class="glass-card timeline-item">
+                    <h3>2019</h3>
+                    <p>Passaggio al video: <strong>Fujifilm X-T3</strong>. Ho scoperto che il movimento cambia tutto. Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="dot">.</span></p>
+                </div>
             </div>
-          </div>
+        </section>
 
-        </div>
-      </div>
     </div>
 
-    <!-- GEAR -->
-    <div id="page-gear" class="page-view">
-      <div class="px-4 sm:px-6 py-12 max-w-7xl mx-auto">
-        <div class="mb-10 scroll-animate">
-          <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white">
-            Gear<span class="text-otuics-red">.</span>
-          </h2>
-          <p class="mt-5 text-lg sm:text-xl text-gray-400 max-w-3xl font-medium">
-            Sistema veloce, affidabile, ripetibile<span class="text-otuics-red">.</span>
-          </p>
-        </div>
+    <nav>
+        <button class="nav-btn active" data-target="home">Home</button>
+        <button class="nav-btn" data-target="portfolio">Portfolio</button>
+        <button class="nav-btn" data-target="gear">Gear</button>
+        <button class="nav-btn" data-target="about">About</button>
+    </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-          
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center">
-                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-              </div>
-              <h3 class="text-2xl font-bold text-white">Bodies<span class="text-otuics-red">.</span></h3>
-            </div>
-            <ul class="space-y-3 text-gray-300">
-              <li class="flex items-center justify-between text-white font-semibold">
-                <span>Canon EOS R6</span>
-                <span class="text-xs px-3 py-1 rounded-full glass border border-otuics-red/50 text-otuics-red">MAIN</span>
-              </li>
-              <li>Canon EOS R (Backup)</li>
-              <li>Canon 600D (Archive)</li>
-            </ul>
-          </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const views = document.querySelectorAll('.view');
 
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center">
-                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-              </div>
-              <h3 class="text-2xl font-bold text-white">Stabilization<span class="text-otuics-red">.</span></h3>
-            </div>
-            <p class="text-white font-semibold mb-2">DJI Ronin S</p>
-            <p class="text-sm text-gray-400">3-axis gimbal per movimenti fluidi e dinamici</p>
-          </div>
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 1. Evita ricalcoli se la vista è già attiva
+                    if(btn.classList.contains('active')) return;
 
-        </div>
+                    const targetId = btn.getAttribute('data-target');
 
-        <div class="card-glass rounded-3xl p-8 mb-6 scroll-animate">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center">
-              <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/></svg>
-            </div>
-            <h3 class="text-2xl sm:text-3xl font-bold text-white">Lenses<span class="text-otuics-red">.</span></h3>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p class="text-xs uppercase tracking-wider text-otuics-red font-bold mb-4">Prime</p>
-              <ul class="space-y-2.5 text-sm sm:text-base">
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-otuics-red mt-2 flex-shrink-0"></span>
-                  <span class="text-white font-semibold">Canon EF 85mm f/1.2L USM</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 50mm f/1.4 USM</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Sigma 35mm f/1.4 DG HSM Art</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 28mm f/1.8 USM</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 100mm f/2.8 Macro USM</span>
-                </li>
-              </ul>
-            </div>
+                    // 2. Aggiorna lo stato della navigazione
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
 
-            <div>
-              <p class="text-xs uppercase tracking-wider text-otuics-red font-bold mb-4">Zoom</p>
-              <ul class="space-y-2.5 text-sm sm:text-base">
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 8-15mm f/4L Fisheye USM</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Tokina AT-X 16-28mm f/2.8 Pro FX</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 24-70mm f/2.8L II USM</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0"></span>
-                  <span class="text-gray-400">Canon EF 70-200mm f/2.8L IS II USM</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-white scroll-animate">
-            Kit Configurations<span class="text-otuics-red">.</span>
-          </h3>
-
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
-            <h4 class="text-xl font-bold mb-2 text-white">Wedding Kit<span class="text-otuics-red">.</span></h4>
-            <p class="text-sm text-gray-400 mb-3">Copertura completa + ritratti premium</p>
-            <p class="text-sm font-mono text-gray-300">24-70mm f/2.8L + 85mm f/1.2L + 70-200mm f/2.8L</p>
-          </div>
-
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
-            <h4 class="text-xl font-bold mb-2 text-white">Nightlife Kit<span class="text-otuics-red">.</span></h4>
-            <p class="text-sm text-gray-400 mb-3">Luce scarsa + movimento dinamico</p>
-            <p class="text-sm font-mono text-gray-300">35mm f/1.4 Art + 50mm f/1.4 + Ronin S</p>
-          </div>
-
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
-            <h4 class="text-xl font-bold mb-2 text-white">Event Trinity<span class="text-otuics-red">.</span></h4>
-            <p class="text-sm text-gray-400 mb-3">Versatilità massima per corporate/sport</p>
-            <p class="text-sm font-mono text-gray-300">16-28mm f/2.8 + 24-70mm f/2.8L + 70-200mm f/2.8L</p>
-          </div>
-
-          <div class="card-glass rounded-2xl p-6 hover:bg-white/5 transition scroll-animate">
-            <h4 class="text-xl font-bold mb-2 text-white">Portrait Kit<span class="text-otuics-red">.</span></h4>
-            <p class="text-sm text-gray-400 mb-3">Isolamento soggetto + rendering magico</p>
-            <p class="text-sm font-mono text-gray-300">85mm f/1.2L + 50mm f/1.4 + 100mm f/2.8 Macro</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ABOUT -->
-    <div id="page-about" class="page-view">
-      <div class="px-4 sm:px-6 py-12 max-w-5xl mx-auto">
-        <div class="mb-10 scroll-animate">
-          <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white">
-            Storia<span class="text-otuics-red">.</span>
-          </h2>
-        </div>
-
-        <div class="space-y-5 mb-8">
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <p class="text-otuics-red font-bold text-xl mb-3">2016</p>
-            <p class="text-lg leading-relaxed text-gray-300">
-              Ho iniziato con una <span class="text-white font-semibold">Canon 600D</span>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <p class="text-otuics-red font-bold text-xl mb-3">2019</p>
-            <p class="text-lg leading-relaxed text-gray-300">
-              Passaggio al video: <span class="text-white font-semibold">Fujifilm X-T3</span>. Ho scoperto che il movimento cambia tutto. Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <p class="text-otuics-red font-bold text-xl mb-3">2020</p>
-            <p class="text-lg leading-relaxed text-gray-300">
-              Salto al full frame con <span class="text-white font-semibold">Sony A7S II, A7R1, A7R2</span>. Comincio a lavorare sui matrimoni: luce variabile, emozioni irripetibili, zero margine di errore. Sony mi ha insegnato l'affidabilità sotto stress<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <p class="text-otuics-red font-bold text-xl mb-3">2021</p>
-            <p class="text-lg leading-relaxed text-gray-300">
-              Specializzazione in <span class="text-white font-semibold">fotografia nightlife e discoteche</span>. Buio, velocità, energia pura. ISO alti, messa a fuoco istantanea, composizione nel flusso. La nightlife mi ha dato il ritmo<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-
-          <div class="card-glass rounded-3xl p-8 scroll-animate">
-            <p class="text-otuics-red font-bold text-xl mb-3">2025</p>
-            <p class="text-lg leading-relaxed text-gray-300">
-              Ritorno a Canon: <span class="text-white font-semibold">EOS R6 + EOS R</span>. Color science definitiva. I colori Canon sono "miei": pelle pulita, toni caldi naturali, look riconoscibile senza post-produzione pesante<span class="text-otuics-red">.</span>
-            </p>
-          </div>
-        </div>
-
-        <div class="card-glass rounded-3xl p-8 sm:p-10 border-2 border-otuics-red/20 scroll-animate">
-          <h3 class="text-3xl sm:text-4xl font-bold mb-6 text-white">
-            Contatti<span class="text-otuics-red">.</span>
-          </h3>
-          <p class="text-lg text-gray-300 mb-8">
-            Se hai un progetto che richiede controllo visivo totale e consegna premium, scriviamo il brief<span class="text-otuics-red">.</span>
-          </p>
-          
-          <a href="mailto:otuicsart@gmail.com" class="inline-block text-2xl sm:text-3xl font-bold text-white hover:text-otuics-red transition mb-8">
-            otuicsart@gmail.com
-          </a>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <a href="https://instagram.com/otuicsart" target="_blank" rel="noopener" class="glass rounded-2xl p-5 hover:bg-white/10 transition flex items-center gap-4">
-              <svg class="w-6 h-6 text-otuics-red flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-              <div>
-                <p class="text-xs text-gray-500 uppercase tracking-wide">Instagram</p>
-                <p class="text-white font-semibold">@otuicsart</p>
-              </div>
-            </a>
-
-            <a href="https://facebook.com/otuics" target="_blank" rel="noopener" class="glass rounded-2xl p-5 hover:bg-white/10 transition flex items-center gap-4">
-              <svg class="w-6 h-6 text-otuics-red flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              <div>
-                <p class="text-xs text-gray-500 uppercase tracking-wide">Facebook</p>
-                <p class="text-white font-semibold">@otuics</p>
-              </div>
-            </a>
-          </div>
-
-          <div class="glass rounded-2xl p-6">
-            <p class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-bold">Base</p>
-            <p class="text-white font-semibold text-lg">📍 Reggio Calabria, Italia</p>
-            <p class="text-sm text-gray-400 mt-1">Trasferte Italia/Europa su richiesta</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </main>
-
-  <!-- BOTTOM NAV -->
-  <nav class="fixed bottom-0 left-0 right-0 z-50 liquid-glass-bottom">
-    <div class="max-w-lg mx-auto px-4 h-[80px] pb-5 flex items-center justify-around">
-      <button onclick="goToPage('home')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="home">
-        <span class="text-xs font-semibold tracking-wide">Home</span>
-      </button>
-
-      <button onclick="goToPage('portfolio')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="portfolio">
-        <span class="text-xs font-semibold tracking-wide">Portfolio</span>
-      </button>
-
-      <button onclick="goToPage('gear')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="gear">
-        <span class="text-xs font-semibold tracking-wide">Gear</span>
-      </button>
-
-      <button onclick="goToPage('about')" class="nav-item flex flex-col items-center gap-1 text-gray-500 transition-colors" data-page="about">
-        <span class="text-xs font-semibold tracking-wide">About</span>
-      </button>
-    </div>
-  </nav>
-
-  <script>
-    // Sound Effects using Web Audio API
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playClickSound() {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 800;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    }
-
-    function playTransitionSound() {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(900, audioContext.currentTime + 0.15);
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.15);
-    }
-
-    // Photo Slider
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.photo-slide');
-    const totalSlides = slides.length;
-
-    function showNextSlide() {
-      slides[currentSlide].classList.remove('active');
-      currentSlide = (currentSlide + 1) % totalSlides;
-      slides[currentSlide].classList.add('active');
-    }
-
-    setInterval(showNextSlide, 4000);
-
-    // Scroll Animation with Intersection Observer
-    const observerOptions = {
-      threshold: 0.3,
-      rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          
-          // Add in-view class for center elements
-          const rect = entry.boundingClientRect;
-          const viewportHeight = window.innerHeight;
-          const elementCenter = rect.top + rect.height / 2;
-          const viewportCenter = viewportHeight / 2;
-          
-          if (Math.abs(elementCenter - viewportCenter) < 150) {
-            entry.target.classList.add('in-view');
-          } else {
-            entry.target.classList.remove('in-view');
-          }
-        }
-      });
-    }, observerOptions);
-
-    // Observe all scroll-animate elements
-    function observeElements() {
-      document.querySelectorAll('.scroll-animate').forEach(el => {
-        observer.observe(el);
-      });
-    }
-
-    // PIN Modal
-    const CORRECT_PIN = '123456';
-
-    function openPinModal() {
-      playClickSound();
-      document.getElementById('pinModal').classList.add('show');
-      document.getElementById('pin1').focus();
-    }
-
-    function closePinModal() {
-      playClickSound();
-      document.getElementById('pinModal').classList.remove('show');
-      clearPinInputs();
-    }
-
-    function clearPinInputs() {
-      for (let i = 1; i <= 6; i++) {
-        document.getElementById('pin' + i).value = '';
-      }
-      document.getElementById('pinError').textContent = '';
-    }
-
-    // Auto-advance to next input
-    for (let i = 1; i <= 6; i++) {
-      const input = document.getElementById('pin' + i);
-      
-      input.addEventListener('input', (e) => {
-        const value = e.target.value;
-        if (value.length === 1) {
-          playClickSound();
-          if (i < 6) {
-            document.getElementById('pin' + (i + 1)).focus();
-          }
-        }
-      });
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !e.target.value && i > 1) {
-          document.getElementById('pin' + (i - 1)).focus();
-        }
-      });
-
-      input.addEventListener('keypress', (e) => {
-        if (!/[0-9]/.test(e.key)) {
-          e.preventDefault();
-        }
-      });
-    }
-
-    function verifyPin() {
-      let enteredPin = '';
-      for (let i = 1; i <= 6; i++) {
-        enteredPin += document.getElementById('pin' + i).value;
-      }
-
-      if (enteredPin === CORRECT_PIN) {
-        playTransitionSound();
-        document.getElementById('pinError').textContent = '';
-        closePinModal();
-        alert('Accesso consentito!');
-      } else {
-        playClickSound();
-        document.getElementById('pinError').textContent = 'PIN non valido';
-        document.querySelectorAll('.pin-input').forEach(input => {
-          input.classList.add('pin-error');
-          setTimeout(() => input.classList.remove('pin-error'), 500);
+                    // 3. Esegui lo swap delle viste (gestito in GPU tramite CSS)
+                    views.forEach(view => {
+                        if (view.id === targetId) {
+                            view.classList.add('active');
+                        } else {
+                            view.classList.remove('active');
+                        }
+                    });
+                });
+            });
         });
-        clearPinInputs();
-        document.getElementById('pin1').focus();
-      }
-    }
-
-    document.getElementById('pin6').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        verifyPin();
-      }
-    });
-
-    // Page Navigation
-    let currentPage = 'home';
-
-    function goToPage(pageId) {
-      if (currentPage === pageId) return;
-
-      playTransitionSound();
-
-      const pages = document.querySelectorAll('.page-view');
-      const navItems = document.querySelectorAll('.nav-item');
-
-      pages.forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + pageId).classList.add('active');
-
-      navItems.forEach(n => {
-        if (n.getAttribute('data-page') === pageId) {
-          n.classList.add('text-white');
-          n.classList.remove('text-gray-500');
-        } else {
-          n.classList.remove('text-white');
-          n.classList.add('text-gray-500');
-        }
-      });
-
-      currentPage = pageId;
-      const targetPage = document.getElementById('page-' + pageId);
-      targetPage.scrollTop = 0;
-
-      // Re-observe elements when page changes
-      setTimeout(() => {
-        observeElements();
-      }, 100);
-    }
-
-    // Add click sound to all buttons
-    document.querySelectorAll('button, a').forEach(el => {
-      el.addEventListener('click', (e) => {
-        if (!e.target.closest('.pin-input')) {
-          playClickSound();
-        }
-      });
-    });
-
-    // Scroll tracking for each page
-    document.querySelectorAll('.page-view').forEach(page => {
-      page.addEventListener('scroll', () => {
-        if (page.classList.contains('active')) {
-          const scrollAnimateElements = page.querySelectorAll('.scroll-animate');
-          scrollAnimateElements.forEach(el => {
-            const rect = el.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
-            const elementCenter = rect.top + rect.height / 2;
-            const viewportCenter = viewportHeight / 2;
-            
-            if (Math.abs(elementCenter - viewportCenter) < 200) {
-              el.classList.add('in-view');
-            } else {
-              el.classList.remove('in-view');
-            }
-          });
-        }
-      });
-    });
-
-    // Init
-    document.querySelector('.nav-item[data-page="home"]').classList.add('text-white');
-    document.querySelector('.nav-item[data-page="home"]').classList.remove('text-gray-500');
-    
-    // Initial observation
-    setTimeout(observeElements, 100);
-  </script>
-
+    </script>
 </body>
 </html>
