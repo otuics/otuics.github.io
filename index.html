@@ -50,10 +50,7 @@
            HEADER (FIXED)
            ========================================= */
         header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%); pointer-events: none; }
-        
-        /* Modifica Logo: Bianco Assoluto */
         .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; cursor: pointer; color: #ffffff; text-shadow: 0 0 2px rgba(255,255,255,0.1); transition: text-shadow 0.3s;}
-        
         .dot { color: var(--accent-red); animation: rec-blink 1.5s infinite ease-in-out; }
         .btn-reserved { background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); color: #fff; padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.8rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; pointer-events: auto; transition: all 0.3s var(--ease-apple); }
         .btn-reserved:active { transform: scale(0.92); opacity: 0.8; }
@@ -79,15 +76,14 @@
         #unified-nav.swap-complete .lens-red-line { opacity: 0; }
 
         /* =========================================
-           ABOUT TIMELINE NAV (NEW)
+           ABOUT TIMELINE NAV (PURE DOTS)
            ========================================= */
         #about-timeline-nav {
             position: fixed; bottom: 5.5rem; left: 50%; transform: translateX(-50%) translateY(30px);
             display: flex; align-items: center; gap: 1rem;
             background: rgba(20, 20, 22, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 1.2rem; border-radius: 30px;
-            z-index: 999; /* Z-index minore del main nav per scivolare da sotto */
-            opacity: 0; pointer-events: none; transition: transform 0.6s var(--ease-apple), opacity 0.5s;
+            z-index: 999; opacity: 0; pointer-events: none; transition: transform 0.6s var(--ease-apple), opacity 0.5s;
             width: max-content; max-width: 90vw; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
         }
         #about-timeline-nav.show-timeline { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
@@ -96,20 +92,18 @@
         .timeline-track-base { position: absolute; width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         .timeline-track-fill { position: absolute; height: 2px; background: var(--accent-red); width: 0%; transition: width 0.5s var(--ease-apple); border-radius: 2px; box-shadow: 0 0 8px var(--accent-red); }
         
+        /* Modifica Punti Timeline: Solo Pallino solido */
         .timeline-point {
-            position: absolute; width: 12px; height: 12px; background: #555; border-radius: 50%;
-            top: 50%; transform: translate(-50%, -50%); cursor: pointer; border: 2px solid #141416;
-            transition: all 0.3s var(--ease-apple); z-index: 2;
-        }
-        .timeline-point::after {
-            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%;
+            position: absolute; width: 10px; height: 10px; background: #666; border-radius: 50%;
+            top: 50%; transform: translate(-50%, -50%); cursor: pointer; border: none;
+            transition: all 0.4s var(--ease-apple); z-index: 2;
         }
         .timeline-point span {
             position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
             font-size: 0.7rem; font-weight: 600; color: #fff; font-family: 'Inter', monospace;
             opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none;
         }
-        .timeline-point.active { background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); border-color: var(--accent-red); transform: translate(-50%, -50%) scale(1.2); }
+        .timeline-point.active { background: var(--accent-red); box-shadow: 0 0 12px var(--accent-red); transform: translate(-50%, -50%) scale(1.4); }
         .timeline-point.active span { opacity: 1; transform: translateX(-50%) translateY(-2px); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
 
         .btn-scroll-contacts {
@@ -126,7 +120,9 @@
         .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden; transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s; display: flex; flex-direction: column; align-items: center; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
         .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-        .snap-block { scroll-snap-align: center; scroll-snap-stop: always; margin-bottom: 2.5rem; width: 100%; max-width: 380px; filter: blur(var(--scroll-blur)); transform: scaleY(var(--scroll-stretch)); transition: filter 0.1s linear, transform 0.1s linear; will-change: transform, filter; }
+        
+        .snap-block { scroll-snap-align: center; scroll-snap-stop: always; margin-bottom: 2.5rem; width: 100%; max-width: 380px; filter: blur(var(--scroll-blur)); transform: scaleY(var(--scroll-stretch)); transition: filter 0.1s linear, transform 0.1s linear, opacity 0.5s var(--ease-apple); will-change: transform, filter, opacity; }
+        
         .shape-card { width: 100%; border-radius: 24px; overflow: hidden; position: relative; background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem; }
         .interactive-card { transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; filter: blur(6px); opacity: 0.4; }
         .interactive-card.scroll-focus, .interactive-card:hover { transform: scale(1.02); z-index: 10; filter: blur(0px); opacity: 1; }
@@ -134,7 +130,7 @@
         .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
 
         /* =========================================
-           HOME, PORTFOLIO & GEAR (Omissis di ridondanza CSS)
+           HOME SPECIFICS & SYNC GRADIENT
            ========================================= */
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; cursor: pointer;}
         .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; margin-bottom: 2rem;}
@@ -149,6 +145,9 @@
         .dynamic-btn:hover + .btn-container::before { opacity: 1; transform: scale(1.1); } 
         .dynamic-btn span { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; color: var(--text-main); transition: opacity 0.4s ease; }
 
+        /* =========================================
+           PORTFOLIO REDESIGN + iOS BTN
+           ========================================= */
         .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }
         .portfolio-visual { aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative; background-size: cover; background-position: center; border: 1px solid var(--glass-border); overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s; }
         .portfolio-visual::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%; background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none; }
@@ -168,6 +167,10 @@
         .vis-documentary { background-image: url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
         .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
+        /* =========================================
+           GEAR SPECIFIC
+           ========================================= */
+        #gear-container { position: relative; transition: all 0.5s var(--ease-apple); }
         #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
         .gear-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main); }
         .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
@@ -184,19 +187,36 @@
         .badge-tech { color: #a1a1a6; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
         .badge-legend { color: #fff; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(255,255,255,0.5); text-shadow: 0 0 4px #fff;}
         .text-legend { animation: logo-glow 2.5s infinite ease-in-out; font-weight: 600; color: #fff; }
-        .philosophy-text { color: var(--text-muted); font-weight: 300; line-height: 1.5; font-size: 0.9rem; margin-bottom: 1.2rem; }
+        
+        /* FILOSOFIA: Isolamento Cinematografico Gear */
+        .bento-philosophy { margin-top: 3rem; margin-bottom: 5rem;}
+        .philosophy-card {
+            background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
+            min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.8s var(--ease-apple), box-shadow 0.8s; box-shadow: none !important; backdrop-filter: none !important;
+        }
+        .philosophy-text { color: var(--text-muted); font-weight: 300; line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; max-width: 600px;}
+        
+        /* Quando la Filosofia è in Focus, Ingrandisce se stessa... */
+        .bento-philosophy.scroll-focus .philosophy-card { transform: scale(1.08); }
+        
+        /* ...e il container dissolve tutto il resto! */
+        #gear-container.philosophy-active .snap-block:not(.bento-philosophy) {
+            opacity: 0; filter: blur(15px); pointer-events: none; transform: scale(0.95) translateY(-20px);
+        }
 
         /* =========================================
            ABOUT TIMELINE CARDS & FOOTER
            ========================================= */
         .timeline-year { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-        .timeline-title { color: var(--accent-red); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+        .timeline-title { color: var(--accent-red); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
         .timeline-desc { color: var(--text-muted); font-weight: 300; line-height: 1.6; font-size: 0.95rem; }
         
-        .footer-block { text-align: center; padding: 2rem; margin-top: 2rem; }
-        .footer-logo { font-size: 1.2rem; margin-bottom: 1rem; opacity: 0.5; color:#fff;}
-        .footer-links { display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 400; transition: color 0.3s; }
+        /* Footer/Contacts Stylings */
+        .footer-block { padding: 0; margin-top: 2rem; }
+        .footer-links { display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-start; text-align: left; margin-top: 1rem;}
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 400; transition: color 0.3s; }
+        .footer-links a.primary-contact { font-size: 1.4rem; font-weight: 600; color: #fff; border-bottom: 1px solid var(--accent-red); padding-bottom: 0.2rem;}
         .footer-links a:hover { color: var(--text-main); }
 
         /* =========================================
@@ -239,7 +259,7 @@
             .bento-light { grid-column: span 2; grid-row: span 1; }
             .bento-philosophy { grid-column: 1 / -1; }
             
-            .timeline-track-container { width: 300px; } /* Più larga su desktop */
+            .timeline-track-container { width: 300px; }
         }
     </style>
 </head>
@@ -410,10 +430,10 @@
                 </div>
 
                 <div class="snap-block bento-philosophy scroll-reveal">
-                    <div class="shape-card interactive-card" style="align-items: center; text-align: center;">
-                        <h3 class="gear-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Filosofia del Setup</h3>
+                    <div class="shape-card interactive-card philosophy-card">
+                        <h3 class="gear-title" style="font-size: 1.8rem; margin-bottom: 0.8rem;">Filosofia del Setup</h3>
                         <p class="philosophy-text">L'attrezzatura non fa il fotografo, ma ne traccia i limiti. Scopri il ragionamento dietro le focali scelte, l'ergonomia sul set e come il passaggio da Cinema a Full-Frame abbia cambiato il mio approccio visivo.</p>
-                        <button class="ios-explore-btn">Analisi Tecnica <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                        <button class="ios-explore-btn" style="margin-top: 1rem;">Analisi Tecnica <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                     </div>
                 </div>
 
@@ -466,13 +486,18 @@
                 </div>
             </div>
 
-            <div class="snap-block scroll-reveal" id="contact-footer" style="margin-top: 4rem;">
-                <div class="footer-block">
-                    <div class="footer-logo logo">otuics<span class="dot">.</span></div>
-                    <div class="footer-links">
-                        <a href="mailto:otuicsart@gmail.com">otuicsart@gmail.com</a>
-                        <a href="https://instagram.com/otuicsart" target="_blank">Instagram: @otuicsart</a>
-                        <a href="https://facebook.com/otuics" target="_blank">Facebook: @otuics</a>
+            <div class="snap-block scroll-reveal about-card-track" id="contact-footer" style="margin-top: 4rem;">
+                <div class="shape-card interactive-card" style="background: transparent; border: none; box-shadow: none; backdrop-filter: none; padding-top: 0;">
+                    <div class="timeline-year" style="font-size: 2rem;">Oggi</div>
+                    <div class="timeline-title">La Prossima Visione</div>
+                    <p class="timeline-desc" style="font-size: 1.1rem; color: #fff; margin-bottom: 2rem;">La storia è scritta dai frame che scegliamo di salvare. Il prossimo progetto, la prossima campagna, il prossimo istante irripetibile. Sono qui per documentarlo.</p>
+                    
+                    <div class="footer-block">
+                        <div class="footer-links">
+                            <a href="mailto:otuicsart@gmail.com" class="primary-contact">otuicsart@gmail.com</a>
+                            <a href="https://instagram.com/otuicsart" target="_blank">Instagram / @otuicsart</a>
+                            <a href="https://facebook.com/otuics" target="_blank">Facebook / @otuics</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -501,6 +526,9 @@
             
             const unifiedNav = document.getElementById('unified-nav');
             const aboutTimelineNav = document.getElementById('about-timeline-nav');
+            const gearContainer = document.getElementById('gear-container');
+            const philosophyBlock = document.querySelector('.bento-philosophy');
+
             setTimeout(() => { unifiedNav.classList.add('swap-complete'); }, 2800);
 
             // AUDIO ENGINE
@@ -544,7 +572,6 @@
                     const targetId = btn.getAttribute('data-target');
                     navButtons.forEach(b => b.classList.remove('active')); btn.classList.add('active');
                     
-                    // Gestione comparsa Timeline Barra
                     if(targetId === 'about') { aboutTimelineNav.classList.add('show-timeline'); } 
                     else { aboutTimelineNav.classList.remove('show-timeline'); }
 
@@ -563,6 +590,12 @@
             const timelineObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
+                        // Se è l'ultimo blocco contatti, riempi al 100%
+                        if(entry.target.id === 'contact-footer') {
+                            timelineFill.style.width = '100%';
+                            return;
+                        }
+
                         const targetYearId = entry.target.id;
                         timelinePoints.forEach(pt => {
                             if (pt.getAttribute('data-target') === targetYearId) {
@@ -577,7 +610,6 @@
             }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
             aboutCards.forEach(card => timelineObserver.observe(card));
 
-            // CLICK SUI PUNTI DELLA TIMELINE
             timelinePoints.forEach(pt => {
                 pt.addEventListener('click', () => {
                     playSound('focus');
@@ -592,15 +624,23 @@
                 document.getElementById('contact-footer').scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
 
-            // FOCUS OBSERVER GENERALE
+            // FOCUS OBSERVER GENERALE (Include la logica di Fade per la Filosofia Gear)
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
+                    // Logica Gear Filosofia Fade
+                    if (entry.target === philosophyBlock) {
+                        if (entry.isIntersecting) { gearContainer.classList.add('philosophy-active'); } 
+                        else { gearContainer.classList.remove('philosophy-active'); }
+                    }
+
+                    // Logica Focus Standard
                     if (entry.isIntersecting) {
                         if (!entry.target.classList.contains('scroll-focus')) { entry.target.classList.add('scroll-focus'); playSound('focus'); }
                     } else { entry.target.classList.remove('scroll-focus'); }
                 });
             }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
+            focusObserver.observe(philosophyBlock); // Assicura che la filosofia sia tracciata specificatamente
 
             // MOTION BLUR
             let isScrolling; let lastScrollTop = 0;
