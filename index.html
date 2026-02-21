@@ -18,11 +18,14 @@
             --text-main: #f5f5f7;
             --text-muted: #86868b;
             --accent-red: #ff2d55;
+            --accent-blue: #0a84ff;
+            --accent-gold: #ffd700;
             --glass-bg: rgba(20, 20, 22, 0.4);
             --glass-border: rgba(255, 255, 255, 0.05);
             --blur: blur(20px);
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
-            --scroll-blur: 0px; /* Variabile controllata dal motore JS per il Motion Blur */
+            --scroll-blur: 0px; 
+            --scroll-stretch: 1; /* Aggiunto per Motion Blur Direzionale */
         }
 
         * { 
@@ -37,14 +40,14 @@
             font-family: 'Inter', sans-serif;
             width: 100vw;
             height: 100vh;
-            height: 100dvh; /* Altezza dinamica sicura su mobile */
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         /* =========================================
-           KEYFRAMES (ANIMAZIONI GPU)
+           KEYFRAMES & ANIMATIONS
            ========================================= */
         @keyframes rec-blink {
             0%   { opacity: 1; text-shadow: 0 0 15px var(--accent-red); }
@@ -58,6 +61,14 @@
             100% { box-shadow: 0 0 15px rgba(255, 45, 85, 0.2); border-color: rgba(255, 45, 85, 0.3); }
         }
 
+        @keyframes logo-glow {
+            0%   { text-shadow: 0 0 0px rgba(255, 255, 255, 0); }
+            50%  { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4); }
+            100% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); }
+        }
+
+        .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
+
         /* =========================================
            HEADER & NAV (FIXED)
            ========================================= */
@@ -68,7 +79,7 @@
             pointer-events: none;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; }
+        .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; cursor: pointer; transition: text-shadow 0.3s;}
         .dot { color: var(--accent-red); animation: rec-blink 1.5s infinite ease-in-out; }
 
         .btn-reserved {
@@ -111,29 +122,21 @@
         .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
-        /* CENTRATURA ASSOLUTA HOME */
-        #home { padding: 0; scroll-snap-type: none; }
-        #home .snap-block {
-            height: 100dvh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; margin: 0; max-width: 100%;
-        }
-
         /* =========================================
-           SQUARE BLOCKS, RECTANGLES & BENTO GRID
+           CORE BLOCKS & BLUR ENGINE
            ========================================= */
         .snap-block {
             scroll-snap-align: center; scroll-snap-stop: always;
             margin-bottom: 2.5rem; width: 100%; max-width: 380px;
-            /* Iniezione Motion Blur Dinamico */
+            /* Motion Blur Direzionale (Blur + Stretch) */
             filter: blur(var(--scroll-blur));
-            transition: filter 0.1s linear, transform 0.6s var(--ease-apple), opacity 0.6s;
+            transform: scaleY(var(--scroll-stretch));
+            transition: filter 0.1s linear, transform 0.1s linear, opacity 0.6s;
             will-change: transform, opacity, filter;
         }
 
-        /* Base Mobile: Quadrati */
         .shape-card {
-            aspect-ratio: 1 / 1; width: 100%; border-radius: 24px;
-            overflow: hidden; position: relative;
+            width: 100%; border-radius: 24px; overflow: hidden; position: relative;
             background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
             border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem;
         }
@@ -143,74 +146,110 @@
             transform: translateY(-5px) scale(1.02); z-index: 10;
             animation: rec-pulse-shadow 2s infinite ease-in-out;
         }
-        .interactive-card.in-view:active {
-            transform: scale(0.96) translateY(0) !important; animation: none !important; box-shadow: none !important;
-        }
+        .interactive-card.in-view:active { transform: scale(0.96) translateY(0) !important; animation: none !important; box-shadow: none !important; }
 
         /* =========================================
-           TYPOGRAPHY SPECIFICS
+           TYPOGRAPHY & HOME SPECIFICS
            ========================================= */
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; }
-        .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; cursor: pointer;}
+        .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; margin-bottom: 2rem;}
         
-        /* Font Cursive Elegante per Gear */
-        .gear-title {
+        #home { padding: 0; scroll-snap-type: none; }
+        #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
+
+        /* Tasto Dinamico Apple Style */
+        .dynamic-btn {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 2rem; border-radius: 40px; cursor: pointer;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s var(--ease-apple);
+            display: flex; align-items: center; justify-content: center; min-width: 200px;
+        }
+        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.08); transform: scale(1.05); border-color: rgba(255, 255, 255, 0.3); }
+        .dynamic-btn span {
             font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500;
-            font-size: 2.2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main);
+            font-size: 1.4rem; color: var(--text-main); transition: opacity 0.3s ease;
         }
 
         /* =========================================
-           PORTFOLIO SPECIFIC
+           PORTFOLIO REDESIGN (SQUARES + TEXT)
            ========================================= */
-        .portfolio-card { padding: 1.5rem; justify-content: flex-end; background-size: cover; background-position: center; border: 1px solid var(--glass-border);}
+        .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; }
         
-        .card-commercial { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop'); }
-        .card-editorial { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
-        .card-documentary { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
-        .card-portraiture { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop'); }
-        .card-motion { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
+        .portfolio-visual {
+            aspect-ratio: 1 / 1; /* Quadrato perfetto */
+            width: 100%; border-radius: 24px; position: relative;
+            background-size: cover; background-position: center; border: 1px solid var(--glass-border);
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-        .portfolio-card h3 { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.2rem; }
-        .portfolio-card p { color: #d1d1d6; font-size: 0.9rem; font-weight: 300;}
+        /* Sfumatura inferiore per intravedere le altre categorie su mobile */
+        .portfolio-visual::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
+            background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none;
+        }
+
+        .portfolio-text { padding: 0 0.5rem; text-align: left; }
+        .portfolio-text h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text-main); }
+        .portfolio-text p { color: var(--text-muted); font-size: 0.95rem; font-weight: 300; line-height: 1.5; }
+
+        .vis-commercial { background-image: url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop'); }
+        .vis-editorial { background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
+        .vis-portraiture { background-image: url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop'); }
+        .vis-documentary { background-image: url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
+        .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
         /* =========================================
-           GEAR SPECIFIC
+           GEAR SPECIFIC (SMARTPHONE ADAPTIVE)
            ========================================= */
+        #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
+        
+        .gear-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main); }
         .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
-        .gear-list li { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .gear-list li { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;}
         .gear-list li:last-child { border-bottom: none; padding-bottom: 0; }
         
-        .item-name { color: var(--text-main); }
+        .item-name { color: var(--text-main); flex: 1; min-width: 150px;}
         .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
-        .badge { background: rgba(255,45,85,0.15); color: var(--accent-red); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; border: 1px solid rgba(255,45,85,0.3); font-weight: 600;}
+        
+        /* Badges Avanzati */
+        .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .badge-main { background: rgba(255,255,255,0.1); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
+        .badge-l { color: var(--accent-red); background: rgba(255,45,85,0.1); border: 1px solid var(--accent-red); box-shadow: 0 0 10px rgba(255,45,85,0.4); }
+        .badge-art { color: var(--accent-blue); background: rgba(10,132,255,0.1); border: 1px solid var(--accent-blue); box-shadow: 0 0 10px rgba(10,132,255,0.4); }
+
+        /* Effetto Hero 85mm 1.2 */
+        .hero-row { 
+            background: linear-gradient(90deg, rgba(255,45,85,0.1) 0%, rgba(20,20,22,0) 100%);
+            border-left: 3px solid var(--accent-red);
+            padding: 0.8rem !important; border-radius: 4px;
+            margin: 0.2rem -0.8rem; /* Espande fuori dal padding standard */
+            box-shadow: inset 20px 0 20px -20px rgba(255,45,85,0.3);
+        }
+        .hero-row .item-name { font-weight: 600; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
 
         /* =========================================
            DESKTOP/WIDE SCREENS RESPONSIVE
-           Rettangoli adatti e Bento Grid per il Gear
            ========================================= */
         @media (min-width: 768px) {
             .view { padding: 8rem 4rem 10rem 4rem; }
             .snap-block { max-width: 800px; }
             
-            /* Portfolio diventa rettangolare 16:9 o 2:1 */
-            #portfolio .shape-card { aspect-ratio: 2 / 1; }
+            /* Portfolio Desktop: Quadrato a SX, Testo a DX */
+            .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 3rem; }
+            .portfolio-visual { flex: 0 0 45%; max-width: 400px; }
+            .portfolio-visual::after { display: none; /* Rimuove la sfumatura su desktop */ }
+            .portfolio-text { flex: 1; text-align: left; }
+            .portfolio-text h3 { font-size: 2.5rem; }
+            .portfolio-text p { font-size: 1.1rem; }
 
             /* BENTO GRID PER IL GEAR */
-            #gear-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1.5rem;
-                width: 100%;
-                max-width: 1100px;
-                scroll-snap-type: none; /* Disabilita snap rigido nei blocchi interni della griglia */
-            }
-            
+            #gear-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; max-width: 1100px; scroll-snap-type: none; }
             #gear-container .snap-block { margin-bottom: 0; max-width: 100%; }
-            #gear-container .shape-card { aspect-ratio: auto; height: 100%; justify-content: flex-start; }
+            #gear-container .shape-card { justify-content: flex-start; }
 
-            /* Definizione incastri Bento */
             .bento-bodies { grid-column: span 1; grid-row: span 1; }
-            .bento-primes { grid-column: span 2; grid-row: span 2; } /* Box grande per lenti fisse */
+            .bento-primes { grid-column: span 2; grid-row: span 2; }
             .bento-zooms { grid-column: span 1; grid-row: span 2; }
             .bento-stab { grid-column: span 1; grid-row: span 1; }
             .bento-light { grid-column: span 2; grid-row: span 1; }
@@ -220,7 +259,7 @@
 </head>
 <body>
     <header>
-        <div class="logo">otuics<span class="dot">.</span></div>
+        <div class="logo" id="main-logo">otuics<span class="dot">.</span></div>
         <button class="btn-reserved">Area Riservata</button>
     </header>
 
@@ -228,52 +267,71 @@
         
         <section id="home" class="view active">
             <div class="snap-block scroll-reveal">
-                <h1>otuics<span class="dot">.</span></h1>
+                <h1 id="center-logo">otuics<span class="dot">.</span></h1>
                 <p class="subtitle">Visual Creator</p>
+                
+                <button class="dynamic-btn" id="dynamic-category-btn">
+                    <span id="dynamic-text">Wedding.</span>
+                </button>
             </div>
         </section>
 
         <section id="portfolio" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border: none; padding: 0;">
-                <h1>Portfolio<span class="dot">.</span></h1>
+            <div class="snap-block scroll-reveal" style="text-align: center; border: none; padding: 0;">
+                <h1 style="cursor:default;">Portfolio<span class="dot">.</span></h1>
                 <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
             </div>
             
             <div class="snap-block scroll-reveal">
-                <div class="shape-card portfolio-card card-commercial interactive-card">
-                    <h3>Commercial<span class="dot">.</span></h3>
-                    <p>Campagne, prodotto e identità di brand</p>
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-commercial"></div>
+                    <div class="portfolio-text">
+                        <h3>Commercial.</h3>
+                        <p>Campagne, prodotto e identità di brand. Costruiamo narrazioni visive che elevano il valore percepito.</p>
+                    </div>
                 </div>
             </div>
             <div class="snap-block scroll-reveal">
-                <div class="shape-card portfolio-card card-editorial interactive-card">
-                    <h3>Editorial<span class="dot">.</span></h3>
-                    <p>Moda, pubblicazioni e concettuale</p>
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-editorial"></div>
+                    <div class="portfolio-text">
+                        <h3>Editorial.</h3>
+                        <p>Moda, pubblicazioni e concettuale. Ricerca estrema nella posa, nella luce e nel moodboard.</p>
+                    </div>
                 </div>
             </div>
             <div class="snap-block scroll-reveal">
-                <div class="shape-card portfolio-card card-portraiture interactive-card">
-                    <h3>Portraiture<span class="dot">.</span></h3>
-                    <p>Psicologia del soggetto e presenza pura</p>
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-portraiture"></div>
+                    <div class="portfolio-text">
+                        <h3>Portraiture.</h3>
+                        <p>Psicologia del soggetto e presenza pura. Catturare l'invisibile attraverso l'obiettivo.</p>
+                    </div>
                 </div>
             </div>
             <div class="snap-block scroll-reveal">
-                <div class="shape-card portfolio-card card-documentary interactive-card">
-                    <h3>Documentary<span class="dot">.</span></h3>
-                    <p>Reportage e storytelling non filtrato</p>
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-documentary"></div>
+                    <div class="portfolio-text">
+                        <h3>Documentary.</h3>
+                        <p>Reportage e storytelling non filtrato. La realtà nuda, composta in istanti decisivi.</p>
+                    </div>
                 </div>
             </div>
             <div class="snap-block scroll-reveal">
-                <div class="shape-card portfolio-card card-motion interactive-card">
-                    <h3>Motion / Auto<span class="dot">.</span></h3>
-                    <p>Dinamica, tracking e velocità</p>
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-motion"></div>
+                    <div class="portfolio-text">
+                        <h3>Motion / Auto.</h3>
+                        <p>Dinamica, tracking e velocità. Il metallo e la strada, congelati o resi liquidi dal mosso.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="gear" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border:none; padding: 0;">
-                <h1>Gear<span class="dot">.</span></h1>
+            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0;">
+                <h1 style="cursor:default;">Gear<span class="dot">.</span></h1>
                 <p class="subtitle">Strumenti al servizio dell'intenzione.</p>
             </div>
             
@@ -282,7 +340,7 @@
                     <div class="shape-card interactive-card">
                         <h3 class="gear-title">Bodies</h3>
                         <ul class="gear-list">
-                            <li><span class="item-name">Canon EOS R6</span> <span class="badge">MAIN</span></li>
+                            <li><span class="item-name">Canon EOS R6</span> <span class="badge badge-main">MAIN</span></li>
                             <li><span class="item-name">Canon EOS R</span> <span class="item-spec">Backup</span></li>
                             <li><span class="item-name">Canon 600D</span> <span class="item-spec">Archive</span></li>
                         </ul>
@@ -294,10 +352,13 @@
                         <h3 class="gear-title">Prime Lenses</h3>
                         <ul class="gear-list">
                             <li><span class="item-name">Canon EF 28mm f/1.8 USM</span></li>
-                            <li><span class="item-name">Sigma 35mm f/1.4 DG HSM</span> <span class="item-spec">Art</span></li>
+                            <li><span class="item-name">Sigma 35mm f/1.4 DG HSM</span> <span class="badge badge-art">Art</span></li>
                             <li><span class="item-name">Canon EF 50mm f/1.4 USM</span></li>
-                            <li><span class="item-name">Canon EF 85mm f/1.2L II USM</span> <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff;">L SERIES</span></li>
-                            <li><span class="item-name">Canon EF 100mm f/2.8L Macro IS USM</span></li>
+                            <li class="hero-row">
+                                <span class="item-name">Canon EF 85mm f/1.2L II USM</span> 
+                                <span class="badge badge-l">L Series</span>
+                            </li>
+                            <li><span class="item-name">Canon EF 100mm f/2.8L Macro IS USM</span> <span class="badge badge-l">L Series</span></li>
                         </ul>
                     </div>
                 </div>
@@ -307,9 +368,9 @@
                         <h3 class="gear-title">Zoom Lenses</h3>
                         <ul class="gear-list">
                             <li><span class="item-name">Tokina AT-X 16-28mm f/2.8 PRO FX</span></li>
-                            <li><span class="item-name">Canon EF 24-70mm f/2.8L USM</span> <span class="item-spec">Mk I</span></li>
-                            <li><span class="item-name">Canon EF 70-200mm f/2.8L IS USM</span></li>
-                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span></li>
+                            <li><span class="item-name">Canon EF 24-70mm f/2.8L USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Canon EF 70-200mm f/2.8L IS USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span> <span class="badge badge-l">L Series</span></li>
                         </ul>
                     </div>
                 </div>
@@ -328,8 +389,8 @@
                     <div class="shape-card interactive-card">
                         <h3 class="gear-title">Lighting & Control</h3>
                         <ul class="gear-list">
-                            <li><span class="item-name">Neewer Z2-C</span> <span class="item-spec">w/ QPRO Trigger System</span></li>
-                            <li><span class="item-name">SmallRig 40W</span> <span class="item-spec">Portable LED Bi-Color</span></li>
+                            <li><span class="item-name">Neewer Z2-C</span> <span class="item-spec">w/ QPRO</span></li>
+                            <li><span class="item-name">SmallRig 40W</span> <span class="item-spec">LED Bi-Color</span></li>
                         </ul>
                     </div>
                 </div>
@@ -337,8 +398,8 @@
         </section>
 
         <section id="about" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border:none; padding: 0;">
-                <h1>Storia<span class="dot">.</span></h1>
+            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0;">
+                <h1 style="cursor:default;">Storia<span class="dot">.</span></h1>
             </div>
             <div class="snap-block scroll-reveal">
                 <div class="shape-card interactive-card">
@@ -358,7 +419,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. GESTIONE NAVIGAZIONE
+            
+            // --- LOGO GLOW EFFECT ---
+            const logos = [document.getElementById('main-logo'), document.getElementById('center-logo')];
+            const triggerGlow = () => {
+                logos.forEach(logo => {
+                    logo.classList.remove('trigger-glow');
+                    void logo.offsetWidth; // Trigger reflow per riavviare l'animazione
+                    logo.classList.add('trigger-glow');
+                });
+            };
+            
+            // Glow all'apertura
+            setTimeout(triggerGlow, 500);
+            
+            // Glow al click su entrambi i loghi e sul bottone dinamico
+            logos.forEach(logo => logo.addEventListener('click', triggerGlow));
+
+            // --- TASTO DINAMICO HOME ---
+            const dynamicBtn = document.getElementById('dynamic-category-btn');
+            const dynamicText = document.getElementById('dynamic-text');
+            const categories = ["Wedding.", "Commercial.", "Editorial.", "Portraiture.", "Automotive."];
+            let catIndex = 0;
+
+            dynamicBtn.addEventListener('click', () => {
+                triggerGlow(); // Fa brillare il logo al click del bottone
+                dynamicText.style.opacity = 0;
+                setTimeout(() => {
+                    catIndex = (catIndex + 1) % categories.length;
+                    dynamicText.textContent = categories[catIndex];
+                    dynamicText.style.opacity = 1;
+                }, 300);
+            });
+
+
+            // --- GESTIONE NAVIGAZIONE ---
             const navButtons = document.querySelectorAll('.nav-btn');
             const views = document.querySelectorAll('.view');
 
@@ -379,7 +474,7 @@
                 });
             });
 
-            // 2. OBSERVER FOCUS (Ombra rossa)
+            // --- OBSERVER FOCUS (Ombra rossa) ---
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) entry.target.classList.add('scroll-focus');
@@ -389,29 +484,32 @@
 
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
 
-            // 3. MOTORE MOTION BLUR SU SCROLL (Hardware Accelerated)
+            // --- MOTORE MOTION BLUR DIREZIONALE ---
             let isScrolling;
             let lastScrollTop = 0;
             
             views.forEach(view => {
                 view.addEventListener('scroll', () => {
                     let st = view.scrollTop;
-                    // Calcola la velocità dello scroll (delta)
                     let delta = Math.abs(st - lastScrollTop);
                     lastScrollTop = st;
 
-                    // Mappa la velocità in pixel di sfocatura (limite max 8px per non distruggere le performance)
+                    // Calcola il Blur standard
                     let blurAmount = Math.min(delta * 0.15, 8); 
                     
-                    // Inietta il valore nella variabile CSS della singola vista
-                    view.style.setProperty('--scroll-blur', `${blurAmount}px`);
+                    // Calcola lo Stretch per dare direzionalità al blur (Motion Smear)
+                    // Scala leggermente sull'asse Y per simulare la scia della velocità
+                    let stretchAmount = 1 + Math.min(delta * 0.003, 0.08);
 
-                    // Rimuove il blur quando lo scroll si ferma
+                    view.style.setProperty('--scroll-blur', `${blurAmount}px`);
+                    view.style.setProperty('--scroll-stretch', `${stretchAmount}`);
+
                     window.clearTimeout(isScrolling);
                     isScrolling = setTimeout(function() {
                         view.style.setProperty('--scroll-blur', `0px`);
-                    }, 60); // 60ms di debounce
-                }, { passive: true }); // passive: true per garantire i 60fps su mobile
+                        view.style.setProperty('--scroll-stretch', `1`);
+                    }, 60); 
+                }, { passive: true });
             });
         });
     </script>
