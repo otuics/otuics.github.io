@@ -61,6 +61,13 @@
             100% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); }
         }
 
+        /* Effetto di rivelazione luce -> nitidezza (HOME) */
+        @keyframes cinematic-reveal {
+            0%   { opacity: 0; filter: blur(30px) brightness(2); transform: scale(1.05); }
+            50%  { opacity: 0.7; filter: blur(10px) brightness(1.5); }
+            100% { opacity: 1; filter: blur(0px) brightness(1); transform: scale(1); }
+        }
+
         .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
 
         /* =========================================
@@ -122,7 +129,6 @@
         .snap-block {
             scroll-snap-align: center; scroll-snap-stop: always;
             margin-bottom: 2.5rem; width: 100%; max-width: 380px;
-            /* Motion Blur Direzionale durante lo scroll */
             filter: blur(var(--scroll-blur));
             transform: scaleY(var(--scroll-stretch));
             transition: filter 0.1s linear, transform 0.1s linear;
@@ -135,20 +141,19 @@
             border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem;
         }
 
-        /* Effetto Focus Contestuale (Sfoca i non selezionati, ingrandisce e illumina di rosso il focus) */
+        /* Logica Standard per Gear e About */
         .interactive-card { 
             transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; 
-            filter: blur(6px); /* Sfocato di default */
-            opacity: 0.4;
+            filter: blur(6px); opacity: 0.4;
         }
         
         .interactive-card.scroll-focus, .interactive-card:hover {
-            transform: scale(1.04); 
-            z-index: 10;
-            filter: blur(0px); /* Nitido quando in focus */
-            opacity: 1;
-            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25);
-            border-color: rgba(255, 45, 85, 0.4);
+            transform: scale(1.02); z-index: 10; filter: blur(0px); opacity: 1;
+        }
+
+        /* Ombreggiatura rossa applicata SOLO agli elementi con box-shadow attiva (Gear/About) */
+        .shape-card.interactive-card.scroll-focus, .shape-card.interactive-card:hover {
+            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25); border-color: rgba(255, 45, 85, 0.4);
         }
 
         .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
@@ -161,36 +166,59 @@
         
         #home { padding: 0; scroll-snap-type: none; }
         #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
+        
+        /* Applica l'animazione luce al testo della home */
+        .reveal-text { animation: cinematic-reveal 2.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards; }
 
-        /* Nuovo Tasto Dinamico Apple Style (Vetro sfocato, piccolo, sans-serif) */
+        /* Pulsante Home iOS + Gradiente Sotto */
+        .btn-container { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-top: 1rem; }
+        
+        /* Il bagliore diffuso sotto il tasto */
+        .btn-container::before {
+            content: ''; position: absolute; width: 120%; height: 120%;
+            background: radial-gradient(circle, rgba(255,45,85,0.4) 0%, transparent 70%);
+            filter: blur(15px); z-index: -1; opacity: 0.8; transition: opacity 0.4s; pointer-events: none;
+        }
+        
         .dynamic-btn {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 0.6rem 1.4rem; border-radius: 50px; cursor: pointer;
+            padding: 0.6rem 1.6rem; border-radius: 50px; cursor: pointer;
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            transition: all 0.4s var(--ease-apple);
-            display: flex; align-items: center; justify-content: center; min-width: 140px;
+            transition: all 0.4s var(--ease-apple); display: flex; align-items: center; justify-content: center; min-width: 140px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); }
+        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+        .dynamic-btn:hover + .btn-container::before { opacity: 1; } /* Aumenta il bagliore in hover */
+        
         .dynamic-btn span {
             font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;
             color: var(--text-main); transition: opacity 0.4s ease;
         }
 
         /* =========================================
-           PORTFOLIO REDESIGN
+           PORTFOLIO REDESIGN (FIX BLACK BOX)
            ========================================= */
-        .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; }
+        .portfolio-item { 
+            display: flex; flex-direction: column; width: 100%; gap: 1rem;
+            /* Forza la trasparenza per evitare il rettangolo su desktop */
+            background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important;
+        }
         
         .portfolio-visual {
             aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative;
             background-size: cover; background-position: center; border: 1px solid var(--glass-border);
-            overflow: hidden; 
+            overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s;
         }
 
+        /* Sfumatura mobile */
         .portfolio-visual::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
             background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none;
+        }
+
+        /* Il bagliore rosso si applica SOLO ALL'IMMAGINE, non al contenitore intero */
+        .portfolio-item.scroll-focus .portfolio-visual, .portfolio-item:hover .portfolio-visual {
+            box-shadow: 0 0 40px rgba(255, 45, 85, 0.35); border-color: rgba(255, 45, 85, 0.6);
         }
 
         .portfolio-text { padding: 0 0.5rem; text-align: left; }
@@ -210,11 +238,12 @@
         
         .gear-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main); }
         .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
-        .gear-list li { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;}
+        .gear-list li { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;}
         .gear-list li:last-child { border-bottom: none; padding-bottom: 0; }
         
         .item-name { color: var(--text-main); flex: 1; min-width: 150px;}
         .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
+        .badge-container { display: flex; gap: 0.4rem; align-items: center; }
         
         /* Badges */
         .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
@@ -223,14 +252,9 @@
         .badge-art { color: var(--accent-blue); background: rgba(10,132,255,0.1); border: 1px solid var(--accent-blue); box-shadow: 0 0 10px rgba(10,132,255,0.4); }
         .badge-pro { color: var(--accent-gold); background: rgba(255,215,0,0.1); border: 1px solid var(--accent-gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
 
-        .hero-row { 
-            background: linear-gradient(90deg, rgba(255,45,85,0.1) 0%, rgba(20,20,22,0) 100%);
-            border-left: 3px solid var(--accent-red);
-            padding: 0.8rem !important; border-radius: 4px;
-            margin: 0.2rem -0.8rem; 
-            box-shadow: inset 20px 0 20px -20px rgba(255,45,85,0.3);
-        }
-        .hero-row .item-name { font-weight: 600; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        /* Nuovo Effetto "Legend" per 85mm */
+        .badge-legend { color: #fff; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(255,255,255,0.5); text-shadow: 0 0 4px #fff;}
+        .text-legend { animation: logo-glow 2.5s infinite ease-in-out; font-weight: 600; color: #fff; }
 
         /* =========================================
            DESKTOP RESPONSIVE
@@ -239,8 +263,9 @@
             .view { padding: 8rem 4rem 10rem 4rem; }
             .snap-block { max-width: 800px; }
             
-            .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 3rem; }
-            .portfolio-visual { flex: 0 0 45%; max-width: 400px; }
+            /* Sdoppiamento perfetto layout Desktop */
+            .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 4rem; }
+            .portfolio-visual { flex: 0 0 45%; max-width: 450px; }
             .portfolio-visual::after { display: none; }
             .portfolio-text { flex: 1; text-align: left; }
             .portfolio-text h3 { font-size: 2.5rem; }
@@ -268,13 +293,15 @@
     <div class="view-container">
         
         <section id="home" class="view active">
-            <div class="snap-block scroll-reveal">
+            <div class="snap-block scroll-reveal reveal-text">
                 <h1 id="center-logo">otuics<span class="dot">.</span></h1>
                 <p class="subtitle">Visual Creator</p>
                 
-                <button class="dynamic-btn" id="dynamic-category-btn">
-                    <span id="dynamic-text">Wedding</span>
-                </button>
+                <div class="btn-container">
+                    <button class="dynamic-btn" id="dynamic-category-btn">
+                        <span id="dynamic-text">Wedding</span>
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -356,9 +383,12 @@
                             <li><span class="item-name">Canon EF 28mm f/1.8 USM</span></li>
                             <li><span class="item-name">Sigma 35mm f/1.4 DG HSM</span> <span class="badge badge-art">Art</span></li>
                             <li><span class="item-name">Canon EF 50mm f/1.4 USM</span></li>
-                            <li class="hero-row">
-                                <span class="item-name">Canon EF 85mm f/1.2L II USM</span> 
-                                <span class="badge badge-l">L Series</span>
+                            <li>
+                                <span class="item-name text-legend">Canon EF 85mm f/1.2L II USM</span> 
+                                <div class="badge-container">
+                                    <span class="badge badge-l">L Series</span>
+                                    <span class="badge badge-legend">Legend</span>
+                                </div>
                             </li>
                             <li><span class="item-name">Canon EF 100mm f/2.8 Macro USM</span></li>
                         </ul>
@@ -422,7 +452,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- AUDIO SYNTHESIZER (No file MP3 = Zero latenza) ---
+            // Audio Engine a bassa latenza
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
             function playSound(type = 'nav') {
@@ -431,7 +461,6 @@
                 const gain = audioCtx.createGain();
                 
                 if (type === 'nav') {
-                    // Suono morbido per il cambio pagina
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
@@ -439,7 +468,6 @@
                     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.1);
                 } else if (type === 'focus') {
-                    // Click sottile (haptic-like) per lo scroll focus
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                     gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
@@ -447,53 +475,38 @@
                     osc.start(); osc.stop(audioCtx.currentTime + 0.03);
                 }
                 
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                osc.connect(gain); gain.connect(audioCtx.destination);
             }
 
-            // --- LOGO GLOW EFFECT ---
-            const logos = [document.getElementById('main-logo'), document.getElementById('center-logo')];
-            const triggerGlow = () => {
-                logos.forEach(logo => {
-                    logo.classList.remove('trigger-glow');
-                    void logo.offsetWidth; 
-                    logo.classList.add('trigger-glow');
-                });
-            };
-            setTimeout(triggerGlow, 500);
-            logos.forEach(logo => logo.addEventListener('click', triggerGlow));
-
-            // --- TASTO DINAMICO HOME (Fade automatico + Vetro) ---
+            // Tasto Dinamico
             const dynamicBtn = document.getElementById('dynamic-category-btn');
             const dynamicText = document.getElementById('dynamic-text');
             const categories = ["Wedding", "Commercial", "Editorial", "Portraiture", "Automotive"];
             let catIndex = 0;
 
-            // Cambia categoria in automatico ogni 3 secondi
             setInterval(() => {
                 dynamicText.style.opacity = 0;
                 setTimeout(() => {
                     catIndex = (catIndex + 1) % categories.length;
                     dynamicText.textContent = categories[catIndex];
                     dynamicText.style.opacity = 1;
-                }, 400); // Sincronizzato con la transition CSS
+                }, 400); 
             }, 3000);
 
-            // --- GESTIONE NAVIGAZIONE ---
+            // Navigazione
             const navButtons = document.querySelectorAll('.nav-btn');
             const views = document.querySelectorAll('.view');
 
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     if(btn.classList.contains('active')) return;
-                    playSound('nav'); // Feedback sonoro navigazione
+                    playSound('nav');
                     const targetId = btn.getAttribute('data-target');
                     navButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     views.forEach(view => {
                         if (view.id === targetId) {
-                            view.classList.add('active');
-                            view.scrollTop = 0; 
+                            view.classList.add('active'); view.scrollTop = 0; 
                         } else {
                             view.classList.remove('active');
                         }
@@ -501,29 +514,23 @@
                 });
             });
 
-            // --- OBSERVER FOCUS (Sfocatura contestuale + Suono + Ombra rossa) ---
+            // Focus Observer
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Se la card entra nel focus principale dello schermo
                         if (!entry.target.classList.contains('scroll-focus')) {
                             entry.target.classList.add('scroll-focus');
-                            // Suono solo se l'utente sta attivamente scrollando o aprendo la view
                             playSound('focus'); 
                         }
                     } else {
-                        // Se esce dal centro, la sfoca
                         entry.target.classList.remove('scroll-focus');
                     }
                 });
-            }, { 
-                rootMargin: '-35% 0px -35% 0px', // Definisce una "finestra" stretta al centro dello schermo
-                threshold: 0 
-            });
+            }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
 
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
 
-            // --- MOTORE MOTION BLUR DIREZIONALE ---
+            // Motion Blur Engine
             let isScrolling;
             let lastScrollTop = 0;
             
