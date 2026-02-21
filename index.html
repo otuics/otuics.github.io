@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>otuics. — Visual Creator</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+
     <style>
         /* =========================================
            CORE ARCHITECTURE & VARIABLES
@@ -17,24 +22,22 @@
             --glass-border: rgba(255, 255, 255, 0.05);
             --blur: blur(20px);
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+            --scroll-blur: 0px; /* Variabile controllata dal motore JS per il Motion Blur */
         }
 
-        /* DISABILITAZIONE SELEZIONE TESTO */
         * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            -webkit-user-select: none;
-            user-select: none;
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-user-select: none; user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            font-family: 'Inter', sans-serif;
             width: 100vw;
             height: 100vh;
+            height: 100dvh; /* Altezza dinamica sicura su mobile */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -43,14 +46,12 @@
         /* =========================================
            KEYFRAMES (ANIMAZIONI GPU)
            ========================================= */
-        /* Animazione Punto REC */
         @keyframes rec-blink {
             0%   { opacity: 1; text-shadow: 0 0 15px var(--accent-red); }
             50%  { opacity: 0.3; text-shadow: 0 0 2px var(--accent-red); }
             100% { opacity: 1; text-shadow: 0 0 15px var(--accent-red); }
         }
 
-        /* Animazione Pulsazione Ombra */
         @keyframes rec-pulse-shadow {
             0%   { box-shadow: 0 0 15px rgba(255, 45, 85, 0.2); border-color: rgba(255, 45, 85, 0.3); }
             50%  { box-shadow: 0 0 40px rgba(255, 45, 85, 0.6); border-color: rgba(255, 45, 85, 0.8); }
@@ -58,249 +59,162 @@
         }
 
         /* =========================================
-           HEADER (FIXED)
+           HEADER & NAV (FIXED)
            ========================================= */
         header {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%);
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%);
             pointer-events: none;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 400; /* Richiesta: normal, non bold */
-            letter-spacing: -0.04em;
-            pointer-events: auto;
-        }
-        
-        .dot { 
-            color: var(--accent-red); 
-            animation: rec-blink 1.5s infinite ease-in-out; /* Effetto REC acceso */
-        }
+        .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; }
+        .dot { color: var(--accent-red); animation: rec-blink 1.5s infinite ease-in-out; }
 
         .btn-reserved {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: all 0.3s var(--ease-apple);
+            background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border); color: var(--text-main); padding: 0.5rem 1.2rem;
+            border-radius: 30px; font-size: 0.8rem; font-weight: 500; font-family: 'Inter', sans-serif;
+            cursor: pointer; pointer-events: auto; transition: all 0.3s var(--ease-apple);
         }
 
-        .btn-reserved:active, nav button:active {
-            transform: scale(0.92) !important;
-            opacity: 0.8;
-            transition: transform 0.1s, opacity 0.1s;
+        nav {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 22, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px;
+            display: flex; gap: 0.2rem; z-index: 1000; width: max-content; max-width: 95vw;
         }
+
+        nav button {
+            background: transparent; border: none; color: var(--text-muted);
+            padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem);
+            font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s;
+        }
+
+        nav button.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
+        .btn-reserved:active, nav button:active { transform: scale(0.92) !important; opacity: 0.8; }
 
         /* =========================================
-           VIEWS (SCROLL SNAP NATIVO)
+           VIEWS & SCROLL SNAP NATIVO
            ========================================= */
-        .view-container {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
+        .view-container { flex: 1; position: relative; width: 100%; height: 100%; }
 
         .view {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 8rem 2rem 10rem 2rem;
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0.96) translateY(20px);
-            transition: opacity 0.5s var(--ease-apple), transform 0.5s var(--ease-apple), visibility 0.5s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden;
+            transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
+            display: flex; flex-direction: column; align-items: center;
+            scroll-snap-type: y mandatory; scroll-behavior: smooth;
         }
 
-        .view.active {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1) translateY(0);
+        .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* CENTRATURA ASSOLUTA HOME */
+        #home { padding: 0; scroll-snap-type: none; }
+        #home .snap-block {
+            height: 100dvh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; margin: 0; max-width: 100%;
         }
 
         /* =========================================
-           SQUARE BLOCKS & SNAP (IL CUORE DEL LAYOUT)
+           SQUARE BLOCKS, RECTANGLES & BENTO GRID
            ========================================= */
         .snap-block {
-            scroll-snap-align: center;
-            scroll-snap-stop: always;
-            margin-bottom: 2.5rem;
-            width: 100%;
-            max-width: 340px; /* Dimensione base per il quadrato */
+            scroll-snap-align: center; scroll-snap-stop: always;
+            margin-bottom: 2.5rem; width: 100%; max-width: 380px;
+            /* Iniezione Motion Blur Dinamico */
+            filter: blur(var(--scroll-blur));
+            transition: filter 0.1s linear, transform 0.6s var(--ease-apple), opacity 0.6s;
+            will-change: transform, opacity, filter;
         }
 
-        /* Tutti i riquadri ora sono quadrati perfetti */
-        .square-card {
-            aspect-ratio: 1 / 1;
-            width: 100%;
-            border-radius: 24px;
-            overflow: hidden; /* Nasconde ciò che esce dal quadrato */
-            position: relative;
+        /* Base Mobile: Quadrati */
+        .shape-card {
+            aspect-ratio: 1 / 1; width: 100%; border-radius: 24px;
+            overflow: hidden; position: relative;
+            background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem;
         }
 
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centra il contenuto nel quadrato */
+        .interactive-card { transition: transform 0.4s var(--ease-apple), box-shadow 0.4s; }
+        .interactive-card.in-view.scroll-focus, .interactive-card.in-view:hover {
+            transform: translateY(-5px) scale(1.02); z-index: 10;
+            animation: rec-pulse-shadow 2s infinite ease-in-out;
         }
-
-        /* =========================================
-           ANIMAZIONI DI SCROLL & PULSAZIONE REC
-           ========================================= */
-        .scroll-reveal {
-            opacity: 0.3;
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.6s var(--ease-apple);
-            will-change: transform, opacity;
-        }
-        
-        .scroll-reveal.in-view {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .interactive-card {
-            transition: transform 0.4s var(--ease-apple), opacity 0.4s var(--ease-apple);
-        }
-
-        /* Quando entra nel focus centrale, pulsa! */
-        .interactive-card.in-view.scroll-focus,
-        .interactive-card.in-view:hover {
-            transform: translateY(-5px) scale(1.02);
-            z-index: 10;
-            animation: rec-pulse-shadow 2s infinite ease-in-out; /* Effetto REC pulsante */
-        }
-
         .interactive-card.in-view:active {
-            transform: scale(0.96) translateY(0) !important;
-            animation: none !important;
-            box-shadow: none !important;
-            transition: transform 0.1s;
+            transform: scale(0.96) translateY(0) !important; animation: none !important; box-shadow: none !important;
         }
 
         /* =========================================
-           TYPOGRAPHY
+           TYPOGRAPHY SPECIFICS
            ========================================= */
-        h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 400; /* Richiesta: normal */
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; }
+        .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; }
         
-        .subtitle {
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        /* Centratura perfetta della Home */
-        #home { 
-            justify-content: center; 
-            padding-bottom: 0; /* Rimuove padding per centratura assoluta */
+        /* Font Cursive Elegante per Gear */
+        .gear-title {
+            font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500;
+            font-size: 2.2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main);
         }
 
         /* =========================================
            PORTFOLIO SPECIFIC
            ========================================= */
-        .portfolio-card {
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            border: 1px solid var(--glass-border);
-        }
+        .portfolio-card { padding: 1.5rem; justify-content: flex-end; background-size: cover; background-position: center; border: 1px solid var(--glass-border);}
         
-        /* Gradiente ottimizzato per la massima leggibilità */
-        .card-wedding { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, transparent 100%), url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop'); }
-        .card-nightlife { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, transparent 100%), url('https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=600&auto=format&fit=crop'); }
-        .card-ritratti { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, transparent 100%), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop'); }
+        .card-commercial { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop'); }
+        .card-editorial { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
+        .card-documentary { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
+        .card-portraiture { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop'); }
+        .card-motion { background-image: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
-        .portfolio-card h3 { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.2rem; }
-        .portfolio-card p { color: #ddd; font-size: 0.95rem; }
+        .portfolio-card h3 { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.2rem; }
+        .portfolio-card p { color: #d1d1d6; font-size: 0.9rem; font-weight: 300;}
 
         /* =========================================
-           GEAR & ABOUT SPECIFIC (adattati al quadrato)
+           GEAR SPECIFIC
            ========================================= */
-        .badge { background: rgba(255,45,85,0.15); color: var(--accent-red); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; border: 1px solid rgba(255,45,85,0.3); margin-left: auto;}
+        .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+        .gear-list li { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .gear-list li:last-child { border-bottom: none; padding-bottom: 0; }
         
-        .gear-list { list-style: none; margin-top: 1rem; width: 100%;}
-        .gear-list li { padding: 0.8rem 0; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; font-size: 0.9rem;}
-        .gear-list li:last-child { border-bottom: none; }
-
-        .timeline-item p { color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; margin-top: 0.8rem;}
-        .timeline-item h3 { color: var(--accent-red); font-size: 2rem;}
+        .item-name { color: var(--text-main); }
+        .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
+        .badge { background: rgba(255,45,85,0.15); color: var(--accent-red); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; border: 1px solid rgba(255,45,85,0.3); font-weight: 600;}
 
         /* =========================================
-           DOCK INFERIORE (FIXED)
+           DESKTOP/WIDE SCREENS RESPONSIVE
+           Rettangoli adatti e Bento Grid per il Gear
            ========================================= */
-        nav {
-            position: fixed;
-            bottom: 1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 22, 0.75);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 0.4rem;
-            border-radius: 30px;
-            display: flex;
-            gap: 0.2rem;
-            z-index: 1000;
-            width: max-content;
-            max-width: 95vw;
-        }
+        @media (min-width: 768px) {
+            .view { padding: 8rem 4rem 10rem 4rem; }
+            .snap-block { max-width: 800px; }
+            
+            /* Portfolio diventa rettangolare 16:9 o 2:1 */
+            #portfolio .shape-card { aspect-ratio: 2 / 1; }
 
-        nav button {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 0.7rem 1.2rem;
-            border-radius: 20px;
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s var(--ease-apple);
-        }
+            /* BENTO GRID PER IL GEAR */
+            #gear-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+                width: 100%;
+                max-width: 1100px;
+                scroll-snap-type: none; /* Disabilita snap rigido nei blocchi interni della griglia */
+            }
+            
+            #gear-container .snap-block { margin-bottom: 0; max-width: 100%; }
+            #gear-container .shape-card { aspect-ratio: auto; height: 100%; justify-content: flex-start; }
 
-        nav button:hover { color: var(--text-main); }
-        nav button.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            /* Definizione incastri Bento */
+            .bento-bodies { grid-column: span 1; grid-row: span 1; }
+            .bento-primes { grid-column: span 2; grid-row: span 2; } /* Box grande per lenti fisse */
+            .bento-zooms { grid-column: span 1; grid-row: span 2; }
+            .bento-stab { grid-column: span 1; grid-row: span 1; }
+            .bento-light { grid-column: span 2; grid-row: span 1; }
         }
-
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
 
     </style>
 </head>
@@ -313,82 +227,123 @@
     <div class="view-container">
         
         <section id="home" class="view active">
-            <div class="snap-block scroll-reveal" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <div class="snap-block scroll-reveal">
                 <h1>otuics<span class="dot">.</span></h1>
                 <p class="subtitle">Visual Creator</p>
             </div>
         </section>
 
         <section id="portfolio" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; max-width: 100%;">
+            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border: none; padding: 0;">
                 <h1>Portfolio<span class="dot">.</span></h1>
-                <p class="subtitle" style="max-width: 300px; margin: 0 auto;">Ogni categoria ha la sua grammatica visiva.</p>
+                <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
             </div>
             
-            <div class="snap-block">
-                <div class="square-card portfolio-card card-wedding interactive-card scroll-reveal">
-                    <h3>Wedding<span class="dot">.</span></h3>
-                    <p>Emozioni irripetibili</p>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card portfolio-card card-commercial interactive-card">
+                    <h3>Commercial<span class="dot">.</span></h3>
+                    <p>Campagne, prodotto e identità di brand</p>
                 </div>
             </div>
-            <div class="snap-block">
-                <div class="square-card portfolio-card card-nightlife interactive-card scroll-reveal">
-                    <h3>Nightlife<span class="dot">.</span></h3>
-                    <p>Energia pura</p>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card portfolio-card card-editorial interactive-card">
+                    <h3>Editorial<span class="dot">.</span></h3>
+                    <p>Moda, pubblicazioni e concettuale</p>
                 </div>
             </div>
-            <div class="snap-block">
-                <div class="square-card portfolio-card card-ritratti interactive-card scroll-reveal">
-                    <h3>Ritratti<span class="dot">.</span></h3>
-                    <p>Presenza magnetica</p>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card portfolio-card card-portraiture interactive-card">
+                    <h3>Portraiture<span class="dot">.</span></h3>
+                    <p>Psicologia del soggetto e presenza pura</p>
+                </div>
+            </div>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card portfolio-card card-documentary interactive-card">
+                    <h3>Documentary<span class="dot">.</span></h3>
+                    <p>Reportage e storytelling non filtrato</p>
+                </div>
+            </div>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card portfolio-card card-motion interactive-card">
+                    <h3>Motion / Auto<span class="dot">.</span></h3>
+                    <p>Dinamica, tracking e velocità</p>
                 </div>
             </div>
         </section>
 
         <section id="gear" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; max-width: 100%;">
+            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border:none; padding: 0;">
                 <h1>Gear<span class="dot">.</span></h1>
-                <p class="subtitle">Sistema veloce e affidabile.</p>
+                <p class="subtitle">Strumenti al servizio dell'intenzione.</p>
             </div>
             
-            <div class="snap-block">
-                <div class="square-card glass-card interactive-card scroll-reveal">
-                    <h3>📷 Bodies<span class="dot">.</span></h3>
-                    <ul class="gear-list">
-                        <li>Canon R6 <span class="badge">MAIN</span></li>
-                        <li>Canon R <span style="font-size: 0.8em; color: var(--text-muted); margin-left: auto;">(Backup)</span></li>
-                        <li>Canon 600D <span style="font-size: 0.8em; color: var(--text-muted); margin-left: auto;">(Archive)</span></li>
-                    </ul>
+            <div id="gear-container">
+                <div class="snap-block bento-bodies scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Bodies</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Canon EOS R6</span> <span class="badge">MAIN</span></li>
+                            <li><span class="item-name">Canon EOS R</span> <span class="item-spec">Backup</span></li>
+                            <li><span class="item-name">Canon 600D</span> <span class="item-spec">Archive</span></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="snap-block">
-                <div class="square-card glass-card interactive-card scroll-reveal">
-                    <h3>🎥 Stabilization<span class="dot">.</span></h3>
-                    <ul class="gear-list">
-                        <li style="flex-direction: column; align-items: flex-start; border:none; padding-top: 1rem;">
-                            <strong style="font-size: 1.1rem;">DJI Ronin S</strong>
-                            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">3-axis gimbal per movimenti fluidi e dinamici in ogni situazione.</span>
-                        </li>
-                    </ul>
+
+                <div class="snap-block bento-primes scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Prime Lenses</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Canon EF 28mm f/1.8 USM</span></li>
+                            <li><span class="item-name">Sigma 35mm f/1.4 DG HSM</span> <span class="item-spec">Art</span></li>
+                            <li><span class="item-name">Canon EF 50mm f/1.4 USM</span></li>
+                            <li><span class="item-name">Canon EF 85mm f/1.2L II USM</span> <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff;">L SERIES</span></li>
+                            <li><span class="item-name">Canon EF 100mm f/2.8L Macro IS USM</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-zooms scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Zoom Lenses</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Tokina AT-X 16-28mm f/2.8 PRO FX</span></li>
+                            <li><span class="item-name">Canon EF 24-70mm f/2.8L USM</span> <span class="item-spec">Mk I</span></li>
+                            <li><span class="item-name">Canon EF 70-200mm f/2.8L IS USM</span></li>
+                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-stab scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Stabilization</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">DJI Ronin-S</span> <span class="item-spec">3-Axis Gimbal</span></li>
+                            <li><span class="item-name">Manfrotto XPRO+</span> <span class="item-spec">Video Monopod</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-light scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Lighting & Control</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Neewer Z2-C</span> <span class="item-spec">w/ QPRO Trigger System</span></li>
+                            <li><span class="item-name">SmallRig 40W</span> <span class="item-spec">Portable LED Bi-Color</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="about" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; max-width: 100%;">
+            <div class="snap-block scroll-reveal" style="text-align: center; background: none; border:none; padding: 0;">
                 <h1>Storia<span class="dot">.</span></h1>
             </div>
-            
-            <div class="snap-block">
-                <div class="square-card glass-card timeline-item interactive-card scroll-reveal">
-                    <h3>2016</h3>
-                    <p>Inizio con una <strong>Canon 600D</strong>. Ritratti, sport, strada. Imparare a vedere prima di scattare. Sbagliare, capire l'esposizione e l'importanza del momento esatto.</p>
-                </div>
-            </div>
-            <div class="snap-block">
-                <div class="square-card glass-card timeline-item interactive-card scroll-reveal">
-                    <h3>2019</h3>
-                    <p>Il salto al video con <strong>Fuji X-T3</strong>. Il movimento cambia la prospettiva. Nasce un linguaggio visivo vero, dove ogni singolo frame serve a raccontare una storia.</p>
+            <div class="snap-block scroll-reveal">
+                <div class="shape-card interactive-card">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--accent-red);">Visione</h3>
+                    <p style="color: var(--text-muted); font-weight: 300; line-height: 1.6; font-size: 0.95rem;">Un approccio ibrido tra estetica cinematografica e pura cattura documentaristica. Ogni frame è calcolato, ogni luce ha uno scopo.</p>
                 </div>
             </div>
         </section>
@@ -403,19 +358,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Gestione Navigazione Viste
+            // 1. GESTIONE NAVIGAZIONE
             const navButtons = document.querySelectorAll('.nav-btn');
             const views = document.querySelectorAll('.view');
 
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     if(btn.classList.contains('active')) return;
-                    
                     const targetId = btn.getAttribute('data-target');
-                    
                     navButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-
                     views.forEach(view => {
                         if (view.id === targetId) {
                             view.classList.add('active');
@@ -427,39 +379,39 @@
                 });
             });
 
-            // 2. Observer Base (Rivela elementi)
-            const revealOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('in-view');
-                    }
-                });
-            }, revealOptions);
-
-            document.querySelectorAll('.scroll-reveal').forEach(el => {
-                revealObserver.observe(el);
-            });
-
-            // 3. Observer Focus (Triggera l'animazione pulsante REC)
-            const focusOptions = {
-                root: null,
-                rootMargin: '-40% 0px -40% 0px', 
-                threshold: 0
-            };
-
+            // 2. OBSERVER FOCUS (Ombra rossa)
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('scroll-focus');
-                    } else {
-                        entry.target.classList.remove('scroll-focus');
-                    }
+                    if (entry.isIntersecting) entry.target.classList.add('scroll-focus');
+                    else entry.target.classList.remove('scroll-focus');
                 });
-            }, focusOptions);
+            }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
 
-            document.querySelectorAll('.interactive-card').forEach(el => {
-                focusObserver.observe(el);
+            document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
+
+            // 3. MOTORE MOTION BLUR SU SCROLL (Hardware Accelerated)
+            let isScrolling;
+            let lastScrollTop = 0;
+            
+            views.forEach(view => {
+                view.addEventListener('scroll', () => {
+                    let st = view.scrollTop;
+                    // Calcola la velocità dello scroll (delta)
+                    let delta = Math.abs(st - lastScrollTop);
+                    lastScrollTop = st;
+
+                    // Mappa la velocità in pixel di sfocatura (limite max 8px per non distruggere le performance)
+                    let blurAmount = Math.min(delta * 0.15, 8); 
+                    
+                    // Inietta il valore nella variabile CSS della singola vista
+                    view.style.setProperty('--scroll-blur', `${blurAmount}px`);
+
+                    // Rimuove il blur quando lo scroll si ferma
+                    window.clearTimeout(isScrolling);
+                    isScrolling = setTimeout(function() {
+                        view.style.setProperty('--scroll-blur', `0px`);
+                    }, 60); // 60ms di debounce
+                }, { passive: true }); // passive: true per garantire i 60fps su mobile
             });
         });
     </script>
