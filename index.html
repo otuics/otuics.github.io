@@ -25,7 +25,7 @@
             --blur: blur(20px);
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
             --scroll-blur: 0px; 
-            --scroll-stretch: 1; /* Aggiunto per Motion Blur Direzionale */
+            --scroll-stretch: 1;
         }
 
         * { 
@@ -53,12 +53,6 @@
             0%   { opacity: 1; text-shadow: 0 0 15px var(--accent-red); }
             50%  { opacity: 0.3; text-shadow: 0 0 2px var(--accent-red); }
             100% { opacity: 1; text-shadow: 0 0 15px var(--accent-red); }
-        }
-
-        @keyframes rec-pulse-shadow {
-            0%   { box-shadow: 0 0 15px rgba(255, 45, 85, 0.2); border-color: rgba(255, 45, 85, 0.3); }
-            50%  { box-shadow: 0 0 40px rgba(255, 45, 85, 0.6); border-color: rgba(255, 45, 85, 0.8); }
-            100% { box-shadow: 0 0 15px rgba(255, 45, 85, 0.2); border-color: rgba(255, 45, 85, 0.3); }
         }
 
         @keyframes logo-glow {
@@ -123,16 +117,16 @@
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         /* =========================================
-           CORE BLOCKS & BLUR ENGINE
+           CORE BLOCKS, BLUR ENGINE & CONTEXTUAL FOCUS
            ========================================= */
         .snap-block {
             scroll-snap-align: center; scroll-snap-stop: always;
             margin-bottom: 2.5rem; width: 100%; max-width: 380px;
-            /* Motion Blur Direzionale (Blur + Stretch) */
+            /* Motion Blur Direzionale durante lo scroll */
             filter: blur(var(--scroll-blur));
             transform: scaleY(var(--scroll-stretch));
-            transition: filter 0.1s linear, transform 0.1s linear, opacity 0.6s;
-            will-change: transform, opacity, filter;
+            transition: filter 0.1s linear, transform 0.1s linear;
+            will-change: transform, filter;
         }
 
         .shape-card {
@@ -141,12 +135,23 @@
             border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem;
         }
 
-        .interactive-card { transition: transform 0.4s var(--ease-apple), box-shadow 0.4s; }
-        .interactive-card.in-view.scroll-focus, .interactive-card.in-view:hover {
-            transform: translateY(-5px) scale(1.02); z-index: 10;
-            animation: rec-pulse-shadow 2s infinite ease-in-out;
+        /* Effetto Focus Contestuale (Sfoca i non selezionati, ingrandisce e illumina di rosso il focus) */
+        .interactive-card { 
+            transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; 
+            filter: blur(6px); /* Sfocato di default */
+            opacity: 0.4;
         }
-        .interactive-card.in-view:active { transform: scale(0.96) translateY(0) !important; animation: none !important; box-shadow: none !important; }
+        
+        .interactive-card.scroll-focus, .interactive-card:hover {
+            transform: scale(1.04); 
+            z-index: 10;
+            filter: blur(0px); /* Nitido quando in focus */
+            opacity: 1;
+            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25);
+            border-color: rgba(255, 45, 85, 0.4);
+        }
+
+        .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
 
         /* =========================================
            TYPOGRAPHY & HOME SPECIFICS
@@ -157,33 +162,32 @@
         #home { padding: 0; scroll-snap-type: none; }
         #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
 
-        /* Tasto Dinamico Apple Style */
+        /* Nuovo Tasto Dinamico Apple Style (Vetro sfocato, piccolo, sans-serif) */
         .dynamic-btn {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 2rem; border-radius: 40px; cursor: pointer;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.6rem 1.4rem; border-radius: 50px; cursor: pointer;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             transition: all 0.4s var(--ease-apple);
-            display: flex; align-items: center; justify-content: center; min-width: 200px;
+            display: flex; align-items: center; justify-content: center; min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.08); transform: scale(1.05); border-color: rgba(255, 255, 255, 0.3); }
+        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); }
         .dynamic-btn span {
-            font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500;
-            font-size: 1.4rem; color: var(--text-main); transition: opacity 0.3s ease;
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;
+            color: var(--text-main); transition: opacity 0.4s ease;
         }
 
         /* =========================================
-           PORTFOLIO REDESIGN (SQUARES + TEXT)
+           PORTFOLIO REDESIGN
            ========================================= */
         .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; }
         
         .portfolio-visual {
-            aspect-ratio: 1 / 1; /* Quadrato perfetto */
-            width: 100%; border-radius: 24px; position: relative;
+            aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative;
             background-size: cover; background-position: center; border: 1px solid var(--glass-border);
-            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden; 
         }
 
-        /* Sfumatura inferiore per intravedere le altre categorie su mobile */
         .portfolio-visual::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
             background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none;
@@ -200,7 +204,7 @@
         .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
         /* =========================================
-           GEAR SPECIFIC (SMARTPHONE ADAPTIVE)
+           GEAR SPECIFIC
            ========================================= */
         #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
         
@@ -212,38 +216,36 @@
         .item-name { color: var(--text-main); flex: 1; min-width: 150px;}
         .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
         
-        /* Badges Avanzati */
-        .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        /* Badges */
+        .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
         .badge-main { background: rgba(255,255,255,0.1); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
         .badge-l { color: var(--accent-red); background: rgba(255,45,85,0.1); border: 1px solid var(--accent-red); box-shadow: 0 0 10px rgba(255,45,85,0.4); }
         .badge-art { color: var(--accent-blue); background: rgba(10,132,255,0.1); border: 1px solid var(--accent-blue); box-shadow: 0 0 10px rgba(10,132,255,0.4); }
+        .badge-pro { color: var(--accent-gold); background: rgba(255,215,0,0.1); border: 1px solid var(--accent-gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
 
-        /* Effetto Hero 85mm 1.2 */
         .hero-row { 
             background: linear-gradient(90deg, rgba(255,45,85,0.1) 0%, rgba(20,20,22,0) 100%);
             border-left: 3px solid var(--accent-red);
             padding: 0.8rem !important; border-radius: 4px;
-            margin: 0.2rem -0.8rem; /* Espande fuori dal padding standard */
+            margin: 0.2rem -0.8rem; 
             box-shadow: inset 20px 0 20px -20px rgba(255,45,85,0.3);
         }
         .hero-row .item-name { font-weight: 600; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
 
         /* =========================================
-           DESKTOP/WIDE SCREENS RESPONSIVE
+           DESKTOP RESPONSIVE
            ========================================= */
         @media (min-width: 768px) {
             .view { padding: 8rem 4rem 10rem 4rem; }
             .snap-block { max-width: 800px; }
             
-            /* Portfolio Desktop: Quadrato a SX, Testo a DX */
             .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 3rem; }
             .portfolio-visual { flex: 0 0 45%; max-width: 400px; }
-            .portfolio-visual::after { display: none; /* Rimuove la sfumatura su desktop */ }
+            .portfolio-visual::after { display: none; }
             .portfolio-text { flex: 1; text-align: left; }
             .portfolio-text h3 { font-size: 2.5rem; }
             .portfolio-text p { font-size: 1.1rem; }
 
-            /* BENTO GRID PER IL GEAR */
             #gear-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; max-width: 1100px; scroll-snap-type: none; }
             #gear-container .snap-block { margin-bottom: 0; max-width: 100%; }
             #gear-container .shape-card { justify-content: flex-start; }
@@ -271,13 +273,13 @@
                 <p class="subtitle">Visual Creator</p>
                 
                 <button class="dynamic-btn" id="dynamic-category-btn">
-                    <span id="dynamic-text">Wedding.</span>
+                    <span id="dynamic-text">Wedding</span>
                 </button>
             </div>
         </section>
 
         <section id="portfolio" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; border: none; padding: 0;">
+            <div class="snap-block scroll-reveal" style="text-align: center; border: none; padding: 0; filter: blur(0); opacity: 1;">
                 <h1 style="cursor:default;">Portfolio<span class="dot">.</span></h1>
                 <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
             </div>
@@ -330,7 +332,7 @@
         </section>
 
         <section id="gear" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0;">
+            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
                 <h1 style="cursor:default;">Gear<span class="dot">.</span></h1>
                 <p class="subtitle">Strumenti al servizio dell'intenzione.</p>
             </div>
@@ -358,7 +360,7 @@
                                 <span class="item-name">Canon EF 85mm f/1.2L II USM</span> 
                                 <span class="badge badge-l">L Series</span>
                             </li>
-                            <li><span class="item-name">Canon EF 100mm f/2.8L Macro IS USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Canon EF 100mm f/2.8 Macro USM</span></li>
                         </ul>
                     </div>
                 </div>
@@ -367,10 +369,10 @@
                     <div class="shape-card interactive-card">
                         <h3 class="gear-title">Zoom Lenses</h3>
                         <ul class="gear-list">
-                            <li><span class="item-name">Tokina AT-X 16-28mm f/2.8 PRO FX</span></li>
+                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Tokina AT-X 16-28mm f/2.8 FX</span> <span class="badge badge-pro">PRO</span></li>
                             <li><span class="item-name">Canon EF 24-70mm f/2.8L USM</span> <span class="badge badge-l">L Series</span></li>
                             <li><span class="item-name">Canon EF 70-200mm f/2.8L IS USM</span> <span class="badge badge-l">L Series</span></li>
-                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span> <span class="badge badge-l">L Series</span></li>
                         </ul>
                     </div>
                 </div>
@@ -398,7 +400,7 @@
         </section>
 
         <section id="about" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0;">
+            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
                 <h1 style="cursor:default;">Storia<span class="dot">.</span></h1>
             </div>
             <div class="snap-block scroll-reveal">
@@ -420,38 +422,62 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            // --- AUDIO SYNTHESIZER (No file MP3 = Zero latenza) ---
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playSound(type = 'nav') {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                if (type === 'nav') {
+                    // Suono morbido per il cambio pagina
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'focus') {
+                    // Click sottile (haptic-like) per lo scroll focus
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.03);
+                }
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+            }
+
             // --- LOGO GLOW EFFECT ---
             const logos = [document.getElementById('main-logo'), document.getElementById('center-logo')];
             const triggerGlow = () => {
                 logos.forEach(logo => {
                     logo.classList.remove('trigger-glow');
-                    void logo.offsetWidth; // Trigger reflow per riavviare l'animazione
+                    void logo.offsetWidth; 
                     logo.classList.add('trigger-glow');
                 });
             };
-            
-            // Glow all'apertura
             setTimeout(triggerGlow, 500);
-            
-            // Glow al click su entrambi i loghi e sul bottone dinamico
             logos.forEach(logo => logo.addEventListener('click', triggerGlow));
 
-            // --- TASTO DINAMICO HOME ---
+            // --- TASTO DINAMICO HOME (Fade automatico + Vetro) ---
             const dynamicBtn = document.getElementById('dynamic-category-btn');
             const dynamicText = document.getElementById('dynamic-text');
-            const categories = ["Wedding.", "Commercial.", "Editorial.", "Portraiture.", "Automotive."];
+            const categories = ["Wedding", "Commercial", "Editorial", "Portraiture", "Automotive"];
             let catIndex = 0;
 
-            dynamicBtn.addEventListener('click', () => {
-                triggerGlow(); // Fa brillare il logo al click del bottone
+            // Cambia categoria in automatico ogni 3 secondi
+            setInterval(() => {
                 dynamicText.style.opacity = 0;
                 setTimeout(() => {
                     catIndex = (catIndex + 1) % categories.length;
                     dynamicText.textContent = categories[catIndex];
                     dynamicText.style.opacity = 1;
-                }, 300);
-            });
-
+                }, 400); // Sincronizzato con la transition CSS
+            }, 3000);
 
             // --- GESTIONE NAVIGAZIONE ---
             const navButtons = document.querySelectorAll('.nav-btn');
@@ -460,6 +486,7 @@
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     if(btn.classList.contains('active')) return;
+                    playSound('nav'); // Feedback sonoro navigazione
                     const targetId = btn.getAttribute('data-target');
                     navButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
@@ -474,13 +501,25 @@
                 });
             });
 
-            // --- OBSERVER FOCUS (Ombra rossa) ---
+            // --- OBSERVER FOCUS (Sfocatura contestuale + Suono + Ombra rossa) ---
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('scroll-focus');
-                    else entry.target.classList.remove('scroll-focus');
+                    if (entry.isIntersecting) {
+                        // Se la card entra nel focus principale dello schermo
+                        if (!entry.target.classList.contains('scroll-focus')) {
+                            entry.target.classList.add('scroll-focus');
+                            // Suono solo se l'utente sta attivamente scrollando o aprendo la view
+                            playSound('focus'); 
+                        }
+                    } else {
+                        // Se esce dal centro, la sfoca
+                        entry.target.classList.remove('scroll-focus');
+                    }
                 });
-            }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+            }, { 
+                rootMargin: '-35% 0px -35% 0px', // Definisce una "finestra" stretta al centro dello schermo
+                threshold: 0 
+            });
 
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
 
@@ -494,11 +533,7 @@
                     let delta = Math.abs(st - lastScrollTop);
                     lastScrollTop = st;
 
-                    // Calcola il Blur standard
                     let blurAmount = Math.min(delta * 0.15, 8); 
-                    
-                    // Calcola lo Stretch per dare direzionalità al blur (Motion Smear)
-                    // Scala leggermente sull'asse Y per simulare la scia della velocità
                     let stretchAmount = 1 + Math.min(delta * 0.003, 0.08);
 
                     view.style.setProperty('--scroll-blur', `${blurAmount}px`);
