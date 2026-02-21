@@ -20,7 +20,15 @@
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* 1. DISABILITAZIONE SELEZIONE TESTO GLOBALE */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-user-select: none; /* Safari */
+            user-select: none; /* Standard */
+            -webkit-tap-highlight-color: transparent; /* Rimuove il flash blu su Android */
+        }
 
         body {
             background-color: var(--bg-color);
@@ -28,7 +36,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             width: 100vw;
             height: 100vh;
-            /* Blocca lo scroll del body, deleghiamo lo scroll alle singole viste */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -46,7 +53,7 @@
             align-items: center;
             z-index: 1000;
             background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%);
-            pointer-events: none; /* Lascia passare i click nel vuoto */
+            pointer-events: none;
         }
 
         .logo {
@@ -57,7 +64,6 @@
             text-shadow: 0 0 15px rgba(255,255,255,0.1);
         }
         
-        /* Effetto Glow sul punto rosso */
         .dot { color: var(--accent-red); text-shadow: 0 0 12px var(--accent-red); }
 
         .btn-reserved {
@@ -81,8 +87,15 @@
             transform: translateY(-2px);
         }
 
+        /* 2. FEEDBACK AL CLICK (Bottoni) */
+        .btn-reserved:active, nav button:active {
+            transform: scale(0.92) !important;
+            opacity: 0.8;
+            transition: transform 0.1s, opacity 0.1s;
+        }
+
         /* =========================================
-           VIEWS (PAGINE CON SCROLL INTERNO)
+           VIEWS (SCROLL SNAP NATIVO)
            ========================================= */
         .view-container {
             flex: 1;
@@ -94,10 +107,9 @@
         .view {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* ABILITA LO SCROLL INTERNO */
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 6rem 2rem 8rem 2rem; /* Spazio per header in alto e dock in basso */
+            padding: 8rem 2rem 10rem 2rem; /* Margini aumentati per permettere lo snap al centro */
             opacity: 0;
             visibility: hidden;
             transform: scale(0.96) translateY(20px);
@@ -105,6 +117,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            
+            /* 3. SCROLL A BLOCCHI MAGNENTICO */
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
         }
 
         .view.active {
@@ -113,37 +129,54 @@
             transform: scale(1) translateY(0);
         }
 
+        /* Classe aggiuntiva per gli elementi che fanno da "calamita" */
+        .snap-block {
+            scroll-snap-align: center;
+            scroll-snap-stop: always; /* Forza l'arresto ad ogni blocco */
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
         /* =========================================
-           ANIMAZIONI DI SCROLL & HOVER CARDS
+           ANIMAZIONI DI SCROLL & HIGHLIGHT
            ========================================= */
         .scroll-reveal {
             opacity: 0.3;
             transform: translateY(20px) scale(0.98);
-            transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple), box-shadow 0.3s var(--ease-apple);
-            width: 100%;
+            transition: all 0.6s var(--ease-apple);
             max-width: 1000px;
-            will-change: transform, opacity;
+            will-change: transform, opacity, box-shadow;
         }
         
-        /* Classe aggiunta da JS quando l'elemento entra nello schermo */
         .scroll-reveal.in-view {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
 
-        /* Effetto Focus/Hover con ombra rossa */
-        .interactive-card.in-view:hover {
-            transform: translateY(-5px) scale(1.02);
+        /* 4. EVIDENZIAZIONE ALLO SCORRIMENTO (scroll-focus) + HOVER */
+        .interactive-card {
+            transition: all 0.4s var(--ease-apple);
+        }
+
+        .interactive-card.in-view:hover,
+        .interactive-card.in-view.scroll-focus {
+            transform: translateY(-8px) scale(1.03);
             box-shadow: var(--shadow-red);
             border-color: rgba(255, 45, 85, 0.4);
             z-index: 10;
+        }
+
+        /* 2. FEEDBACK AL CLICK (Card) */
+        .interactive-card.in-view:active {
+            transform: scale(0.96) translateY(0) !important;
+            box-shadow: none !important;
+            transition: transform 0.1s;
         }
 
         /* =========================================
            TYPOGRAPHY & LAYOUTS FLUIDI
            ========================================= */
         h1 {
-            /* Adatta la dimensione del font al dispositivo */
             font-size: clamp(2.5rem, 8vw, 6rem);
             font-weight: 800;
             letter-spacing: -0.05em;
@@ -158,7 +191,6 @@
             margin-bottom: 3rem;
         }
 
-        /* Cards Generiche in Vetro */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: var(--blur);
@@ -169,13 +201,11 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Griglie Auto-adattanti */
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; width: 100%; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; width: 100%; }
 
-        /* Componenti Specifici: Portfolio */
         .portfolio-card {
-            height: 350px;
+            height: 400px; /* Leggermente aumentato per riempire meglio lo schermo */
             border-radius: 24px;
             position: relative;
             background-size: cover;
@@ -186,7 +216,7 @@
             padding: 1.5rem;
             border: 1px solid var(--glass-border);
         }
-        /* Segnaposto immagini (da sostituire con le tue vere) */
+        
         .card-wedding { background-image: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 80%), url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop'); }
         .card-nightlife { background-image: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 80%), url('https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=600&auto=format&fit=crop'); }
         .card-ritratti { background-image: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 80%), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop'); }
@@ -194,19 +224,16 @@
         .portfolio-card h3 { font-size: 1.8rem; text-shadow: 0 4px 15px rgba(0,0,0,1); }
         .portfolio-card p { color: #ccc; text-shadow: 0 2px 5px rgba(0,0,0,1); }
 
-        /* Componenti Specifici: Gear */
         .badge { background: rgba(255,45,85,0.15); color: var(--accent-red); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; border: 1px solid rgba(255,45,85,0.3); }
         .gear-list { list-style: none; margin-top: 1rem; }
         .gear-list li { padding: 1rem 0; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;}
         .gear-list li:last-child { border-bottom: none; }
 
-        /* Componenti Specifici: Timeline Storia */
         .timeline-item { position: relative; padding-left: 2rem; border-left: 2px solid rgba(255,255,255,0.1); }
         .timeline-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
         .timeline-item h3 { color: var(--accent-red); font-size: 1.8rem; margin-bottom: 0.5rem; text-shadow: 0 0 15px rgba(255,45,85,0.3); }
         .timeline-item p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem;}
 
-        /* Home Centrale Eroe */
         #home { justify-content: center; }
 
         /* =========================================
@@ -227,7 +254,7 @@
             gap: 0.2rem;
             z-index: 1000;
             width: max-content;
-            max-width: 95vw; /* Evita che esca fuori sui telefoni piccolissimi */
+            max-width: 95vw;
         }
 
         nav button {
@@ -249,13 +276,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        /* =========================================
-           CUSTOM SCROLLBAR (Per le view interne)
-           ========================================= */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
+        ::-webkit-scrollbar { width: 0px; background: transparent; } /* Nascosta per un vero look App nativa */
 
     </style>
 </head>
@@ -268,72 +289,71 @@
     <div class="view-container">
         
         <section id="home" class="view active">
-            <h1 class="scroll-reveal">otuics<span class="dot">.</span></h1>
-            <p class="subtitle scroll-reveal">Visual Creator</p>
+            <div class="snap-block scroll-reveal">
+                <h1>otuics<span class="dot">.</span></h1>
+                <p class="subtitle">Visual Creator</p>
+            </div>
         </section>
 
         <section id="portfolio" class="view">
-            <div class="scroll-reveal" style="text-align: center; margin-bottom: 2rem;">
+            <div class="snap-block scroll-reveal" style="text-align: center;">
                 <h1>Portfolio<span class="dot">.</span></h1>
                 <p class="subtitle">Ogni categoria ha la sua grammatica: timing, composizione, intenzione<span class="dot">.</span></p>
             </div>
-            <div class="grid-3 scroll-reveal">
-                <div class="portfolio-card card-wedding interactive-card scroll-reveal">
-                    <h3>Wedding<span class="dot">.</span></h3>
-                    <p>Emozioni irripetibili</p>
-                </div>
-                <div class="portfolio-card card-nightlife interactive-card scroll-reveal">
-                    <h3>Nightlife<span class="dot">.</span></h3>
-                    <p>Energia pura</p>
-                </div>
-                <div class="portfolio-card card-ritratti interactive-card scroll-reveal">
-                    <h3>Ritratti<span class="dot">.</span></h3>
-                    <p>Presenza magnetica</p>
-                </div>
+            
+            <div class="portfolio-card card-wedding interactive-card snap-block scroll-reveal">
+                <h3>Wedding<span class="dot">.</span></h3>
+                <p>Emozioni irripetibili</p>
+            </div>
+            <div class="portfolio-card card-nightlife interactive-card snap-block scroll-reveal">
+                <h3>Nightlife<span class="dot">.</span></h3>
+                <p>Energia pura</p>
+            </div>
+            <div class="portfolio-card card-ritratti interactive-card snap-block scroll-reveal">
+                <h3>Ritratti<span class="dot">.</span></h3>
+                <p>Presenza magnetica</p>
             </div>
         </section>
 
         <section id="gear" class="view">
-            <div class="scroll-reveal" style="text-align: center; margin-bottom: 2rem;">
+            <div class="snap-block scroll-reveal" style="text-align: center;">
                 <h1>Gear<span class="dot">.</span></h1>
                 <p class="subtitle">Sistema veloce, affidabile, ripetibile<span class="dot">.</span></p>
             </div>
-            <div class="grid-2 scroll-reveal">
-                <div class="glass-card interactive-card scroll-reveal">
-                    <h3 style="margin-bottom: 1rem;">📷 Bodies<span class="dot">.</span></h3>
-                    <ul class="gear-list">
-                        <li>Canon EOS R6 <span class="badge">MAIN</span></li>
-                        <li>Canon EOS R <span style="font-size: 0.8em; color: var(--text-muted)">(Backup)</span></li>
-                        <li>Canon 600D <span style="font-size: 0.8em; color: var(--text-muted)">(Archive)</span></li>
-                    </ul>
-                </div>
-                <div class="glass-card interactive-card scroll-reveal">
-                    <h3 style="margin-bottom: 1rem;">🎥 Stabilization<span class="dot">.</span></h3>
-                    <ul class="gear-list">
-                        <li>
-                            <div>
-                                <strong style="font-size: 1.1rem;">DJI Ronin S</strong><br>
-                                <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">3-axis gimbal per movimenti fluidi e dinamici</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+            
+            <div class="glass-card interactive-card snap-block scroll-reveal">
+                <h3 style="margin-bottom: 1rem;">📷 Bodies<span class="dot">.</span></h3>
+                <ul class="gear-list">
+                    <li>Canon EOS R6 <span class="badge">MAIN</span></li>
+                    <li>Canon EOS R <span style="font-size: 0.8em; color: var(--text-muted)">(Backup)</span></li>
+                    <li>Canon 600D <span style="font-size: 0.8em; color: var(--text-muted)">(Archive)</span></li>
+                </ul>
+            </div>
+            <div class="glass-card interactive-card snap-block scroll-reveal">
+                <h3 style="margin-bottom: 1rem;">🎥 Stabilization<span class="dot">.</span></h3>
+                <ul class="gear-list">
+                    <li>
+                        <div>
+                            <strong style="font-size: 1.1rem;">DJI Ronin S</strong><br>
+                            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">3-axis gimbal per movimenti fluidi e dinamici</span>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </section>
 
         <section id="about" class="view">
-            <div class="scroll-reveal" style="text-align: center; margin-bottom: 2rem;">
+            <div class="snap-block scroll-reveal" style="text-align: center;">
                 <h1>Storia<span class="dot">.</span></h1>
             </div>
-            <div class="scroll-reveal" style="width: 100%; max-width: 800px;">
-                <div class="timeline-item glass-card interactive-card scroll-reveal">
-                    <h3>2016</h3>
-                    <p>Ho iniziato con una <strong>Canon 600D</strong>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto<span class="dot">.</span></p>
-                </div>
-                <div class="timeline-item glass-card interactive-card scroll-reveal">
-                    <h3>2019</h3>
-                    <p>Passaggio al video: <strong>Fujifilm X-T3</strong>. Ho scoperto che il movimento cambia tutto. Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="dot">.</span></p>
-                </div>
+            
+            <div class="timeline-item glass-card interactive-card snap-block scroll-reveal" style="max-width: 800px; width: 100%;">
+                <h3>2016</h3>
+                <p>Ho iniziato con una <strong>Canon 600D</strong>, Sigma 17-50mm e Canon 55-250mm. Fotografavo ritratti, partite di basket, calcio: imparare a vedere prima di sapere cosa fare. Era tutto "manuale" nel senso più brutale: sbagliare esposizione, perdere il momento, capire che il timing è tutto<span class="dot">.</span></p>
+            </div>
+            <div class="timeline-item glass-card interactive-card snap-block scroll-reveal" style="max-width: 800px; width: 100%;">
+                <h3>2019</h3>
+                <p>Passaggio al video: <strong>Fujifilm X-T3</strong>. Ho scoperto che il movimento cambia tutto. Taglio, sequenza, transizione: nasce il linguaggio visivo vero. Le riprese diventano intenzionali: ogni frame deve servire la storia<span class="dot">.</span></p>
             </div>
         </section>
     </div>
@@ -363,8 +383,7 @@
                     views.forEach(view => {
                         if (view.id === targetId) {
                             view.classList.add('active');
-                            // Reset dello scroll della singola pagina quando la si riapre
-                            view.scrollTop = 0;
+                            view.scrollTop = 0; // Reset scroll
                         } else {
                             view.classList.remove('active');
                         }
@@ -372,24 +391,42 @@
                 });
             });
 
-            // 2. Intersection Observer (Motore dello Scroll Reveal)
-            const observerOptions = {
-                root: null, // Usa la viewport attuale del browser
-                rootMargin: '0px',
-                threshold: 0.1 // L'effetto scatta quando il 10% del blocco è visibile
-            };
-
-            const observer = new IntersectionObserver((entries) => {
+            // 2. Observer Base (Rivela gli elementi che entrano nello schermo)
+            const revealOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const revealObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
                     }
                 });
-            }, observerOptions);
+            }, revealOptions);
 
-            // Applica l'osservatore a tutti gli elementi con la classe .scroll-reveal
             document.querySelectorAll('.scroll-reveal').forEach(el => {
-                observer.observe(el);
+                revealObserver.observe(el);
+            });
+
+            // 3. NUOVO OBSERVER: Focus Centrale (Evidenziazione allo scorrimento)
+            // Questo scatta SOLO quando l'elemento è esattamente nella zona centrale dello schermo
+            const focusOptions = {
+                root: null,
+                // Margini negativi: crea una "finestra" centrale attiva del 20% dell'altezza dello schermo
+                rootMargin: '-40% 0px -40% 0px', 
+                threshold: 0
+            };
+
+            const focusObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('scroll-focus');
+                    } else {
+                        entry.target.classList.remove('scroll-focus');
+                    }
+                });
+            }, focusOptions);
+
+            // Osserviamo solo le card interattive per l'effetto focus
+            document.querySelectorAll('.interactive-card').forEach(el => {
+                focusObserver.observe(el);
             });
         });
     </script>
