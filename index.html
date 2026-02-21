@@ -24,26 +24,16 @@
             --glass-border: rgba(255, 255, 255, 0.05);
             --blur: blur(20px);
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+            --ease-focus: cubic-bezier(0.1, 0.8, 0.2, 1); /* Curva meccanica per il fuoco */
             --scroll-blur: 0px; 
             --scroll-stretch: 1;
         }
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-user-select: none; user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif;
+            width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
         }
 
         /* =========================================
@@ -61,11 +51,17 @@
             100% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); }
         }
 
-        /* Effetto di rivelazione luce -> nitidezza (HOME) */
-        @keyframes cinematic-reveal {
-            0%   { opacity: 0; filter: blur(30px) brightness(2); transform: scale(1.05); }
-            50%  { opacity: 0.7; filter: blur(10px) brightness(1.5); }
-            100% { opacity: 1; filter: blur(0px) brightness(1); transform: scale(1); }
+        /* Effetto di Messa a Fuoco Meccanica (Blur -> Nitido) */
+        @keyframes rack-focus-pull {
+            0%   { filter: blur(25px); transform: scale(1.08); opacity: 0; }
+            10%  { opacity: 1; }
+            100% { filter: blur(0px); transform: scale(1); opacity: 1; }
+        }
+
+        /* Scorrimento della scala delle distanze */
+        @keyframes slide-distance-scale {
+            0%   { transform: translateX(110px); } /* Distanza minima (Macro) */
+            100% { transform: translateX(-160px); } /* Infinito */
         }
 
         .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
@@ -74,10 +70,9 @@
            HEADER & NAV (FIXED)
            ========================================= */
         header {
-            position: fixed; top: 0; left: 0; width: 100%;
-            padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%);
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2rem; 
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%); pointer-events: none;
         }
 
         .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; cursor: pointer; transition: text-shadow 0.3s;}
@@ -90,21 +85,54 @@
             cursor: pointer; pointer-events: auto; transition: all 0.3s var(--ease-apple);
         }
 
-        nav {
-            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+        /* NAV REALE (Inizialmente Nascosta) */
+        #main-nav {
+            position: fixed; bottom: 2rem; left: 50%; 
             background: rgba(20, 20, 22, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px;
             display: flex; gap: 0.2rem; z-index: 1000; width: max-content; max-width: 95vw;
+            
+            /* Setup per l'entrata dal basso */
+            transform: translateX(-50%) translateY(40px); opacity: 0; pointer-events: none;
+            transition: transform 0.8s var(--ease-focus), opacity 0.8s;
         }
 
-        nav button {
-            background: transparent; border: none; color: var(--text-muted);
-            padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem);
-            font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s;
-        }
+        #main-nav.show-nav { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
 
+        nav button { background: transparent; border: none; color: var(--text-muted); padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem); font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s; }
         nav button.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
         .btn-reserved:active, nav button:active { transform: scale(0.92) !important; opacity: 0.8; }
+
+        /* =========================================
+           LENS FOCUS DISTANCE WINDOW (STARTUP)
+           ========================================= */
+        #lens-focus-window {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            width: 220px; height: 55px; background: rgba(10,10,12,0.9);
+            border: 1px solid #333; border-radius: 6px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; z-index: 1001;
+            box-shadow: inset 0 8px 15px rgba(0,0,0,0.9), 0 5px 20px rgba(0,0,0,0.5);
+            transition: transform 0.6s var(--ease-focus), opacity 0.6s;
+        }
+        
+        /* Linea di Fede Rossa */
+        .lens-red-line {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 2px; height: 100%; background: var(--accent-red); z-index: 2;
+            box-shadow: 0 0 5px var(--accent-red);
+        }
+
+        .distance-scale {
+            display: flex; gap: 1.8rem; align-items: baseline;
+            color: var(--accent-gold); font-family: 'Inter', monospace; font-size: 0.85rem; font-weight: 600;
+            /* L'animazione parte insieme a rack-focus-pull con la stessa durata e curva */
+            animation: slide-distance-scale 2.8s var(--ease-focus) forwards;
+        }
+
+        .distance-scale span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .distance-scale span::after { content: ''; width: 2px; height: 6px; background: #fff; opacity: 0.5; }
+        .distance-scale span.infinity { font-size: 1.5rem; color: #fff; font-weight: 300;}
+        .distance-scale span.infinity::after { display: none; }
 
         /* =========================================
            VIEWS & SCROLL SNAP NATIVO
@@ -113,8 +141,7 @@
 
         .view {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            overflow-y: auto; overflow-x: hidden;
-            padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden;
+            overflow-y: auto; overflow-x: hidden; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden;
             transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
             display: flex; flex-direction: column; align-items: center;
             scroll-snap-type: y mandatory; scroll-behavior: smooth;
@@ -123,39 +150,13 @@
         .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
-        /* =========================================
-           CORE BLOCKS, BLUR ENGINE & CONTEXTUAL FOCUS
-           ========================================= */
-        .snap-block {
-            scroll-snap-align: center; scroll-snap-stop: always;
-            margin-bottom: 2.5rem; width: 100%; max-width: 380px;
-            filter: blur(var(--scroll-blur));
-            transform: scaleY(var(--scroll-stretch));
-            transition: filter 0.1s linear, transform 0.1s linear;
-            will-change: transform, filter;
-        }
+        .snap-block { scroll-snap-align: center; scroll-snap-stop: always; margin-bottom: 2.5rem; width: 100%; max-width: 380px; filter: blur(var(--scroll-blur)); transform: scaleY(var(--scroll-stretch)); transition: filter 0.1s linear, transform 0.1s linear; will-change: transform, filter; }
 
-        .shape-card {
-            width: 100%; border-radius: 24px; overflow: hidden; position: relative;
-            background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-            border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem;
-        }
+        .shape-card { width: 100%; border-radius: 24px; overflow: hidden; position: relative; background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem; }
 
-        /* Logica Standard per Gear e About */
-        .interactive-card { 
-            transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; 
-            filter: blur(6px); opacity: 0.4;
-        }
-        
-        .interactive-card.scroll-focus, .interactive-card:hover {
-            transform: scale(1.02); z-index: 10; filter: blur(0px); opacity: 1;
-        }
-
-        /* Ombreggiatura rossa applicata SOLO agli elementi con box-shadow attiva (Gear/About) */
-        .shape-card.interactive-card.scroll-focus, .shape-card.interactive-card:hover {
-            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25); border-color: rgba(255, 45, 85, 0.4);
-        }
-
+        .interactive-card { transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; filter: blur(6px); opacity: 0.4; }
+        .interactive-card.scroll-focus, .interactive-card:hover { transform: scale(1.02); z-index: 10; filter: blur(0px); opacity: 1; }
+        .shape-card.interactive-card.scroll-focus, .shape-card.interactive-card:hover { box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25); border-color: rgba(255, 45, 85, 0.4); }
         .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
 
         /* =========================================
@@ -167,60 +168,23 @@
         #home { padding: 0; scroll-snap-type: none; }
         #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
         
-        /* Applica l'animazione luce al testo della home */
-        .reveal-text { animation: cinematic-reveal 2.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards; }
+        /* Focus Visivo Coordinato alla Scala delle Distanze (Durata 2.8s) */
+        .reveal-focus { animation: rack-focus-pull 2.8s var(--ease-focus) forwards; opacity: 0; }
 
-        /* Pulsante Home iOS + Gradiente Sotto */
         .btn-container { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-top: 1rem; }
-        
-        /* Il bagliore diffuso sotto il tasto */
-        .btn-container::before {
-            content: ''; position: absolute; width: 120%; height: 120%;
-            background: radial-gradient(circle, rgba(255,45,85,0.4) 0%, transparent 70%);
-            filter: blur(15px); z-index: -1; opacity: 0.8; transition: opacity 0.4s; pointer-events: none;
-        }
-        
-        .dynamic-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 0.6rem 1.6rem; border-radius: 50px; cursor: pointer;
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            transition: all 0.4s var(--ease-apple); display: flex; align-items: center; justify-content: center; min-width: 140px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .btn-container::before { content: ''; position: absolute; width: 120%; height: 120%; background: radial-gradient(circle, rgba(255,45,85,0.4) 0%, transparent 70%); filter: blur(15px); z-index: -1; opacity: 0.8; transition: opacity 0.4s; pointer-events: none; }
+        .dynamic-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.6rem 1.6rem; border-radius: 50px; cursor: pointer; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); transition: all 0.4s var(--ease-apple); display: flex; align-items: center; justify-content: center; min-width: 140px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .dynamic-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
-        .dynamic-btn:hover + .btn-container::before { opacity: 1; } /* Aumenta il bagliore in hover */
-        
-        .dynamic-btn span {
-            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px;
-            color: var(--text-main); transition: opacity 0.4s ease;
-        }
+        .dynamic-btn:hover + .btn-container::before { opacity: 1; } 
+        .dynamic-btn span { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; color: var(--text-main); transition: opacity 0.4s ease; }
 
         /* =========================================
-           PORTFOLIO REDESIGN (FIX BLACK BOX)
+           PORTFOLIO REDESIGN
            ========================================= */
-        .portfolio-item { 
-            display: flex; flex-direction: column; width: 100%; gap: 1rem;
-            /* Forza la trasparenza per evitare il rettangolo su desktop */
-            background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important;
-        }
-        
-        .portfolio-visual {
-            aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative;
-            background-size: cover; background-position: center; border: 1px solid var(--glass-border);
-            overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s;
-        }
-
-        /* Sfumatura mobile */
-        .portfolio-visual::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%;
-            background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none;
-        }
-
-        /* Il bagliore rosso si applica SOLO ALL'IMMAGINE, non al contenitore intero */
-        .portfolio-item.scroll-focus .portfolio-visual, .portfolio-item:hover .portfolio-visual {
-            box-shadow: 0 0 40px rgba(255, 45, 85, 0.35); border-color: rgba(255, 45, 85, 0.6);
-        }
-
+        .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+        .portfolio-visual { aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative; background-size: cover; background-position: center; border: 1px solid var(--glass-border); overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s; }
+        .portfolio-visual::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%; background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none; }
+        .portfolio-item.scroll-focus .portfolio-visual, .portfolio-item:hover .portfolio-visual { box-shadow: 0 0 40px rgba(255, 45, 85, 0.35); border-color: rgba(255, 45, 85, 0.6); }
         .portfolio-text { padding: 0 0.5rem; text-align: left; }
         .portfolio-text h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text-main); }
         .portfolio-text p { color: var(--text-muted); font-size: 0.95rem; font-weight: 300; line-height: 1.5; }
@@ -235,24 +199,18 @@
            GEAR SPECIFIC
            ========================================= */
         #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
-        
         .gear-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main); }
         .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
         .gear-list li { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;}
         .gear-list li:last-child { border-bottom: none; padding-bottom: 0; }
-        
         .item-name { color: var(--text-main); flex: 1; min-width: 150px;}
         .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
         .badge-container { display: flex; gap: 0.4rem; align-items: center; }
-        
-        /* Badges */
         .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
         .badge-main { background: rgba(255,255,255,0.1); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
         .badge-l { color: var(--accent-red); background: rgba(255,45,85,0.1); border: 1px solid var(--accent-red); box-shadow: 0 0 10px rgba(255,45,85,0.4); }
         .badge-art { color: var(--accent-blue); background: rgba(10,132,255,0.1); border: 1px solid var(--accent-blue); box-shadow: 0 0 10px rgba(10,132,255,0.4); }
         .badge-pro { color: var(--accent-gold); background: rgba(255,215,0,0.1); border: 1px solid var(--accent-gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
-
-        /* Nuovo Effetto "Legend" per 85mm */
         .badge-legend { color: #fff; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(255,255,255,0.5); text-shadow: 0 0 4px #fff;}
         .text-legend { animation: logo-glow 2.5s infinite ease-in-out; font-weight: 600; color: #fff; }
 
@@ -262,19 +220,15 @@
         @media (min-width: 768px) {
             .view { padding: 8rem 4rem 10rem 4rem; }
             .snap-block { max-width: 800px; }
-            
-            /* Sdoppiamento perfetto layout Desktop */
             .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 4rem; }
             .portfolio-visual { flex: 0 0 45%; max-width: 450px; }
             .portfolio-visual::after { display: none; }
             .portfolio-text { flex: 1; text-align: left; }
             .portfolio-text h3 { font-size: 2.5rem; }
             .portfolio-text p { font-size: 1.1rem; }
-
             #gear-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; max-width: 1100px; scroll-snap-type: none; }
             #gear-container .snap-block { margin-bottom: 0; max-width: 100%; }
             #gear-container .shape-card { justify-content: flex-start; }
-
             .bento-bodies { grid-column: span 1; grid-row: span 1; }
             .bento-primes { grid-column: span 2; grid-row: span 2; }
             .bento-zooms { grid-column: span 1; grid-row: span 2; }
@@ -290,10 +244,30 @@
         <button class="btn-reserved">Area Riservata</button>
     </header>
 
+    <div id="lens-focus-window">
+        <div class="lens-red-line"></div>
+        <div class="distance-scale">
+            <span>0.85</span>
+            <span>1.2</span>
+            <span>2.0</span>
+            <span>3.0</span>
+            <span>5.0</span>
+            <span>10</span>
+            <span class="infinity">∞</span>
+        </div>
+    </div>
+
+    <nav id="main-nav">
+        <button class="nav-btn active" data-target="home">Home</button>
+        <button class="nav-btn" data-target="portfolio">Portfolio</button>
+        <button class="nav-btn" data-target="gear">Gear</button>
+        <button class="nav-btn" data-target="about">About</button>
+    </nav>
+
     <div class="view-container">
         
         <section id="home" class="view active">
-            <div class="snap-block scroll-reveal reveal-text">
+            <div class="snap-block scroll-reveal reveal-focus">
                 <h1 id="center-logo">otuics<span class="dot">.</span></h1>
                 <p class="subtitle">Visual Creator</p>
                 
@@ -440,21 +414,33 @@
                 </div>
             </div>
         </section>
-    </div>
 
-    <nav>
-        <button class="nav-btn active" data-target="home">Home</button>
-        <button class="nav-btn" data-target="portfolio">Portfolio</button>
-        <button class="nav-btn" data-target="gear">Gear</button>
-        <button class="nav-btn" data-target="about">About</button>
-    </nav>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Audio Engine a bassa latenza
+            // --- LOGICA DELLO SWAP: FINSTRA FUOCO -> MENU REALE ---
+            const focusWindow = document.getElementById('lens-focus-window');
+            const mainNav = document.getElementById('main-nav');
+
+            // Aspetta che finisca l'animazione di focus (2.8 secondi), poi fa lo swap
+            setTimeout(() => {
+                // 1. Spinge giù e rende invisibile la finestrella delle distanze
+                focusWindow.style.transform = 'translate(-50%, 40px)';
+                focusWindow.style.opacity = '0';
+                
+                // 2. Dopo una minuscola frazione di secondo (per fluidità), tira su il menù vero
+                setTimeout(() => {
+                    focusWindow.style.display = 'none'; // Rimuove dal DOM visivo
+                    mainNav.classList.add('show-nav');
+                }, 400);
+
+            }, 2800); // 2800ms corrisponde alla durata dell'animazione CSS
+
+
+            // --- AUDIO ENGINE ---
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
             function playSound(type = 'nav') {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 const osc = audioCtx.createOscillator();
@@ -479,11 +465,9 @@
             }
 
             // Tasto Dinamico
-            const dynamicBtn = document.getElementById('dynamic-category-btn');
             const dynamicText = document.getElementById('dynamic-text');
             const categories = ["Wedding", "Commercial", "Editorial", "Portraiture", "Automotive"];
             let catIndex = 0;
-
             setInterval(() => {
                 dynamicText.style.opacity = 0;
                 setTimeout(() => {
@@ -496,7 +480,6 @@
             // Navigazione
             const navButtons = document.querySelectorAll('.nav-btn');
             const views = document.querySelectorAll('.view');
-
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     if(btn.classList.contains('active')) return;
@@ -514,7 +497,7 @@
                 });
             });
 
-            // Focus Observer
+            // Focus Observer per le Card interne
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -527,25 +510,20 @@
                     }
                 });
             }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
 
-            // Motion Blur Engine
+            // Motion Blur Scorrimento
             let isScrolling;
             let lastScrollTop = 0;
-            
             views.forEach(view => {
                 view.addEventListener('scroll', () => {
                     let st = view.scrollTop;
                     let delta = Math.abs(st - lastScrollTop);
                     lastScrollTop = st;
-
                     let blurAmount = Math.min(delta * 0.15, 8); 
                     let stretchAmount = 1 + Math.min(delta * 0.003, 0.08);
-
                     view.style.setProperty('--scroll-blur', `${blurAmount}px`);
                     view.style.setProperty('--scroll-stretch', `${stretchAmount}`);
-
                     window.clearTimeout(isScrolling);
                     isScrolling = setTimeout(function() {
                         view.style.setProperty('--scroll-blur', `0px`);
