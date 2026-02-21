@@ -76,42 +76,43 @@
         #unified-nav.swap-complete .lens-red-line { opacity: 0; }
 
         /* =========================================
-           ABOUT TIMELINE NAV (PURE DOTS)
+           ABOUT TIMELINE NAV (PURE NAKED DESIGN)
            ========================================= */
         #about-timeline-nav {
-            position: fixed; bottom: 5.5rem; left: 50%; transform: translateX(-50%) translateY(30px);
-            display: flex; align-items: center; gap: 1rem;
-            background: rgba(20, 20, 22, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 1.2rem; border-radius: 30px;
+            position: fixed; bottom: 5.8rem; left: 50%; transform: translateX(-50%) translateY(30px);
+            display: flex; align-items: center; gap: 1.5rem;
+            background: transparent; border: none; padding: 0;
             z-index: 999; opacity: 0; pointer-events: none; transition: transform 0.6s var(--ease-apple), opacity 0.5s;
-            width: max-content; max-width: 90vw; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+            width: max-content; max-width: 90vw;
         }
         #about-timeline-nav.show-timeline { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
 
-        .timeline-track-container { position: relative; width: 180px; height: 20px; display: flex; align-items: center; }
-        .timeline-track-base { position: absolute; width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; }
-        .timeline-track-fill { position: absolute; height: 2px; background: var(--accent-red); width: 0%; transition: width 0.5s var(--ease-apple); border-radius: 2px; box-shadow: 0 0 8px var(--accent-red); }
+        .timeline-track-container { position: relative; width: 180px; height: 30px; display: flex; align-items: center; }
+        .timeline-track-base { position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.15); }
+        .timeline-track-fill { position: absolute; height: 1px; background: var(--accent-red); width: 0%; transition: width 0.5s var(--ease-apple); box-shadow: 0 0 8px var(--accent-red); }
         
-        /* Modifica Punti Timeline: Solo Pallino solido */
         .timeline-point {
-            position: absolute; width: 10px; height: 10px; background: #666; border-radius: 50%;
-            top: 50%; transform: translate(-50%, -50%); cursor: pointer; border: none;
-            transition: all 0.4s var(--ease-apple); z-index: 2;
+            position: absolute; width: 24px; height: 24px; background: transparent; border-radius: 50%;
+            top: 50%; transform: translate(-50%, -50%); cursor: pointer; z-index: 2;
+            display: flex; justify-content: center; align-items: center;
+        }
+        /* Tick mark sulla linea */
+        .timeline-point::before {
+            content: ''; position: absolute; width: 1px; height: 6px; background: rgba(255,255,255,0.3); transition: all 0.3s;
         }
         .timeline-point span {
-            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
-            font-size: 0.7rem; font-weight: 600; color: #fff; font-family: 'Inter', monospace;
+            position: absolute; top: -20px; font-size: 0.75rem; font-weight: 600; color: #fff; font-family: 'Inter', monospace;
             opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none;
         }
-        .timeline-point.active { background: var(--accent-red); box-shadow: 0 0 12px var(--accent-red); transform: translate(-50%, -50%) scale(1.4); }
-        .timeline-point.active span { opacity: 1; transform: translateX(-50%) translateY(-2px); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .timeline-point.active::before { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); height: 10px; width: 2px;}
+        .timeline-point.active span { opacity: 1; transform: translateY(-4px); text-shadow: 0 0 8px rgba(255,255,255,0.8); }
 
         .btn-scroll-contacts {
-            background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 0.75rem; font-weight: 600;
-            padding: 0.5rem 0.8rem; border-radius: 20px; cursor: pointer; transition: all 0.3s;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); font-size: 0.75rem; font-weight: 500; font-family: 'Inter', sans-serif;
+            padding: 0.5rem 1rem; border-radius: 30px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px);
         }
-        .btn-scroll-contacts:hover { background: rgba(255,255,255,0.2); }
-        .btn-scroll-contacts:active { transform: scale(0.9); }
+        .btn-scroll-contacts:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .btn-scroll-contacts:active { transform: scale(0.92); }
 
         /* =========================================
            VIEWS & SCROLL SNAP NATIVO
@@ -168,7 +169,7 @@
         .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
         /* =========================================
-           GEAR SPECIFIC
+           GEAR SPECIFIC & CINEMATIC ISOLATION
            ========================================= */
         #gear-container { position: relative; transition: all 0.5s var(--ease-apple); }
         #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
@@ -188,7 +189,6 @@
         .badge-legend { color: #fff; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(255,255,255,0.5); text-shadow: 0 0 4px #fff;}
         .text-legend { animation: logo-glow 2.5s infinite ease-in-out; font-weight: 600; color: #fff; }
         
-        /* FILOSOFIA: Isolamento Cinematografico Gear */
         .bento-philosophy { margin-top: 3rem; margin-bottom: 5rem;}
         .philosophy-card {
             background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
@@ -196,25 +196,35 @@
             transition: transform 0.8s var(--ease-apple), box-shadow 0.8s; box-shadow: none !important; backdrop-filter: none !important;
         }
         .philosophy-text { color: var(--text-muted); font-weight: 300; line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; max-width: 600px;}
-        
-        /* Quando la Filosofia è in Focus, Ingrandisce se stessa... */
         .bento-philosophy.scroll-focus .philosophy-card { transform: scale(1.08); }
-        
-        /* ...e il container dissolve tutto il resto! */
         #gear-container.philosophy-active .snap-block:not(.bento-philosophy) {
             opacity: 0; filter: blur(15px); pointer-events: none; transform: scale(0.95) translateY(-20px);
         }
 
         /* =========================================
-           ABOUT TIMELINE CARDS & FOOTER
+           ABOUT TIMELINE CARDS & CONTACT END
            ========================================= */
+        #about-container { position: relative; transition: all 0.5s var(--ease-apple); width: 100%; display: flex; flex-direction: column; align-items: center;}
+        
         .timeline-year { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .timeline-title { color: var(--accent-red); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
         .timeline-desc { color: var(--text-muted); font-weight: 300; line-height: 1.6; font-size: 0.95rem; }
         
-        /* Footer/Contacts Stylings */
-        .footer-block { padding: 0; margin-top: 2rem; }
-        .footer-links { display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-start; text-align: left; margin-top: 1rem;}
+        /* Isolamento Cinematografico per Contatti (Stile Filosofia) */
+        #contact-footer { margin-top: 6rem; margin-bottom: 5rem; }
+        .contact-end-card {
+            background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
+            min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.8s var(--ease-apple), box-shadow 0.8s; box-shadow: none !important; backdrop-filter: none !important; text-align: center;
+        }
+        
+        #contact-footer.scroll-focus .contact-end-card { transform: scale(1.08); }
+        #about-container.contact-active .snap-block:not(#contact-footer) {
+            opacity: 0; filter: blur(15px); pointer-events: none; transform: scale(0.95) translateY(-20px);
+        }
+
+        .footer-block { padding: 0; margin-top: 1rem; }
+        .footer-links { display: flex; flex-direction: column; gap: 0.8rem; align-items: center; text-align: center; }
         .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 400; transition: color 0.3s; }
         .footer-links a.primary-contact { font-size: 1.4rem; font-weight: 600; color: #fff; border-bottom: 1px solid var(--accent-red); padding-bottom: 0.2rem;}
         .footer-links a:hover { color: var(--text-main); }
@@ -441,67 +451,70 @@
         </section>
 
         <section id="about" class="view">
-            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
-                <h1 style="cursor:default;">Timeline<span class="dot">.</span></h1>
-                <p class="subtitle">L'evoluzione della visione.</p>
-            </div>
-            
-            <div class="snap-block scroll-reveal about-card-track" id="year-2016">
-                <div class="shape-card interactive-card">
-                    <div class="timeline-year">2016</div>
-                    <div class="timeline-title">L'Inizio</div>
-                    <p class="timeline-desc">Canon 600D, Sigma 17-50 f/2.8, Canon 55-250. I primi ritratti, la frenesia dello sport, la vastità dei paesaggi. La grammatica della luce si impara sul campo, spingendo al limite sensori entry-level.</p>
+            <div id="about-container">
+                <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
+                    <h1 style="cursor:default;">Timeline<span class="dot">.</span></h1>
+                    <p class="subtitle">L'evoluzione della visione.</p>
                 </div>
-            </div>
-
-            <div class="snap-block scroll-reveal about-card-track" id="year-2018">
-                <div class="shape-card interactive-card">
-                    <div class="timeline-year">2018</div>
-                    <div class="timeline-title">Il Salto Professionale</div>
-                    <p class="timeline-desc">Fujifilm X-T3. Il passaggio a sensori evoluti. Iniziano i battesimi, i matrimoni, la responsabilità incalcolabile di dover congelare istanti irripetibili. La pellicola digitale forgia l'ossessione per il colore.</p>
+                
+                <div class="snap-block scroll-reveal about-card-track" id="year-2016">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2016</div>
+                        <div class="timeline-title">L'Inizio</div>
+                        <p class="timeline-desc">Canon 600D, Sigma 17-50 f/2.8, Canon 55-250. I primi ritratti, la frenesia dello sport, la vastità dei paesaggi. La grammatica della luce si impara sul campo, spingendo al limite sensori entry-level.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="snap-block scroll-reveal about-card-track" id="year-2020">
-                <div class="shape-card interactive-card">
-                    <div class="timeline-year">2020</div>
-                    <div class="timeline-title">L'Era Cinematografica</div>
-                    <p class="timeline-desc">Abbandono il sistema Fuji per dedicarmi al video. Sony A7S mk2 & A7R mk1, lenti Cinema, Atomos Ninja Flame. L'immagine si fa viva. Rig pesanti, logaritmici, esposizione chirurgica. Il confine tra fotografia e cinema crolla.</p>
+                <div class="snap-block scroll-reveal about-card-track" id="year-2018">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-title">Il Salto Professionale</div>
+                        <p class="timeline-desc">Fujifilm X-T3. Il passaggio a sensori evoluti. Iniziano i battesimi, i matrimoni, la responsabilità incalcolabile di dover congelare istanti irripetibili. La pellicola digitale forgia l'ossessione per il colore.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="snap-block scroll-reveal about-card-track" id="year-2021">
-                <div class="shape-card interactive-card">
-                    <div class="timeline-year">2021</div>
-                    <div class="timeline-title">La Notte & Le Sinergie</div>
-                    <p class="timeline-desc">Upgrade a Sony A7R mk2. Scatti nei club, lidi estivi, la sfida tecnica del buio totale e dei laser. Iniziano le collaborazioni a stretto contatto con professionisti del settore. Il workflow diventa spietato, rapido, infallibile.</p>
+                <div class="snap-block scroll-reveal about-card-track" id="year-2020">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2020</div>
+                        <div class="timeline-title">L'Era Cinematografica</div>
+                        <p class="timeline-desc">Abbandono il sistema Fuji per dedicarmi al video. Sony A7S mk2 & A7R mk1, lenti Cinema, Atomos Ninja Flame. L'immagine si fa viva. Rig pesanti, logaritmici, esposizione chirurgica. Il confine tra fotografia e cinema crolla.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="snap-block scroll-reveal about-card-track" id="year-2024">
-                <div class="shape-card interactive-card">
-                    <div class="timeline-year">2024</div>
-                    <div class="timeline-title">Il Ritorno all'Essenza</div>
-                    <p class="timeline-desc">L'abbandono dei rig complessi e del sistema Sony per sposare un ecosistema Full-Frame Canon puro. Un approccio ibrido, pulito, organico. Il sistema diventa l'estensione naturale dell'occhio. Zero distrazioni, solo pura intenzione.</p>
+                <div class="snap-block scroll-reveal about-card-track" id="year-2021">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2021</div>
+                        <div class="timeline-title">La Notte & Le Sinergie</div>
+                        <p class="timeline-desc">Upgrade a Sony A7R mk2. Scatti nei club, lidi estivi, la sfida tecnica del buio totale e dei laser. Iniziano le collaborazioni a stretto contatto con professionisti del settore. Il workflow diventa spietato, rapido, infallibile.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="snap-block scroll-reveal about-card-track" id="contact-footer" style="margin-top: 4rem;">
-                <div class="shape-card interactive-card" style="background: transparent; border: none; box-shadow: none; backdrop-filter: none; padding-top: 0;">
-                    <div class="timeline-year" style="font-size: 2rem;">Oggi</div>
-                    <div class="timeline-title">La Prossima Visione</div>
-                    <p class="timeline-desc" style="font-size: 1.1rem; color: #fff; margin-bottom: 2rem;">La storia è scritta dai frame che scegliamo di salvare. Il prossimo progetto, la prossima campagna, il prossimo istante irripetibile. Sono qui per documentarlo.</p>
-                    
-                    <div class="footer-block">
-                        <div class="footer-links">
-                            <a href="mailto:otuicsart@gmail.com" class="primary-contact">otuicsart@gmail.com</a>
-                            <a href="https://instagram.com/otuicsart" target="_blank">Instagram / @otuicsart</a>
-                            <a href="https://facebook.com/otuics" target="_blank">Facebook / @otuics</a>
+                <div class="snap-block scroll-reveal about-card-track" id="year-2024">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2024</div>
+                        <div class="timeline-title">Il Ritorno all'Essenza</div>
+                        <p class="timeline-desc">L'abbandono dei rig complessi e del sistema Sony per sposare un ecosistema Full-Frame Canon puro. Un approccio ibrido, pulito, organico. Il sistema diventa l'estensione naturale dell'occhio. Zero distrazioni, solo pura intenzione.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="contact-footer" style="margin-top: 6rem; margin-bottom: 5rem;">
+                    <div class="shape-card interactive-card contact-end-card">
+                        <div class="timeline-year" style="font-size: 2rem;">Oggi</div>
+                        <div class="timeline-title">La Prossima Visione</div>
+                        <p class="timeline-desc" style="font-size: 1.1rem; color: #86868b; margin-bottom: 2rem; max-width: 600px;">
+                            La storia è scritta dai frame che scegliamo di salvare. Il prossimo progetto, la prossima campagna, il prossimo istante irripetibile. Sono qui per documentarlo.
+                        </p>
+                        
+                        <div class="footer-block">
+                            <div class="footer-links">
+                                <a href="mailto:otuicsart@gmail.com" class="primary-contact">otuicsart@gmail.com</a>
+                                <a href="https://instagram.com/otuicsart" target="_blank">Instagram / @otuicsart</a>
+                                <a href="https://facebook.com/otuics" target="_blank">Facebook / @otuics</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </section>
     </div>
 
@@ -528,6 +541,9 @@
             const aboutTimelineNav = document.getElementById('about-timeline-nav');
             const gearContainer = document.getElementById('gear-container');
             const philosophyBlock = document.querySelector('.bento-philosophy');
+            const aboutContainer = document.getElementById('about-container');
+            const contactFooter = document.getElementById('contact-footer');
+            const aboutView = document.getElementById('about');
 
             setTimeout(() => { unifiedNav.classList.add('swap-complete'); }, 2800);
 
@@ -590,12 +606,10 @@
             const timelineObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Se è l'ultimo blocco contatti, riempi al 100%
                         if(entry.target.id === 'contact-footer') {
                             timelineFill.style.width = '100%';
                             return;
                         }
-
                         const targetYearId = entry.target.id;
                         timelinePoints.forEach(pt => {
                             if (pt.getAttribute('data-target') === targetYearId) {
@@ -618,29 +632,38 @@
                 });
             });
 
-            // CLICK SU "CONTATTI"
+            // CLICK SU "CONTATTI" - Forzatura Scroll Esecutivo
             document.getElementById('btn-contacts').addEventListener('click', () => {
                 playSound('nav');
-                document.getElementById('contact-footer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Chiamata esplicita per container con scroll-snap
+                aboutView.scrollTo({ top: contactFooter.offsetTop, behavior: 'smooth' });
             });
 
-            // FOCUS OBSERVER GENERALE (Include la logica di Fade per la Filosofia Gear)
+            // FOCUS OBSERVER GENERALE (Include Fade Out per Filosofia & Contatti)
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    // Logica Gear Filosofia Fade
+                    // Logica Gear Filosofia Fade Out
                     if (entry.target === philosophyBlock) {
                         if (entry.isIntersecting) { gearContainer.classList.add('philosophy-active'); } 
                         else { gearContainer.classList.remove('philosophy-active'); }
                     }
 
-                    // Logica Focus Standard
+                    // Logica About Contatti Fade Out
+                    if (entry.target === contactFooter) {
+                        if (entry.isIntersecting) { aboutContainer.classList.add('contact-active'); } 
+                        else { aboutContainer.classList.remove('contact-active'); }
+                    }
+
+                    // Logica Focus Standard (Card rosse)
                     if (entry.isIntersecting) {
                         if (!entry.target.classList.contains('scroll-focus')) { entry.target.classList.add('scroll-focus'); playSound('focus'); }
                     } else { entry.target.classList.remove('scroll-focus'); }
                 });
             }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+            
             document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
-            focusObserver.observe(philosophyBlock); // Assicura che la filosofia sia tracciata specificatamente
+            focusObserver.observe(philosophyBlock);
+            focusObserver.observe(contactFooter);
 
             // MOTION BLUR
             let isScrolling; let lastScrollTop = 0;
