@@ -24,7 +24,7 @@
             --glass-border: rgba(255, 255, 255, 0.05);
             --blur: blur(20px);
             --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
-            --ease-focus: cubic-bezier(0.1, 0.8, 0.2, 1); /* Curva meccanica per il fuoco */
+            --ease-focus: cubic-bezier(0.1, 0.8, 0.2, 1);
             --scroll-blur: 0px; 
             --scroll-stretch: 1;
         }
@@ -51,23 +51,23 @@
             100% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); }
         }
 
-        /* Effetto di Messa a Fuoco Meccanica (Blur -> Nitido) */
+        /* Effetto di Messa a Fuoco (Blur -> Nitido) */
         @keyframes rack-focus-pull {
             0%   { filter: blur(25px); transform: scale(1.08); opacity: 0; }
             10%  { opacity: 1; }
             100% { filter: blur(0px); transform: scale(1); opacity: 1; }
         }
 
-        /* Scorrimento della scala delle distanze */
+        /* Rotazione della lente (scorrimento orizzontale) */
         @keyframes slide-distance-scale {
-            0%   { transform: translateX(110px); } /* Distanza minima (Macro) */
-            100% { transform: translateX(-160px); } /* Infinito */
+            0%   { transform: translateX(120px); } 
+            100% { transform: translateX(-140px); } 
         }
 
         .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
 
         /* =========================================
-           HEADER & NAV (FIXED)
+           HEADER (FIXED)
            ========================================= */
         header {
             position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2rem; 
@@ -85,73 +85,74 @@
             cursor: pointer; pointer-events: auto; transition: all 0.3s var(--ease-apple);
         }
 
-        /* NAV REALE (Inizialmente Nascosta) */
-        #main-nav {
-            position: fixed; bottom: 2rem; left: 50%; 
-            background: rgba(20, 20, 22, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px;
-            display: flex; gap: 0.2rem; z-index: 1000; width: max-content; max-width: 95vw;
-            
-            /* Setup per l'entrata dal basso */
-            transform: translateX(-50%) translateY(40px); opacity: 0; pointer-events: none;
-            transition: transform 0.8s var(--ease-focus), opacity 0.8s;
-        }
-
-        #main-nav.show-nav { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
-
-        nav button { background: transparent; border: none; color: var(--text-muted); padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem); font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s; }
-        nav button.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
-        .btn-reserved:active, nav button:active { transform: scale(0.92) !important; opacity: 0.8; }
-
         /* =========================================
-           LENS FOCUS DISTANCE WINDOW (STARTUP)
+           UNIFIED NAV & LENS WINDOW (CSS GRID MAGIC)
            ========================================= */
-        #lens-focus-window {
+        #unified-nav {
             position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-            width: 220px; height: 55px; background: rgba(10,10,12,0.9);
-            border: 1px solid #333; border-radius: 6px; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; z-index: 1001;
-            box-shadow: inset 0 8px 15px rgba(0,0,0,0.9), 0 5px 20px rgba(0,0,0,0.5);
-            transition: transform 0.6s var(--ease-focus), opacity 0.6s;
+            background: rgba(20, 20, 22, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px;
+            
+            /* CSS GRID ci permette di sovrapporre i livelli nello stesso esatto spazio */
+            display: grid; overflow: hidden;
+            z-index: 1000; width: max-content; min-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        
-        /* Linea di Fede Rossa */
+
+        /* Tutti i figli diretti occupano la stessa cella della griglia */
+        #unified-nav > * { grid-area: 1 / 1; }
+
+        /* Linea Rossa (Si sovrappone a tutto) */
         .lens-red-line {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 2px; height: 100%; background: var(--accent-red); z-index: 2;
-            box-shadow: 0 0 5px var(--accent-red);
+            justify-self: center; width: 2px; height: 100%; background: var(--accent-red); z-index: 5;
+            box-shadow: 0 0 5px var(--accent-red); transition: opacity 0.5s var(--ease-apple);
+        }
+
+        /* Wrapper Distanze (Inizia Visibile, Scende giù) */
+        #distance-wrapper {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            transition: transform 0.8s var(--ease-focus), opacity 0.6s; z-index: 2;
         }
 
         .distance-scale {
-            display: flex; gap: 1.8rem; align-items: baseline;
+            display: flex; gap: 1.8rem; align-items: baseline; pointer-events: none;
             color: var(--accent-gold); font-family: 'Inter', monospace; font-size: 0.85rem; font-weight: 600;
-            /* L'animazione parte insieme a rack-focus-pull con la stessa durata e curva */
             animation: slide-distance-scale 2.8s var(--ease-focus) forwards;
         }
-
         .distance-scale span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .distance-scale span::after { content: ''; width: 2px; height: 6px; background: #fff; opacity: 0.5; }
         .distance-scale span.infinity { font-size: 1.5rem; color: #fff; font-weight: 300;}
         .distance-scale span.infinity::after { display: none; }
 
+        /* Wrapper Menu (Inizia in alto nascosto, Scende giù) */
+        #menu-wrapper {
+            display: flex; align-items: center; justify-content: center; gap: 0.2rem;
+            transform: translateY(-120%); opacity: 0; pointer-events: none;
+            transition: transform 0.8s var(--ease-focus), opacity 0.8s; z-index: 3;
+        }
+
+        #menu-wrapper button {
+            background: transparent; border: none; color: var(--text-muted);
+            padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem);
+            font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s;
+        }
+        #menu-wrapper button.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
+        .btn-reserved:active, #menu-wrapper button:active { transform: scale(0.92) !important; opacity: 0.8; }
+
+        /* --- STATO DOPO L'ANIMAZIONE (LO SWAP VERTICALE) --- */
+        #unified-nav.swap-complete #distance-wrapper { transform: translateY(120%); opacity: 0; }
+        #unified-nav.swap-complete #menu-wrapper { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        #unified-nav.swap-complete .lens-red-line { opacity: 0; }
+
+
         /* =========================================
            VIEWS & SCROLL SNAP NATIVO
            ========================================= */
         .view-container { flex: 1; position: relative; width: 100%; height: 100%; }
-
-        .view {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            overflow-y: auto; overflow-x: hidden; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden;
-            transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
-            display: flex; flex-direction: column; align-items: center;
-            scroll-snap-type: y mandatory; scroll-behavior: smooth;
-        }
-
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden; transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s; display: flex; flex-direction: column; align-items: center; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
         .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
         .snap-block { scroll-snap-align: center; scroll-snap-stop: always; margin-bottom: 2.5rem; width: 100%; max-width: 380px; filter: blur(var(--scroll-blur)); transform: scaleY(var(--scroll-stretch)); transition: filter 0.1s linear, transform 0.1s linear; will-change: transform, filter; }
-
         .shape-card { width: 100%; border-radius: 24px; overflow: hidden; position: relative; background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem; }
 
         .interactive-card { transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; filter: blur(6px); opacity: 0.4; }
@@ -160,7 +161,7 @@
         .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
 
         /* =========================================
-           TYPOGRAPHY & HOME SPECIFICS
+           HOME SPECIFICS (Focus)
            ========================================= */
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; cursor: pointer;}
         .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; margin-bottom: 2rem;}
@@ -168,7 +169,7 @@
         #home { padding: 0; scroll-snap-type: none; }
         #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
         
-        /* Focus Visivo Coordinato alla Scala delle Distanze (Durata 2.8s) */
+        /* Coordinate con lo Slide delle Distanze */
         .reveal-focus { animation: rack-focus-pull 2.8s var(--ease-focus) forwards; opacity: 0; }
 
         .btn-container { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-top: 1rem; }
@@ -244,24 +245,27 @@
         <button class="btn-reserved">Area Riservata</button>
     </header>
 
-    <div id="lens-focus-window">
+    <nav id="unified-nav">
         <div class="lens-red-line"></div>
-        <div class="distance-scale">
-            <span>0.85</span>
-            <span>1.2</span>
-            <span>2.0</span>
-            <span>3.0</span>
-            <span>5.0</span>
-            <span>10</span>
-            <span class="infinity">∞</span>
-        </div>
-    </div>
 
-    <nav id="main-nav">
-        <button class="nav-btn active" data-target="home">Home</button>
-        <button class="nav-btn" data-target="portfolio">Portfolio</button>
-        <button class="nav-btn" data-target="gear">Gear</button>
-        <button class="nav-btn" data-target="about">About</button>
+        <div id="distance-wrapper">
+            <div class="distance-scale">
+                <span>0.85</span>
+                <span>1.2</span>
+                <span>2.0</span>
+                <span>3.0</span>
+                <span>5.0</span>
+                <span>10</span>
+                <span class="infinity">∞</span>
+            </div>
+        </div>
+
+        <div id="menu-wrapper">
+            <button class="nav-btn active" data-target="home">Home</button>
+            <button class="nav-btn" data-target="portfolio">Portfolio</button>
+            <button class="nav-btn" data-target="gear">Gear</button>
+            <button class="nav-btn" data-target="about">About</button>
+        </div>
     </nav>
 
     <div class="view-container">
@@ -420,23 +424,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- LOGICA DELLO SWAP: FINSTRA FUOCO -> MENU REALE ---
-            const focusWindow = document.getElementById('lens-focus-window');
-            const mainNav = document.getElementById('main-nav');
+            // --- LO SWAP VERTICALE NEL MENU UNIFICATO ---
+            const unifiedNav = document.getElementById('unified-nav');
 
-            // Aspetta che finisca l'animazione di focus (2.8 secondi), poi fa lo swap
+            // Scatta a 2.8 secondi, in sincrono esatto con la messa a fuoco (rack-focus-pull)
             setTimeout(() => {
-                // 1. Spinge giù e rende invisibile la finestrella delle distanze
-                focusWindow.style.transform = 'translate(-50%, 40px)';
-                focusWindow.style.opacity = '0';
-                
-                // 2. Dopo una minuscola frazione di secondo (per fluidità), tira su il menù vero
-                setTimeout(() => {
-                    focusWindow.style.display = 'none'; // Rimuove dal DOM visivo
-                    mainNav.classList.add('show-nav');
-                }, 400);
-
-            }, 2800); // 2800ms corrisponde alla durata dell'animazione CSS
+                // Aggiungendo questa classe:
+                // 1. I numeri scendono in basso (translateY 120%)
+                // 2. I bottoni scendono dall'alto verso il centro (translateY 0%)
+                // 3. La linea rossa sfuma scomparendo (opacity 0)
+                unifiedNav.classList.add('swap-complete');
+            }, 2800);
 
 
             // --- AUDIO ENGINE ---
