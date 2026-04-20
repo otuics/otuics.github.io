@@ -44,6 +44,15 @@
         @keyframes rack-focus-pull { 0% { filter: blur(25px); transform: scale(1.08); opacity: 0; } 10% { opacity: 1; } 100% { filter: blur(0px); transform: scale(1); opacity: 1; } }
         @keyframes slide-distance-scale { 0% { transform: translateX(120px); } 100% { transform: translateX(-140px); } }
 
+        /* KEYFRAMES SLIDESHOW LAUREA FRA */
+        @keyframes slideshow-laurea {
+            0%, 20% { background-image: url('https://drive.google.com/uc?export=view&id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5'); }
+            25%, 45% { background-image: url('https://drive.google.com/uc?export=view&id=1SQRjU9rezVKiNxUTDjBzwJtKXkYZTGpx'); }
+            50%, 70% { background-image: url('https://drive.google.com/uc?export=view&id=1VFI-7QOIwtDzbjfM9K2xk1s2mh_52Tn5'); }
+            75%, 95% { background-image: url('https://drive.google.com/uc?export=view&id=1VJj18fFkJh-CY_GDJ4iHslXCm-OAJ9lJ'); }
+            100% { background-image: url('https://drive.google.com/uc?export=view&id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5'); }
+        }
+
         .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
 
         /* =========================================
@@ -76,7 +85,7 @@
         #unified-nav.swap-complete .lens-red-line { opacity: 0; }
 
         /* =========================================
-           ABOUT TIMELINE NAV (PURE NAKED DESIGN)
+           ABOUT TIMELINE NAV
            ========================================= */
         #about-timeline-nav {
             position: fixed; bottom: 5.8rem; left: 50%; transform: translateX(-50%) translateY(30px);
@@ -96,7 +105,6 @@
             top: 50%; transform: translate(-50%, -50%); cursor: pointer; z-index: 2;
             display: flex; justify-content: center; align-items: center;
         }
-        /* Tick mark sulla linea */
         .timeline-point::before {
             content: ''; position: absolute; width: 1px; height: 6px; background: rgba(255,255,255,0.3); transition: all 0.3s;
         }
@@ -147,7 +155,7 @@
         .dynamic-btn span { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; color: var(--text-main); transition: opacity 0.4s ease; }
 
         /* =========================================
-           PORTFOLIO REDESIGN + iOS BTN
+           PORTFOLIO & GALLERIES
            ========================================= */
         .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }
         .portfolio-visual { aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative; background-size: cover; background-position: center; border: 1px solid var(--glass-border); overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s; }
@@ -162,11 +170,51 @@
         .ios-explore-btn:hover svg { transform: translateX(3px); opacity: 1; }
         .ios-explore-btn:active { transform: scale(0.95); }
 
+        .vis-laurea { animation: slideshow-laurea 20s infinite ease-in-out; }
         .vis-commercial { background-image: url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop'); }
         .vis-editorial { background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
         .vis-portraiture { background-image: url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop'); }
         .vis-documentary { background-image: url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
         .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
+
+        /* GALLERY FULLSCREEN MODAL */
+        .gallery-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 10000; overflow-y: auto; overflow-x: hidden;
+            padding: 2rem; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--ease-apple), visibility 0.4s;
+        }
+        .gallery-modal.active { opacity: 1; visibility: visible; }
+        
+        .gallery-header {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto 2rem auto; position: sticky; top: 0; z-index: 10;
+            padding: 1rem 0;
+        }
+        .gallery-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: #fff; }
+        .btn-close-gallery {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.3s; backdrop-filter: blur(10px);
+        }
+        .btn-close-gallery:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+
+        .gallery-grid {
+            column-count: 1; column-gap: 1rem; max-width: 1200px; margin: 0 auto 4rem auto;
+        }
+        .gallery-grid-item {
+            break-inside: avoid; margin-bottom: 1rem; border-radius: 12px;
+            overflow: hidden; opacity: 0; transform: translateY(30px);
+            transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple);
+        }
+        .gallery-grid-item.show { opacity: 1; transform: translateY(0); }
+        .gallery-grid-item img { width: 100%; display: block; border-radius: 12px; transition: transform 0.5s; object-fit: cover; }
+        .gallery-grid-item:hover img { transform: scale(1.02); }
+
+        @media (min-width: 600px) { .gallery-grid { column-count: 2; column-gap: 1.5rem; } .gallery-grid-item { margin-bottom: 1.5rem; } }
+        @media (min-width: 1024px) { .gallery-grid { column-count: 3; } }
+
 
         /* =========================================
            GEAR SPECIFIC & CINEMATIC ISOLATION
@@ -210,7 +258,6 @@
         .timeline-title { color: var(--accent-red); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
         .timeline-desc { color: var(--text-muted); font-weight: 300; line-height: 1.6; font-size: 0.95rem; }
         
-        /* Isolamento Cinematografico per Contatti (Stile Filosofia) */
         #contact-footer { margin-top: 6rem; margin-bottom: 5rem; }
         .contact-end-card {
             background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
@@ -324,6 +371,17 @@
                 <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
             </div>
             
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-laurea"></div>
+                    <div class="portfolio-text">
+                        <h3>Laurea Fra.</h3>
+                        <p>Emozioni catturate nell'attimo del traguardo. Un reportage intimo che celebra la fine di un percorso e l'inizio di una nuova visione.</p>
+                        <button class="ios-explore-btn" id="open-gallery-laurea">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
             <div class="snap-block scroll-reveal">
                 <div class="portfolio-item interactive-card">
                     <div class="portfolio-visual vis-commercial"></div>
@@ -534,6 +592,24 @@
         </div>
     </div>
 
+    <div class="gallery-modal" id="gallery-laurea">
+        <div class="gallery-header">
+            <h2 class="gallery-title">Laurea Fra.</h2>
+            <button class="btn-close-gallery" id="close-gallery-laurea">✕</button>
+        </div>
+        <div class="gallery-grid" id="laurea-grid">
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5" alt="Laurea Fra 1"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1SQRjU9rezVKiNxUTDjBzwJtKXkYZTGpx" alt="Laurea Fra 2"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1VFI-7QOIwtDzbjfM9K2xk1s2mh_52Tn5" alt="Laurea Fra 3"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1VJj18fFkJh-CY_GDJ4iHslXCm-OAJ9lJ" alt="Laurea Fra 4"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1VMwyBQtyH5HUzIBmMKzuYC6duFovL42_" alt="Laurea Fra 5"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1acJlioIKSCzodZ0DHwovZPKoJde5BWrk" alt="Laurea Fra 6"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1jlT9XJFQpbOg4kmBcx2OudItyO7yKIGr" alt="Laurea Fra 7"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1orykCA9Om6NhJ8kQHEU9TtYIqkjXxYQw" alt="Laurea Fra 8"></div>
+            <div class="gallery-grid-item"><img src="https://drive.google.com/uc?export=view&id=1phIBmMXPMFuJ6cz2wi7-Ka3lZk9eaHGs" alt="Laurea Fra 9"></div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -632,29 +708,23 @@
                 });
             });
 
-            // CLICK SU "CONTATTI" - Forzatura Scroll Esecutivo
+            // CLICK SU "CONTATTI"
             document.getElementById('btn-contacts').addEventListener('click', () => {
                 playSound('nav');
-                // Chiamata esplicita per container con scroll-snap
                 aboutView.scrollTo({ top: contactFooter.offsetTop, behavior: 'smooth' });
             });
 
-            // FOCUS OBSERVER GENERALE (Include Fade Out per Filosofia & Contatti)
+            // FOCUS OBSERVER GENERALE
             const focusObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    // Logica Gear Filosofia Fade Out
                     if (entry.target === philosophyBlock) {
                         if (entry.isIntersecting) { gearContainer.classList.add('philosophy-active'); } 
                         else { gearContainer.classList.remove('philosophy-active'); }
                     }
-
-                    // Logica About Contatti Fade Out
                     if (entry.target === contactFooter) {
                         if (entry.isIntersecting) { aboutContainer.classList.add('contact-active'); } 
                         else { aboutContainer.classList.remove('contact-active'); }
                     }
-
-                    // Logica Focus Standard (Card rosse)
                     if (entry.isIntersecting) {
                         if (!entry.target.classList.contains('scroll-focus')) { entry.target.classList.add('scroll-focus'); playSound('focus'); }
                     } else { entry.target.classList.remove('scroll-focus'); }
@@ -678,14 +748,15 @@
             });
 
             // AUTH MODAL
-            const modal = document.getElementById('auth-modal');
+            const modalAuth = document.getElementById('auth-modal');
             const btnOpenAuth = document.getElementById('open-auth');
             const btnCloseAuth = document.getElementById('close-auth');
             const otpInputs = document.querySelectorAll('.otp-inputs input');
-            btnOpenAuth.addEventListener('click', () => { playSound('nav'); modal.classList.add('active'); setTimeout(() => otpInputs[0].focus(), 400); });
-            const closeModal = () => { playSound('nav'); modal.classList.remove('active'); otpInputs.forEach(i => i.value = ''); };
-            btnCloseAuth.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+            
+            btnOpenAuth.addEventListener('click', () => { playSound('nav'); modalAuth.classList.add('active'); setTimeout(() => otpInputs[0].focus(), 400); });
+            const closeAuthModal = () => { playSound('nav'); modalAuth.classList.remove('active'); otpInputs.forEach(i => i.value = ''); };
+            btnCloseAuth.addEventListener('click', closeAuthModal);
+            modalAuth.addEventListener('click', (e) => { if(e.target === modalAuth) closeAuthModal(); });
 
             otpInputs.forEach((input, index) => {
                 input.addEventListener('input', (e) => {
@@ -703,7 +774,40 @@
                 });
             });
 
-            document.querySelectorAll('.ios-explore-btn').forEach(btn => { btn.addEventListener('click', () => playSound('nav')); });
+            // LOGICA GALLERY LAUREA
+            const btnOpenLaurea = document.getElementById('open-gallery-laurea');
+            const galleryLaurea = document.getElementById('gallery-laurea');
+            const btnCloseLaurea = document.getElementById('close-gallery-laurea');
+            const gridItems = document.querySelectorAll('.gallery-grid-item');
+
+            btnOpenLaurea.addEventListener('click', () => {
+                playSound('nav');
+                galleryLaurea.classList.add('active');
+                // Effetto cascata sulle immagini
+                gridItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('show');
+                    }, 100 + (index * 80));
+                });
+            });
+
+            const closeGallery = () => {
+                playSound('nav');
+                galleryLaurea.classList.remove('active');
+                gridItems.forEach(item => item.classList.remove('show'));
+            };
+
+            btnCloseLaurea.addEventListener('click', closeGallery);
+            // Chiude se si clicca sullo sfondo sfocato
+            galleryLaurea.addEventListener('click', (e) => {
+                if(e.target === galleryLaurea) closeGallery();
+            });
+
+            document.querySelectorAll('.ios-explore-btn').forEach(btn => { 
+                if(btn.id !== 'open-gallery-laurea') {
+                    btn.addEventListener('click', () => playSound('nav')); 
+                }
+            });
         });
     </script>
 </body>
