@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 
     <style>
+        /* =========================================
+           CORE ARCHITECTURE & VARIABLES
+           ========================================= */
         :root {
             --bg-color: #050505;
             --text-main: #f5f5f7;
@@ -33,11 +36,15 @@
             width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
         }
 
+        /* =========================================
+           KEYFRAMES & ANIMATIONS
+           ========================================= */
         @keyframes rec-blink { 0% { opacity: 1; text-shadow: 0 0 15px var(--accent-red); } 50% { opacity: 0.3; text-shadow: 0 0 2px var(--accent-red); } 100% { opacity: 1; text-shadow: 0 0 15px var(--accent-red); } }
+        @keyframes logo-glow { 0% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4); } 100% { text-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
         @keyframes rack-focus-pull { 0% { filter: blur(25px); transform: scale(1.08); opacity: 0; } 10% { opacity: 1; } 100% { filter: blur(0px); transform: scale(1); opacity: 1; } }
         @keyframes slide-distance-scale { 0% { transform: translateX(120px); } 100% { transform: translateX(-140px); } }
 
-        /* ANIMAZIONE SLIDESHOW ANTEPRIMA LAUREA FRA */
+        /* ANIMAZIONE SLIDESHOW LAUREA FRA */
         @keyframes slideshow-laurea {
             0%, 20% { background-image: url('https://drive.google.com/thumbnail?id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5&sz=w1200'); }
             25%, 45% { background-image: url('https://drive.google.com/thumbnail?id=1SQRjU9rezVKiNxUTDjBzwJtKXkYZTGpx&sz=w1200'); }
@@ -46,188 +53,731 @@
             100% { background-image: url('https://drive.google.com/thumbnail?id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5&sz=w1200'); }
         }
 
-        header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%); pointer-events: none; }
-        .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; cursor: pointer; color: #ffffff; text-shadow: 0 0 2px rgba(255,255,255,0.1); }
-        .dot { color: var(--accent-red); animation: rec-blink 1.5s infinite ease-in-out; }
-        .btn-reserved { background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); color: #fff; padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.8rem; font-weight: 500; cursor: pointer; pointer-events: auto; transition: all 0.3s; }
+        .trigger-glow { animation: logo-glow 1.5s var(--ease-apple); }
 
-        #unified-nav { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 22, 0.85); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px; display: grid; overflow: hidden; z-index: 1000; width: max-content; min-width: 320px; }
+        /* =========================================
+           HEADER (FIXED)
+           ========================================= */
+        header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%); pointer-events: none; }
+        .logo { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.04em; pointer-events: auto; cursor: pointer; color: #ffffff; text-shadow: 0 0 2px rgba(255,255,255,0.1); transition: text-shadow 0.3s;}
+        .dot { color: var(--accent-red); animation: rec-blink 1.5s infinite ease-in-out; }
+        .btn-reserved { background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); color: #fff; padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.8rem; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; pointer-events: auto; transition: all 0.3s var(--ease-apple); }
+        .btn-reserved:active { transform: scale(0.92); opacity: 0.8; }
+
+        /* =========================================
+           UNIFIED NAV & LENS WINDOW
+           ========================================= */
+        #unified-nav { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 22, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem; border-radius: 40px; display: grid; overflow: hidden; z-index: 1000; width: max-content; min-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         #unified-nav > * { grid-area: 1 / 1; }
-        .lens-red-line { justify-self: center; width: 2px; height: 100%; background: var(--accent-red); z-index: 5; transition: opacity 0.5s; }
-        #distance-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.8s, opacity 0.6s; }
-        .distance-scale { display: flex; gap: 1.8rem; color: var(--accent-gold); font-family: monospace; font-size: 0.85rem; animation: slide-distance-scale 2.8s var(--ease-focus) forwards; }
-        
-        #menu-wrapper { display: flex; align-items: center; justify-content: center; gap: 0.2rem; transform: translateY(-120%); opacity: 0; pointer-events: none; transition: transform 0.8s, opacity 0.8s; }
-        #menu-wrapper button { background: transparent; border: none; color: var(--text-muted); padding: 0.7rem 1.2rem; border-radius: 30px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; }
+        .lens-red-line { justify-self: center; width: 2px; height: 100%; background: var(--accent-red); z-index: 5; box-shadow: 0 0 5px var(--accent-red); transition: opacity 0.5s var(--ease-apple); }
+        #distance-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.8s var(--ease-focus), opacity 0.6s; z-index: 2; }
+        .distance-scale { display: flex; gap: 1.8rem; align-items: baseline; pointer-events: none; color: var(--accent-gold); font-family: 'Inter', monospace; font-size: 0.85rem; font-weight: 600; animation: slide-distance-scale 2.8s var(--ease-focus) forwards; }
+        .distance-scale span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .distance-scale span::after { content: ''; width: 2px; height: 6px; background: #fff; opacity: 0.5; }
+        .distance-scale span.infinity { font-size: 1.5rem; color: #fff; font-weight: 300;}
+        .distance-scale span.infinity::after { display: none; }
+        #menu-wrapper { display: flex; align-items: center; justify-content: center; gap: 0.2rem; transform: translateY(-120%); opacity: 0; pointer-events: none; transition: transform 0.8s var(--ease-focus), opacity 0.8s; z-index: 3; }
+        #menu-wrapper button { background: transparent; border: none; color: var(--text-muted); padding: 0.7rem 1.2rem; border-radius: 30px; font-size: clamp(0.7rem, 2vw, 0.85rem); font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s; }
         #menu-wrapper button.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
+        #menu-wrapper button:active { transform: scale(0.92) !important; opacity: 0.8; }
         #unified-nav.swap-complete #distance-wrapper { transform: translateY(120%); opacity: 0; }
         #unified-nav.swap-complete #menu-wrapper { transform: translateY(0); opacity: 1; pointer-events: auto; }
         #unified-nav.swap-complete .lens-red-line { opacity: 0; }
 
+        /* =========================================
+           ABOUT TIMELINE NAV
+           ========================================= */
+        #about-timeline-nav {
+            position: fixed; bottom: 5.8rem; left: 50%; transform: translateX(-50%) translateY(30px);
+            display: flex; align-items: center; gap: 1.5rem;
+            background: transparent; border: none; padding: 0;
+            z-index: 999; opacity: 0; pointer-events: none; transition: transform 0.6s var(--ease-apple), opacity 0.5s;
+            width: max-content; max-width: 90vw;
+        }
+        #about-timeline-nav.show-timeline { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+
+        .timeline-track-container { position: relative; width: 180px; height: 30px; display: flex; align-items: center; }
+        .timeline-track-base { position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.15); }
+        .timeline-track-fill { position: absolute; height: 1px; background: var(--accent-red); width: 0%; transition: width 0.5s var(--ease-apple); box-shadow: 0 0 8px var(--accent-red); }
+        
+        .timeline-point {
+            position: absolute; width: 24px; height: 24px; background: transparent; border-radius: 50%;
+            top: 50%; transform: translate(-50%, -50%); cursor: pointer; z-index: 2;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .timeline-point::before {
+            content: ''; position: absolute; width: 1px; height: 6px; background: rgba(255,255,255,0.3); transition: all 0.3s;
+        }
+        .timeline-point span {
+            position: absolute; top: -20px; font-size: 0.75rem; font-weight: 600; color: #fff; font-family: 'Inter', monospace;
+            opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+        }
+        .timeline-point.active::before { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); height: 10px; width: 2px;}
+        .timeline-point.active span { opacity: 1; transform: translateY(-4px); text-shadow: 0 0 8px rgba(255,255,255,0.8); }
+
+        .btn-scroll-contacts {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); font-size: 0.75rem; font-weight: 500; font-family: 'Inter', sans-serif;
+            padding: 0.5rem 1rem; border-radius: 30px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px);
+        }
+        .btn-scroll-contacts:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .btn-scroll-contacts:active { transform: scale(0.92); }
+
+        /* =========================================
+           VIEWS & SCROLL SNAP NATIVO
+           ========================================= */
         .view-container { flex: 1; position: relative; width: 100%; height: 100%; }
-        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden; transform: scale(0.96); transition: all 0.5s; display: flex; flex-direction: column; align-items: center; scroll-snap-type: y mandatory; }
-        .view.active { opacity: 1; visibility: visible; transform: scale(1); }
-        ::-webkit-scrollbar { width: 0px; }
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; padding: 8rem 2rem 10rem 2rem; opacity: 0; visibility: hidden; transform: scale(0.96) translateY(20px); transition: opacity 0.5s, transform 0.5s, visibility 0.5s; display: flex; flex-direction: column; align-items: center; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        .view.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        .snap-block { scroll-snap-align: center; margin-bottom: 2.5rem; width: 100%; max-width: 380px; transition: all 0.5s; }
-        .shape-card { width: 100%; border-radius: 24px; background: var(--glass-bg); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; }
-        .interactive-card { transition: all 0.5s; filter: blur(6px); opacity: 0.4; }
-        .interactive-card.scroll-focus { transform: scale(1.02); filter: blur(0px); opacity: 1; box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25); border-color: rgba(255, 45, 85, 0.4); }
+        .snap-block { scroll-snap-align: center; scroll-snap-stop: always; margin-bottom: 2.5rem; width: 100%; max-width: 380px; filter: blur(var(--scroll-blur)); transform: scaleY(var(--scroll-stretch)); transition: filter 0.1s linear, transform 0.1s linear, opacity 0.5s var(--ease-apple); will-change: transform, filter, opacity; }
+        
+        .shape-card { width: 100%; border-radius: 24px; overflow: hidden; position: relative; background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 2rem; }
+        .interactive-card { transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple), border-color 0.5s, filter 0.5s, opacity 0.5s; filter: blur(6px); opacity: 0.4; }
+        .interactive-card.scroll-focus, .interactive-card:hover { transform: scale(1.02); z-index: 10; filter: blur(0px); opacity: 1; }
+        .shape-card.interactive-card.scroll-focus, .shape-card.interactive-card:hover { box-shadow: 0 10px 30px rgba(255, 45, 85, 0.25); border-color: rgba(255, 45, 85, 0.4); }
+        .interactive-card:active { transform: scale(0.98) !important; box-shadow: none !important; }
 
-        h1 { font-size: 3rem; font-weight: 400; text-align: center; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-muted); text-align: center; margin-bottom: 2rem; }
+        /* =========================================
+           HOME SPECIFICS & SYNC GRADIENT
+           ========================================= */
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 400; letter-spacing: -0.05em; text-align: center; cursor: pointer;}
+        .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; margin-bottom: 2rem;}
+        #home { padding: 0; scroll-snap-type: none; }
+        #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
+        .reveal-focus { animation: rack-focus-pull 2.8s var(--ease-focus) forwards; opacity: 0; }
+        .btn-container { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-top: 1rem; }
+        .btn-container::before { content: ''; position: absolute; width: 130%; height: 130%; background: radial-gradient(circle, rgba(255,45,85,0.4) 0%, transparent 70%); filter: blur(15px); z-index: -1; opacity: 0.6; pointer-events: none; transition: opacity 0.5s var(--ease-apple), transform 0.5s var(--ease-apple); transform: scale(1); }
+        .btn-container.sync-fade::before { opacity: 0.1; transform: scale(0.8); }
+        .dynamic-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.6rem 1.6rem; border-radius: 50px; cursor: pointer; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); transition: all 0.4s var(--ease-apple); display: flex; align-items: center; justify-content: center; min-width: 140px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .dynamic-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+        .dynamic-btn:hover + .btn-container::before { opacity: 1; transform: scale(1.1); } 
+        .dynamic-btn span { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; color: var(--text-main); transition: opacity 0.4s ease; }
 
-        .portfolio-visual { aspect-ratio: 1 / 1; width: 100%; border-radius: 20px; background-size: cover; background-position: center; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); }
+        /* =========================================
+           PORTFOLIO REDESIGN + NEW GALLERY
+           ========================================= */
+        .portfolio-item { display: flex; flex-direction: column; width: 100%; gap: 1rem; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+        .portfolio-visual { aspect-ratio: 1 / 1; width: 100%; border-radius: 24px; position: relative; background-size: cover; background-position: center; border: 1px solid var(--glass-border); overflow: hidden; transition: transform 0.5s var(--ease-apple), box-shadow 0.5s, border-color 0.5s; }
+        .portfolio-visual::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 25%; background: linear-gradient(to top, var(--bg-color), transparent); pointer-events: none; }
+        .portfolio-item.scroll-focus .portfolio-visual, .portfolio-item:hover .portfolio-visual { box-shadow: 0 0 40px rgba(255, 45, 85, 0.35); border-color: rgba(255, 45, 85, 0.6); }
+        .portfolio-text { padding: 0 0.5rem; text-align: left; }
+        .portfolio-text h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text-main); }
+        .portfolio-text p { color: var(--text-muted); font-size: 0.95rem; font-weight: 300; line-height: 1.5; margin-bottom: 1rem; }
+        .ios-explore-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); padding: 0.6rem 1.2rem; border-radius: 20px; color: var(--text-main); font-size: 0.8rem; font-family: 'Inter', sans-serif; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s var(--ease-apple); }
+        .ios-explore-btn svg { width: 14px; height: 14px; opacity: 0.7; transition: transform 0.3s; }
+        .ios-explore-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+        .ios-explore-btn:hover svg { transform: translateX(3px); opacity: 1; }
+        .ios-explore-btn:active { transform: scale(0.95); }
+
         .vis-laurea { animation: slideshow-laurea 12s infinite ease-in-out; }
-        .vis-commercial { background-image: url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800'); }
-        
-        .ios-explore-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 0.7rem 1.2rem; border-radius: 20px; color: #fff; cursor: pointer; width: fit-content; transition: all 0.3s; }
-        .ios-explore-btn:hover { background: rgba(255,255,255,0.15); }
+        .vis-commercial { background-image: url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop'); }
+        .vis-editorial { background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'); }
+        .vis-portraiture { background-image: url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop'); }
+        .vis-documentary { background-image: url('https://images.unsplash.com/photo-1541872550058-00913cb9d615?q=80&w=800&auto=format&fit=crop'); }
+        .vis-motion { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
 
-        /* MODALE GALLERIA DINAMICA */
-        .gallery-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(25px);
-            z-index: 2000; opacity: 0; visibility: hidden; transition: 0.5s;
-            overflow-y: auto; padding: 2rem;
-        }
-        .gallery-modal.active { opacity: 1; visibility: visible; }
-        .gallery-content { max-width: 1100px; margin: 0 auto; }
-        .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .close-gallery { font-size: 2rem; color: #fff; cursor: pointer; }
+        /* GALLERY MODAL (MASONRY STYLE) */
+        .gallery-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); z-index: 99999; opacity: 0; visibility: hidden; transition: opacity 0.5s var(--ease-apple), visibility 0.5s; overflow-y: auto; padding: 2rem 1rem; }
+        .gallery-modal-overlay.active { opacity: 1; visibility: visible; }
+        .gallery-header-ui { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 2rem auto; position: sticky; top: 0; z-index: 10; padding: 1rem 0; }
+        .gallery-header-ui h2 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: #fff; }
+        .close-gallery-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         
-        /* GRIGLIA MASONRY (DINAMICA) */
-        .masonry-grid {
-            column-count: 2; column-gap: 1rem;
-        }
-        @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
-        .masonry-item { margin-bottom: 1rem; break-inside: avoid; }
-        .masonry-item img { width: 100%; border-radius: 12px; display: block; }
+        .masonry-grid { column-count: 1; column-gap: 1rem; max-width: 1200px; margin: 0 auto; }
+        .masonry-item { break-inside: avoid; margin-bottom: 1rem; border-radius: 12px; overflow: hidden; opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple); }
+        .masonry-item.show { opacity: 1; transform: translateY(0); }
+        .masonry-item img { width: 100%; display: block; border-radius: 12px; transition: transform 0.4s; }
+        .masonry-item:hover img { transform: scale(1.03); }
 
+        @media (min-width: 600px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+
+        /* =========================================
+           GEAR SPECIFIC & CINEMATIC ISOLATION
+           ========================================= */
+        #gear-container { position: relative; transition: all 0.5s var(--ease-apple); }
+        #gear .shape-card { aspect-ratio: auto; height: auto; min-height: 100%; padding: 1.5rem; }
+        .gear-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2rem; letter-spacing: 0.02em; margin-bottom: 1.5rem; color: var(--text-main); }
+        .gear-list { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+        .gear-list li { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 400; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;}
+        .gear-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        .item-name { color: var(--text-main); flex: 1; min-width: 150px;}
+        .item-spec { color: var(--text-muted); font-size: 0.75rem; text-align: right;}
+        .badge-container { display: flex; gap: 0.4rem; align-items: center; }
+        .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        .badge-main { background: rgba(255,255,255,0.1); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
+        .badge-l { color: var(--accent-red); background: rgba(255,45,85,0.1); border: 1px solid var(--accent-red); box-shadow: 0 0 10px rgba(255,45,85,0.4); }
+        .badge-art { color: var(--accent-blue); background: rgba(10,132,255,0.1); border: 1px solid var(--accent-blue); box-shadow: 0 0 10px rgba(10,132,255,0.4); }
+        .badge-pro { color: var(--accent-gold); background: rgba(255,215,0,0.1); border: 1px solid var(--accent-gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .badge-tech { color: #a1a1a6; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+        .badge-legend { color: #fff; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(255,255,255,0.5); text-shadow: 0 0 4px #fff;}
+        .text-legend { animation: logo-glow 2.5s infinite ease-in-out; font-weight: 600; color: #fff; }
+        
+        .bento-philosophy { margin-top: 3rem; margin-bottom: 5rem;}
+        .philosophy-card {
+            background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
+            min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.8s var(--ease-apple), box-shadow 0.8s; box-shadow: none !important; backdrop-filter: none !important;
+        }
+        .philosophy-text { color: var(--text-muted); font-weight: 300; line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; max-width: 600px;}
+        .bento-philosophy.scroll-focus .philosophy-card { transform: scale(1.08); }
+        #gear-container.philosophy-active .snap-block:not(.bento-philosophy) {
+            opacity: 0; filter: blur(15px); pointer-events: none; transform: scale(0.95) translateY(-20px);
+        }
+
+        /* =========================================
+           ABOUT TIMELINE CARDS & CONTACT END
+           ========================================= */
+        #about-container { position: relative; transition: all 0.5s var(--ease-apple); width: 100%; display: flex; flex-direction: column; align-items: center;}
+        
+        .timeline-year { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .timeline-title { color: var(--accent-red); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+        .timeline-desc { color: var(--text-muted); font-weight: 300; line-height: 1.6; font-size: 0.95rem; }
+        
+        #contact-footer { margin-top: 6rem; margin-bottom: 5rem; }
+        .contact-end-card {
+            background: #000; border: none !important; border-radius: 12px; padding: 4rem 2rem;
+            min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 0.8s var(--ease-apple), box-shadow 0.8s; box-shadow: none !important; backdrop-filter: none !important; text-align: center;
+        }
+        
+        #contact-footer.scroll-focus .contact-end-card { transform: scale(1.08); }
+        #about-container.contact-active .snap-block:not(#contact-footer) {
+            opacity: 0; filter: blur(15px); pointer-events: none; transform: scale(0.95) translateY(-20px);
+        }
+
+        .footer-block { padding: 0; margin-top: 1rem; }
+        .footer-links { display: flex; flex-direction: column; gap: 0.8rem; align-items: center; text-align: center; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 400; transition: color 0.3s; }
+        .footer-links a.primary-contact { font-size: 1.4rem; font-weight: 600; color: #fff; border-bottom: 1px solid var(--accent-red); padding-bottom: 0.2rem;}
+        .footer-links a:hover { color: var(--text-main); }
+
+        /* =========================================
+           AUTH MODAL
+           ========================================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(30px) brightness(0.7); -webkit-backdrop-filter: blur(30px) brightness(0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s var(--ease-apple), visibility 0.4s; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box { background: rgba(30, 30, 32, 0.85); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); border-radius: 28px; padding: 2.5rem 2rem; width: 90%; max-width: 360px; text-align: center; transform: scale(0.95) translateY(20px); transition: transform 0.4s var(--ease-apple); }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        .modal-box h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); }
+        .modal-box p { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; line-height: 1.4; margin-bottom: 2rem; }
+        .otp-inputs { display: flex; gap: 0.4rem; justify-content: center; margin-bottom: 2rem; }
+        .otp-inputs input { width: 40px; height: 50px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: var(--text-main); font-size: 1.5rem; text-align: center; font-weight: 600; font-family: 'Inter', monospace; transition: border-color 0.3s, box-shadow 0.3s; }
+        .otp-inputs input:focus { outline: none; border-color: var(--accent-red); box-shadow: 0 0 10px rgba(255,45,85,0.3); }
+        .modal-close-btn { background: rgba(255,255,255,0.1); border: none; padding: 0.8rem 2rem; border-radius: 30px; color: var(--text-main); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.3s; width: 100%; }
+        .modal-close-btn:hover { background: rgba(255,255,255,0.15); }
+        .modal-close-btn:active { transform: scale(0.96); }
+
+        /* =========================================
+           DESKTOP RESPONSIVE
+           ========================================= */
         @media (min-width: 768px) {
+            .view { padding: 8rem 4rem 10rem 4rem; }
             .snap-block { max-width: 800px; }
-            .portfolio-item { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
-            .portfolio-visual { margin-bottom: 0; }
+            .portfolio-item { flex-direction: row; align-items: center; justify-content: space-between; gap: 4rem; }
+            .portfolio-visual { flex: 0 0 45%; max-width: 450px; }
+            .portfolio-visual::after { display: none; }
+            .portfolio-text { flex: 1; text-align: left; }
+            .portfolio-text h3 { font-size: 2.5rem; }
+            .portfolio-text p { font-size: 1.1rem; margin-bottom: 1.5rem;}
+            .ios-explore-btn { font-size: 0.9rem; padding: 0.8rem 1.5rem; }
+            
+            #gear-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%; max-width: 1100px; scroll-snap-type: none; }
+            #gear-container .snap-block { margin-bottom: 0; max-width: 100%; }
+            #gear-container .shape-card { justify-content: flex-start; }
+            .bento-bodies { grid-column: span 1; grid-row: span 1; }
+            .bento-primes { grid-column: span 2; grid-row: span 2; }
+            .bento-zooms { grid-column: span 1; grid-row: span 2; }
+            .bento-stab { grid-column: span 1; grid-row: span 1; }
+            .bento-light { grid-column: span 2; grid-row: span 1; }
+            .bento-philosophy { grid-column: 1 / -1; }
+            
+            .timeline-track-container { width: 300px; }
         }
     </style>
 </head>
 <body>
-
     <header>
-        <div class="logo">otuics<span class="dot">.</span></div>
-        <button class="btn-reserved">Area Riservata</button>
+        <div class="logo" id="main-logo">otuics<span class="dot">.</span></div>
+        <button class="btn-reserved" id="open-auth">Area Riservata</button>
     </header>
-
-    <div class="view-container">
-        
-        <section id="home" class="view active">
-            <div class="snap-block scroll-reveal">
-                <h1 style="font-size: 5rem;">otuics<span class="dot">.</span></h1>
-                <p class="subtitle">Visual Creator</p>
-            </div>
-        </section>
-
-        <section id="portfolio" class="view">
-            <div class="snap-block">
-                <h1>Portfolio<span class="dot">.</span></h1>
-                <p class="subtitle">Lavori selezionati</p>
-            </div>
-
-            <div class="snap-block">
-                <div class="shape-card interactive-card portfolio-item">
-                    <div class="portfolio-visual vis-laurea"></div>
-                    <div>
-                        <h3 style="font-family: 'Playfair Display'; font-style: italic; font-size: 2rem; margin-bottom: 1rem;">Laurea Fra.</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Un reportage dinamico del traguardo accademico. Luci, sorrisi e l'atmosfera di un giorno indimenticabile.</p>
-                        <button class="ios-explore-btn" onclick="openGallery()">Esplora Progetti</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="snap-block">
-                <div class="shape-card interactive-card portfolio-item">
-                    <div class="portfolio-visual vis-commercial"></div>
-                    <div>
-                        <h3 style="font-family: 'Playfair Display'; font-style: italic; font-size: 2rem; margin-bottom: 1rem;">Commercial.</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Narrazioni visive per brand ed editoriali.</p>
-                        <button class="ios-explore-btn">Esplora Progetti</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
 
     <nav id="unified-nav">
         <div class="lens-red-line"></div>
         <div id="distance-wrapper">
-            <div class="distance-scale"><span>0.85</span><span>1.2</span><span>2.0</span><span>3.0</span><span>5.0</span><span>10</span><span>∞</span></div>
+            <div class="distance-scale"><span>0.85</span><span>1.2</span><span>2.0</span><span>3.0</span><span>5.0</span><span>10</span><span class="infinity">∞</span></div>
         </div>
         <div id="menu-wrapper">
             <button class="nav-btn active" data-target="home">Home</button>
             <button class="nav-btn" data-target="portfolio">Portfolio</button>
+            <button class="nav-btn" data-target="gear">Gear</button>
+            <button class="nav-btn" data-target="about">About</button>
         </div>
     </nav>
 
-    <div class="gallery-modal" id="galleryLaurea">
-        <div class="gallery-content">
-            <div class="gallery-header">
-                <h2 style="font-family: 'Playfair Display'; font-style: italic; font-size: 2.5rem;">Laurea Fra.</h2>
-                <div class="close-gallery" onclick="closeGallery()">✕</div>
+    <div id="about-timeline-nav">
+        <div class="timeline-track-container">
+            <div class="timeline-track-base"></div>
+            <div class="timeline-track-fill" id="timeline-fill"></div>
+            
+            <div class="timeline-point" style="left: 0%;" data-target="year-2016" data-pct="0"><span>2016</span></div>
+            <div class="timeline-point" style="left: 25%;" data-target="year-2018" data-pct="25"><span>2018</span></div>
+            <div class="timeline-point" style="left: 50%;" data-target="year-2020" data-pct="50"><span>2020</span></div>
+            <div class="timeline-point" style="left: 62.5%;" data-target="year-2021" data-pct="62.5"><span>2021</span></div>
+            <div class="timeline-point" style="left: 100%;" data-target="year-2024" data-pct="100"><span>2024</span></div>
+        </div>
+        <button class="btn-scroll-contacts" id="btn-contacts">Contatti</button>
+    </div>
+
+    <div class="view-container">
+        
+        <section id="home" class="view active">
+            <div class="snap-block scroll-reveal reveal-focus">
+                <h1 id="center-logo" style="color: #fff; text-shadow: 0 0 4px rgba(255,255,255,0.2);">otuics<span class="dot">.</span></h1>
+                <p class="subtitle">Visual Creator</p>
+                <div class="btn-container" id="gradient-sync-box">
+                    <button class="dynamic-btn" id="dynamic-category-btn"><span id="dynamic-text">Wedding</span></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="view">
+            <div class="snap-block scroll-reveal" style="text-align: center; border: none; padding: 0; filter: blur(0); opacity: 1;">
+                <h1 style="cursor:default;">Portfolio<span class="dot">.</span></h1>
+                <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
+            </div>
+
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-laurea"></div>
+                    <div class="portfolio-text">
+                        <h3>Laurea Fra.</h3>
+                        <p>Catturare l'emozione di un traguardo. Un racconto visivo di sorrisi, brindisi e nuovi inizi.</p>
+                        <button class="ios-explore-btn" id="open-laurea-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
             </div>
             
-            <div class="masonry-grid">
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1SQRjU9rezVKiNxUTDjBzwJtKXkYZTGpx&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VFI-7QOIwtDzbjfM9K2xk1s2mh_52Tn5&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VJj18fFkJh-CY_GDJ4iHslXCm-OAJ9lJ&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VMwyBQtyH5HUzIBmMKzuYC6duFovL42_&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1acJlioIKSCzodZ0DHwovZPKoJde5BWrk&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1jlT9XJFQpbOg4kmBcx2OudItyO7yKIGr&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1orykCA9Om6NhJ8kQHEU9TtYIqkjXxYQw&sz=w1200"></div>
-                <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1phIBmMXPMFuJ6cz2wi7-Ka3lZk9eaHGs&sz=w1200"></div>
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-commercial"></div>
+                    <div class="portfolio-text">
+                        <h3>Commercial.</h3>
+                        <p>Campagne, prodotto e identità di brand. Costruiamo narrazioni visive che elevano il valore percepito.</p>
+                        <button class="ios-explore-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
             </div>
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-editorial"></div>
+                    <div class="portfolio-text">
+                        <h3>Editorial.</h3>
+                        <p>Moda, pubblicazioni e concettuale. Ricerca estrema nella posa, nella luce e nel moodboard.</p>
+                        <button class="ios-explore-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-portraiture"></div>
+                    <div class="portfolio-text">
+                        <h3>Portraiture.</h3>
+                        <p>Psicologia del soggetto e presenza pura. Catturare l'invisibile attraverso l'obiettivo.</p>
+                        <button class="ios-explore-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-documentary"></div>
+                    <div class="portfolio-text">
+                        <h3>Documentary.</h3>
+                        <p>Reportage e storytelling non filtrato. La realtà nuda, composta in istanti decisivi.</p>
+                        <button class="ios-explore-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-motion"></div>
+                    <div class="portfolio-text">
+                        <h3>Motion / Auto.</h3>
+                        <p>Dinamica, tracking e velocità. Il metallo e la strada, congelati o resi liquidi dal mosso.</p>
+                        <button class="ios-explore-btn">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gear" class="view">
+            <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
+                <h1 style="cursor:default;">Gear<span class="dot">.</span></h1>
+                <p class="subtitle">Strumenti al servizio dell'intenzione.</p>
+            </div>
+            
+            <div id="gear-container">
+                <div class="snap-block bento-bodies scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Bodies</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Canon EOS R6</span> <div class="badge-container"><span class="badge badge-main">MAIN</span> <span class="badge badge-pro">4K 60fps</span></div></li>
+                            <li><span class="item-name">Canon EOS R</span> <div class="badge-container"><span class="item-spec">Backup</span> <span class="badge badge-tech">30.3 MP</span></div></li>
+                            <li><span class="item-name">Canon 600D</span> <span class="item-spec">Archive</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-primes scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Prime Lenses</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Canon EF 28mm f/1.8 USM</span></li>
+                            <li><span class="item-name">Sigma 35mm f/1.4 DG HSM</span> <span class="badge badge-art">Art</span></li>
+                            <li><span class="item-name">Canon EF 50mm f/1.4 USM</span></li>
+                            <li><span class="item-name text-legend">Canon EF 85mm f/1.2L II USM</span> <div class="badge-container"><span class="badge badge-l">L Series</span> <span class="badge badge-legend">Legend</span></div></li>
+                            <li><span class="item-name">Canon EF 100mm f/2.8 Macro USM</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-zooms scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Zoom Lenses</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Canon EF 8-15mm f/4L Fisheye USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Tokina AT-X 16-28mm f/2.8 FX</span> <span class="badge badge-pro">PRO</span></li>
+                            <li><span class="item-name">Canon EF 24-70mm f/2.8L USM</span> <span class="badge badge-l">L Series</span></li>
+                            <li><span class="item-name">Canon EF 70-200mm f/2.8L IS USM</span> <span class="badge badge-l">L Series</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-stab scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Stabilization</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">DJI Ronin-S</span> <span class="item-spec">3-Axis Gimbal</span></li>
+                            <li><span class="item-name">Manfrotto XPRO+</span> <span class="item-spec">Video Monopod</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-light scroll-reveal">
+                    <div class="shape-card interactive-card">
+                        <h3 class="gear-title">Lighting & Control</h3>
+                        <ul class="gear-list">
+                            <li><span class="item-name">Neewer Z2-C</span> <span class="item-spec">w/ QPRO</span></li>
+                            <li><span class="item-name">SmallRig 40W</span> <span class="item-spec">LED Bi-Color</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="snap-block bento-philosophy scroll-reveal">
+                    <div class="shape-card interactive-card philosophy-card">
+                        <h3 class="gear-title" style="font-size: 1.8rem; margin-bottom: 0.8rem;">Filosofia del Setup</h3>
+                        <p class="philosophy-text">L'attrezzatura non fa il fotografo, ma ne traccia i limiti. Scopri il ragionamento dietro le focali scelte, l'ergonomia sul set e come il passaggio da Cinema a Full-Frame abbia cambiato il mio approccio visivo.</p>
+                        <button class="ios-explore-btn" style="margin-top: 1rem;">Analisi Tecnica <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="about" class="view">
+            <div id="about-container">
+                <div class="snap-block scroll-reveal" style="text-align: center; border:none; padding: 0; filter: blur(0); opacity: 1;">
+                    <h1 style="cursor:default;">Timeline<span class="dot">.</span></h1>
+                    <p class="subtitle">L'evoluzione della visione.</p>
+                </div>
+                
+                <div class="snap-block scroll-reveal about-card-track" id="year-2016">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2016</div>
+                        <div class="timeline-title">L'Inizio</div>
+                        <p class="timeline-desc">Canon 600D, Sigma 17-50 f/2.8, Canon 55-250. I primi ritratti, la frenesia dello sport, la vastità dei paesaggi. La grammatica della luce si impara sul campo, spingendo al limite sensori entry-level.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="year-2018">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-title">Il Salto Professionale</div>
+                        <p class="timeline-desc">Fujifilm X-T3. Il passaggio a sensori evoluti. Iniziano i battesimi, i matrimoni, la responsabilità incalcolabile di dover congelare istanti irripetibili. La pellicola digitale forgia l'ossessione per il colore.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="year-2020">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2020</div>
+                        <div class="timeline-title">L'Era Cinematografica</div>
+                        <p class="timeline-desc">Abbandono il sistema Fuji per dedicarmi al video. Sony A7S mk2 & A7R mk1, lenti Cinema, Atomos Ninja Flame. L'immagine si fa viva. Rig pesanti, logaritmici, esposizione chirurgica. Il confine tra fotografia e cinema crolla.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="year-2021">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2021</div>
+                        <div class="timeline-title">La Notte & Le Sinergie</div>
+                        <p class="timeline-desc">Upgrade a Sony A7R mk2. Scatti nei club, lidi estivi, la sfida tecnica del buio totale e dei laser. Iniziano le collaborazioni a stretto contatto con professionisti del settore. Il workflow diventa spietato, rapido, infallibile.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="year-2024">
+                    <div class="shape-card interactive-card">
+                        <div class="timeline-year">2024</div>
+                        <div class="timeline-title">Il Ritorno all'Essenza</div>
+                        <p class="timeline-desc">L'abbandono dei rig complessi e del sistema Sony per sposare un ecosistema Full-Frame Canon puro. Un approccio ibrido, pulito, organico. Il sistema diventa l'estensione naturale dell'occhio. Zero distrazioni, solo pura intenzione.</p>
+                    </div>
+                </div>
+
+                <div class="snap-block scroll-reveal about-card-track" id="contact-footer" style="margin-top: 6rem; margin-bottom: 5rem;">
+                    <div class="shape-card interactive-card contact-end-card">
+                        <div class="timeline-year" style="font-size: 2rem;">Oggi</div>
+                        <div class="timeline-title">La Prossima Visione</div>
+                        <p class="timeline-desc" style="font-size: 1.1rem; color: #86868b; margin-bottom: 2rem; max-width: 600px;">
+                            La storia è scritta dai frame che scegliamo di salvare. Il prossimo progetto, la prossima campagna, il prossimo istante irripetibile. Sono qui per documentarlo.
+                        </p>
+                        
+                        <div class="footer-block">
+                            <div class="footer-links">
+                                <a href="mailto:otuicsart@gmail.com" class="primary-contact">otuicsart@gmail.com</a>
+                                <a href="https://instagram.com/otuicsart" target="_blank">Instagram / @otuicsart</a>
+                                <a href="https://facebook.com/otuics" target="_blank">Facebook / @otuics</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-box" id="auth-box">
+            <h2>Accesso Riservato</h2>
+            <p>Inserisci le 6 cifre inviate tramite messaggio WhatsApp per accedere ai contenuti privati.</p>
+            <div class="otp-inputs" id="otp-container">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+            </div>
+            <button class="modal-close-btn" id="close-auth">Annulla</button>
+        </div>
+    </div>
+
+    <div class="gallery-modal-overlay" id="gallery-laurea">
+        <div class="gallery-header-ui">
+            <h2>Laurea Fra.</h2>
+            <button class="close-gallery-btn" id="close-laurea-btn">✕</button>
+        </div>
+        <div class="masonry-grid">
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1QfmwyjkT8-0ZQy-ZSYLi_Tft3vnftjV5&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1SQRjU9rezVKiNxUTDjBzwJtKXkYZTGpx&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VFI-7QOIwtDzbjfM9K2xk1s2mh_52Tn5&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VJj18fFkJh-CY_GDJ4iHslXCm-OAJ9lJ&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1VMwyBQtyH5HUzIBmMKzuYC6duFovL42_&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1acJlioIKSCzodZ0DHwovZPKoJde5BWrk&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1jlT9XJFQpbOg4kmBcx2OudItyO7yKIGr&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1orykCA9Om6NhJ8kQHEU9TtYIqkjXxYQw&sz=w1600"></div>
+            <div class="masonry-item"><img src="https://drive.google.com/thumbnail?id=1phIBmMXPMFuJ6cz2wi7-Ka3lZk9eaHGs&sz=w1600"></div>
         </div>
     </div>
 
     <script>
-        // Logica Navigazione
-        const nav = document.getElementById('unified-nav');
-        setTimeout(() => nav.classList.add('swap-complete'), 2500);
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const unifiedNav = document.getElementById('unified-nav');
+            const aboutTimelineNav = document.getElementById('about-timeline-nav');
+            const gearContainer = document.getElementById('gear-container');
+            const philosophyBlock = document.querySelector('.bento-philosophy');
+            const aboutContainer = document.getElementById('about-container');
+            const contactFooter = document.getElementById('contact-footer');
+            const aboutView = document.getElementById('about');
 
-        const buttons = document.querySelectorAll('.nav-btn');
-        const views = document.querySelectorAll('.view');
+            setTimeout(() => { unifiedNav.classList.add('swap-complete'); }, 2800);
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const target = btn.getAttribute('data-target');
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                views.forEach(v => {
-                    v.classList.remove('active');
-                    if(v.id === target) v.classList.add('active');
+            // AUDIO ENGINE
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            function playSound(type = 'nav') {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                if (type === 'nav') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'focus') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.03);
+                }
+                osc.connect(gain); gain.connect(audioCtx.destination);
+            }
+
+            // SYNC GRADIENT
+            const dynamicText = document.getElementById('dynamic-text');
+            const gradientBox = document.getElementById('gradient-sync-box');
+            const categories = ["Wedding", "Commercial", "Editorial", "Portraiture", "Automotive"];
+            let catIndex = 0;
+            setInterval(() => {
+                dynamicText.style.opacity = 0; gradientBox.classList.add('sync-fade');
+                setTimeout(() => {
+                    catIndex = (catIndex + 1) % categories.length; dynamicText.textContent = categories[catIndex];
+                    dynamicText.style.opacity = 1; gradientBox.classList.remove('sync-fade');
+                }, 500);
+            }, 3000);
+
+            // NAVIGAZIONE
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const views = document.querySelectorAll('.view');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if(btn.classList.contains('active')) return;
+                    playSound('nav');
+                    const targetId = btn.getAttribute('data-target');
+                    navButtons.forEach(b => b.classList.remove('active')); btn.classList.add('active');
+                    
+                    if(targetId === 'about') { aboutTimelineNav.classList.add('show-timeline'); } 
+                    else { aboutTimelineNav.classList.remove('show-timeline'); }
+
+                    views.forEach(view => {
+                        if (view.id === targetId) { view.classList.add('active'); view.scrollTop = 0; } 
+                        else { view.classList.remove('active'); }
+                    });
                 });
             });
-        });
 
-        // Logica Focus allo Scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) entry.target.classList.add('scroll-focus');
-                else entry.target.classList.remove('scroll-focus');
+            // TIMELINE SCROLL SPY LOGIC
+            const timelinePoints = document.querySelectorAll('.timeline-point');
+            const timelineFill = document.getElementById('timeline-fill');
+            const aboutCards = document.querySelectorAll('.about-card-track');
+
+            const timelineObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if(entry.target.id === 'contact-footer') {
+                            timelineFill.style.width = '100%';
+                            return;
+                        }
+                        const targetYearId = entry.target.id;
+                        timelinePoints.forEach(pt => {
+                            if (pt.getAttribute('data-target') === targetYearId) {
+                                pt.classList.add('active');
+                                timelineFill.style.width = pt.getAttribute('data-pct') + '%';
+                            } else {
+                                pt.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+            aboutCards.forEach(card => timelineObserver.observe(card));
+
+            timelinePoints.forEach(pt => {
+                pt.addEventListener('click', () => {
+                    playSound('focus');
+                    const targetSection = document.getElementById(pt.getAttribute('data-target'));
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
             });
-        }, { threshold: 0.5 });
 
-        document.querySelectorAll('.interactive-card').forEach(card => observer.observe(card));
+            // CLICK SU "CONTATTI"
+            document.getElementById('btn-contacts').addEventListener('click', () => {
+                playSound('nav');
+                aboutView.scrollTo({ top: contactFooter.offsetTop, behavior: 'smooth' });
+            });
 
-        // Logica Galleria
-        function openGallery() {
-            document.getElementById('galleryLaurea').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Blocca lo scroll del sito sotto
-        }
-        function closeGallery() {
-            document.getElementById('galleryLaurea').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+            // FOCUS OBSERVER GENERALE
+            const focusObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.target === philosophyBlock) {
+                        if (entry.isIntersecting) { gearContainer.classList.add('philosophy-active'); } 
+                        else { gearContainer.classList.remove('philosophy-active'); }
+                    }
+                    if (entry.target === contactFooter) {
+                        if (entry.isIntersecting) { aboutContainer.classList.add('contact-active'); } 
+                        else { aboutContainer.classList.remove('contact-active'); }
+                    }
+                    if (entry.isIntersecting) {
+                        if (!entry.target.classList.contains('scroll-focus')) { entry.target.classList.add('scroll-focus'); playSound('focus'); }
+                    } else { entry.target.classList.remove('scroll-focus'); }
+                });
+            }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+            
+            document.querySelectorAll('.interactive-card').forEach(el => focusObserver.observe(el));
+            focusObserver.observe(philosophyBlock);
+            focusObserver.observe(contactFooter);
+
+            // MOTION BLUR
+            let isScrolling; let lastScrollTop = 0;
+            views.forEach(view => {
+                view.addEventListener('scroll', () => {
+                    let st = view.scrollTop; let delta = Math.abs(st - lastScrollTop); lastScrollTop = st;
+                    let blurAmount = Math.min(delta * 0.15, 8); let stretchAmount = 1 + Math.min(delta * 0.003, 0.08);
+                    view.style.setProperty('--scroll-blur', `${blurAmount}px`); view.style.setProperty('--scroll-stretch', `${stretchAmount}`);
+                    window.clearTimeout(isScrolling);
+                    isScrolling = setTimeout(function() { view.style.setProperty('--scroll-blur', `0px`); view.style.setProperty('--scroll-stretch', `1`); }, 60); 
+                }, { passive: true });
+            });
+
+            // AUTH MODAL LOGIC
+            const modalAuth = document.getElementById('auth-modal');
+            const btnOpenAuth = document.getElementById('open-auth');
+            const btnCloseAuth = document.getElementById('close-auth');
+            const otpInputs = document.querySelectorAll('.otp-inputs input');
+            
+            btnOpenAuth.addEventListener('click', () => { playSound('nav'); modalAuth.classList.add('active'); setTimeout(() => otpInputs[0].focus(), 400); });
+            const closeAuthModal = () => { playSound('nav'); modalAuth.classList.remove('active'); otpInputs.forEach(i => i.value = ''); };
+            btnCloseAuth.addEventListener('click', closeAuthModal);
+            modalAuth.addEventListener('click', (e) => { if(e.target === modalAuth) closeAuthModal(); });
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    if (e.target.value !== '') {
+                        playSound('focus');
+                        if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
+                        else input.blur();
+                    }
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                        otpInputs[index - 1].focus(); otpInputs[index - 1].value = '';
+                    }
+                });
+            });
+
+            // NEW GALLERY LOGIC (LAUREA FRA)
+            const laureaModal = document.getElementById('gallery-laurea');
+            const openLaureaBtn = document.getElementById('open-laurea-btn');
+            const closeLaureaBtn = document.getElementById('close-laurea-btn');
+            const mItems = document.querySelectorAll('.masonry-item');
+
+            openLaureaBtn.addEventListener('click', () => {
+                playSound('nav');
+                laureaModal.classList.add('active');
+                mItems.forEach((item, index) => {
+                    setTimeout(() => { item.classList.add('show'); }, 100 + (index * 60));
+                });
+            });
+
+            const closeLaurea = () => {
+                playSound('nav');
+                laureaModal.classList.remove('active');
+                mItems.forEach(item => item.classList.remove('show'));
+            };
+
+            closeLaureaBtn.addEventListener('click', closeLaurea);
+            laureaModal.addEventListener('click', (e) => { if(e.target === laureaModal) closeLaurea(); });
+
+            document.querySelectorAll('.ios-explore-btn').forEach(btn => { 
+                if(btn.id !== 'open-laurea-btn') btn.addEventListener('click', () => playSound('nav')); 
+            });
+        });
     </script>
 </body>
 </html>
