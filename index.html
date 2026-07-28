@@ -141,6 +141,7 @@
         .vis-grafica { background-image: url('https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=800&auto=format&fit=crop'); }
         .vis-foto { background-image: url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop'); }
         .vis-video { background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800&auto=format&fit=crop'); }
+        .vis-programmazione { background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop'); }
 
         /* =========================================
            GEAR SPECIFIC & CINEMATIC ISOLATION
@@ -326,6 +327,18 @@
                         <h3>Video.</h3>
                         <p>Dinamica, tracking e narrazione. Il metallo e l'azione, resi vivi dal movimento.</p>
                         <button class="ios-explore-btn subcat-btn" data-modal="modal-video">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRAMMAZIONE -->
+            <div class="snap-block scroll-reveal">
+                <div class="portfolio-item interactive-card">
+                    <div class="portfolio-visual vis-programmazione"></div>
+                    <div class="portfolio-text">
+                        <h3>Programmazione.</h3>
+                        <p>Sviluppo di interfacce, architetture digitali e mondi interattivi. Il codice come strumento creativo.</p>
+                        <button class="ios-explore-btn subcat-btn" data-modal="modal-programmazione">Esplora Progetti <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                     </div>
                 </div>
             </div>
@@ -534,6 +547,20 @@
         </div>
     </div>
 
+    <!-- Modal: Programmazione -->
+    <div class="modal-overlay modal-subcat" id="modal-programmazione">
+        <div class="modal-box">
+            <h2>Programmazione.</h2>
+            <p style="margin-bottom: 0.5rem;">Seleziona la galleria da esplorare</p>
+            <div class="subcat-list">
+                <div class="subcat-item">Siti web</div>
+                <div class="subcat-item">App</div>
+                <div class="subcat-item">Giochi</div>
+            </div>
+            <button class="modal-close-btn chiudi-subcat">Chiudi</button>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -569,7 +596,7 @@
             // SYNC GRADIENT (HOME)
             const dynamicText = document.getElementById('dynamic-text');
             const gradientBox = document.getElementById('gradient-sync-box');
-            const categories = ["Grafica", "Fotografia", "Video Making", "Eventi", "Brand Identity"];
+            const categories = ["Grafica", "Fotografia", "Video Making", "Programmazione", "Eventi", "Brand Identity"];
             let catIndex = 0;
             setInterval(() => {
                 dynamicText.style.opacity = 0; gradientBox.classList.add('sync-fade');
