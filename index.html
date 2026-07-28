@@ -109,54 +109,19 @@
         .subtitle { font-size: clamp(0.9rem, 3vw, 1rem); font-weight: 300; color: var(--text-muted); text-align: center; margin-bottom: 2rem; }
 
         /* =========================================
-           HOME SPECIFICS (TEXT WITH GLOW)
+           HOME SPECIFICS (PILL DESIGN)
            ========================================= */
         #home { padding: 0; scroll-snap-type: none; }
         #home .snap-block { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; max-width: 100%; }
         .reveal-focus { animation: rack-focus-pull 2.8s var(--ease-focus) forwards; opacity: 0; }
         
-        .glowing-text-container {
-            position: relative;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 1rem;
-            padding: 0.5rem 2rem;
-        }
+        .btn-container { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-top: 1rem; }
+        .btn-container::before { content: ''; position: absolute; width: 130%; height: 130%; background: radial-gradient(circle, rgba(255,45,85,0.4) 0%, transparent 70%); filter: blur(15px); z-index: -1; opacity: 0.6; pointer-events: none; transition: opacity 0.5s var(--ease-apple), transform 0.5s var(--ease-apple); transform: scale(1); }
+        .btn-container.sync-fade::before { opacity: 0.1; transform: scale(0.8); }
         
-        /* La luce diffusa posizionata sotto il testo */
-        .glowing-text-container::before {
-            content: '';
-            position: absolute;
-            bottom: -5px; 
-            width: 160%;
-            height: 40px;
-            background: radial-gradient(ellipse, rgba(255, 45, 85, 0.5) 0%, transparent 60%);
-            filter: blur(18px);
-            z-index: -1;
-            opacity: 0.9;
-            pointer-events: none;
-            transition: opacity 0.5s var(--ease-apple), transform 0.5s var(--ease-apple), background 1s;
-            transform: scale(1);
-        }
-        
-        .glowing-text-container.sync-fade::before {
-            opacity: 0.1;
-            transform: scale(0.5);
-        }
-
-        .changing-font-text {
-            color: var(--text-main);
-            transition: opacity 0.4s ease;
-            text-align: center;
-        }
-
-        /* Stili dinamici per il testo */
-        .font-style-0 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px; }
-        .font-style-1 { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 2.5rem; letter-spacing: 0; }
-        .font-style-2 { font-family: monospace; font-weight: 400; font-size: 1.8rem; letter-spacing: -1px; text-transform: lowercase; }
-        .font-style-3 { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 1.8rem; letter-spacing: 6px; text-transform: uppercase; }
-        .font-style-4 { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2.2rem; letter-spacing: -1px; }
+        /* Modificato in "pill" non cliccabile */
+        .dynamic-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); padding: 0.6rem 1.6rem; border-radius: 50px; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); display: flex; align-items: center; justify-content: center; min-width: 140px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .dynamic-pill span { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; color: var(--text-main); transition: opacity 0.4s ease; }
 
         /* =========================================
            PORTFOLIO REDESIGN 
@@ -244,7 +209,6 @@
         .modal-close-btn:hover { background: rgba(255,255,255,0.15); }
         .modal-close-btn:active { transform: scale(0.96); }
 
-        /* NUOVE SOTTOCATEGORIE POPUP */
         .subcat-list { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; }
         .subcat-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 16px; color: var(--text-main); font-weight: 500; cursor: pointer; transition: all 0.3s var(--ease-apple); font-family: 'Inter', sans-serif; }
         .subcat-item:hover { background: rgba(255,255,255,0.1); transform: scale(1.03); border-color: rgba(255, 45, 85, 0.4); box-shadow: 0 4px 15px rgba(255, 45, 85, 0.15); color: #fff;}
@@ -292,11 +256,9 @@
             transition: transform 0.6s var(--ease-apple);
         }
 
-        /* Hover: ingrandimento dell'immagine */
         .iphone-item:hover { z-index: 2; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         .iphone-item:hover img { transform: scale(1.1); }
 
-        /* Classi per variare le dimensioni (stile mosaico iOS) */
         .iphone-item.large { grid-column: span 2; grid-row: span 2; }
         .iphone-item.wide { grid-column: span 2; grid-row: span 1; }
         .iphone-item.tall { grid-column: span 1; grid-row: span 2; }
@@ -308,7 +270,6 @@
 
         /* =========================================
            MOBILE & SHORT SCREEN OPTIMIZATIONS
-           (Fix per tasto coperto dalla nav-bar)
            ========================================= */
         @media (max-width: 767px) {
             .view { padding: 6rem 1.5rem 8rem 1.5rem; }
@@ -316,12 +277,6 @@
             .portfolio-text h3 { font-size: 1.8rem; margin-bottom: 0.3rem; }
             .portfolio-text p { font-size: 0.85rem; margin-bottom: 1rem; }
             .ios-explore-btn { padding: 0.6rem 1rem; font-size: 0.75rem; }
-            .glowing-text-container { margin-top: 0.5rem; padding: 0.2rem 1rem;}
-            .font-style-0 { font-size: 1.5rem; }
-            .font-style-1 { font-size: 2rem; }
-            .font-style-2 { font-size: 1.4rem; }
-            .font-style-3 { font-size: 1.4rem; }
-            .font-style-4 { font-size: 1.8rem; }
         }
 
         @media (max-width: 767px) and (max-height: 720px) {
@@ -398,9 +353,9 @@
                 <h1 id="center-logo" style="color: #fff; text-shadow: 0 0 4px rgba(255,255,255,0.2);">otuics<span class="dot">.</span></h1>
                 <p class="subtitle">Visual Creator</p>
                 
-                <!-- NUOVO BLOCCO TESTO LUMINOSO -->
-                <div class="glowing-text-container" id="gradient-sync-box">
-                    <span class="changing-font-text font-style-0" id="dynamic-text">Grafica</span>
+                <!-- PILLOLA NON CLICCABILE CON TESTO DINAMICO -->
+                <div class="btn-container" id="gradient-sync-box">
+                    <div class="dynamic-pill"><span id="dynamic-text">Grafica</span></div>
                 </div>
 
             </div>
@@ -413,7 +368,6 @@
                 <p class="subtitle">Grammatica visiva ed estetica della forma.</p>
             </div>
 
-            <!-- GRAFICA -->
             <div class="snap-block scroll-reveal">
                 <div class="portfolio-item interactive-card">
                     <div class="portfolio-visual vis-grafica"></div>
@@ -425,7 +379,6 @@
                 </div>
             </div>
 
-            <!-- FOTO -->
             <div class="snap-block scroll-reveal">
                 <div class="portfolio-item interactive-card">
                     <div class="portfolio-visual vis-foto"></div>
@@ -437,7 +390,6 @@
                 </div>
             </div>
 
-            <!-- VIDEO -->
             <div class="snap-block scroll-reveal">
                 <div class="portfolio-item interactive-card">
                     <div class="portfolio-visual vis-video"></div>
@@ -449,7 +401,6 @@
                 </div>
             </div>
 
-            <!-- PROGRAMMAZIONE -->
             <div class="snap-block scroll-reveal">
                 <div class="portfolio-item interactive-card">
                     <div class="portfolio-visual vis-programmazione"></div>
@@ -607,7 +558,6 @@
 
     <!-- ================================= MODALS AREA ================================= -->
     
-    <!-- Modal: Area Riservata -->
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-box" id="auth-box">
             <h2>Accesso Riservato</h2>
@@ -624,13 +574,11 @@
         </div>
     </div>
 
-    <!-- Modal: Grafica -->
     <div class="modal-overlay modal-subcat" id="modal-grafica">
         <div class="modal-box">
             <h2>Grafica.</h2>
             <p style="margin-bottom: 0.5rem;">Seleziona la galleria da esplorare</p>
             <div class="subcat-list">
-                <!-- ID aggiunto per aprire la galleria in basso -->
                 <div class="subcat-item" id="open-loghi-btn">Loghi</div> 
                 <div class="subcat-item">Brochure</div>
                 <div class="subcat-item">Mockup</div>
@@ -639,7 +587,6 @@
         </div>
     </div>
 
-    <!-- Modal: Foto -->
     <div class="modal-overlay modal-subcat" id="modal-foto">
         <div class="modal-box">
             <h2>Foto.</h2>
@@ -653,7 +600,6 @@
         </div>
     </div>
 
-    <!-- Modal: Video -->
     <div class="modal-overlay modal-subcat" id="modal-video">
         <div class="modal-box">
             <h2>Video.</h2>
@@ -666,7 +612,6 @@
         </div>
     </div>
 
-    <!-- Modal: Programmazione -->
     <div class="modal-overlay modal-subcat" id="modal-programmazione">
         <div class="modal-box">
             <h2>Programmazione.</h2>
@@ -680,7 +625,7 @@
         </div>
     </div>
 
-    <!-- Modal Galleria Completa: LOGHI -->
+    <!-- Modal Galleria Completa: LOGHI (NOTA: Usa l'ID della singola foto e uc?id=) -->
     <div class="full-gallery-overlay" id="gallery-loghi-view">
         <div class="gallery-header-ui">
             <h2>Loghi.</h2>
@@ -688,27 +633,27 @@
         </div>
         
         <div class="iphone-grid">
-            <!-- SOSTITUISCI INSERISCI_ID_QUI CON GLI ID DELLE TUE FOTO DI DRIVE -->
+            <!-- SOSTITUISCI INSERISCI_ID_QUI CON L'ID DELLA TUA SINGOLA FOTO (NON DELLA CARTELLA) -->
             <div class="iphone-item large">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w1600" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w800" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w800" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item wide">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w1600" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item tall">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w800" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w800" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
             <div class="iphone-item large">
-                <img src="https://drive.google.com/thumbnail?id=INSERISCI_ID_QUI&sz=w1600" loading="lazy">
+                <img src="https://drive.google.com/uc?id=INSERISCI_ID_QUI" loading="lazy">
             </div>
         </div>
     </div>
@@ -745,7 +690,7 @@
                 osc.connect(gain); gain.connect(audioCtx.destination);
             }
 
-            // SYNC GRADIENT & TESTO (HOME)
+            // SYNC GRADIENT (HOME)
             const dynamicText = document.getElementById('dynamic-text');
             const gradientBox = document.getElementById('gradient-sync-box');
             const categories = ["Grafica", "Fotografia", "Video Making", "Programmazione", "Eventi"];
@@ -758,8 +703,6 @@
                 setTimeout(() => {
                     catIndex = (catIndex + 1) % categories.length; 
                     dynamicText.textContent = categories[catIndex];
-                    // Applica un font diverso tra i 5 definiti nel CSS
-                    dynamicText.className = 'changing-font-text font-style-' + (catIndex % 5);
                     
                     dynamicText.style.opacity = 1; 
                     gradientBox.classList.remove('sync-fade');
@@ -925,14 +868,11 @@
                 openLoghiBtn.addEventListener('click', () => {
                     playSound('nav');
                     
-                    // Chiudi il popup "Grafica" prima di aprire la galleria a tutto schermo
                     document.getElementById('modal-grafica').classList.remove('active');
                     
-                    // Apri la galleria Loghi
                     loghiView.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // Blocca lo scroll del sito sotto
+                    document.body.style.overflow = 'hidden'; 
                     
-                    // Animazione a cascata sfalsata
                     iphoneItems.forEach((item, index) => {
                         setTimeout(() => { 
                             item.classList.add('show'); 
@@ -944,7 +884,7 @@
             const closeLoghiGallery = () => {
                 playSound('nav');
                 loghiView.classList.remove('active');
-                document.body.style.overflow = 'auto'; // Riabilita lo scroll
+                document.body.style.overflow = 'auto'; 
                 iphoneItems.forEach(item => item.classList.remove('show'));
             };
 
